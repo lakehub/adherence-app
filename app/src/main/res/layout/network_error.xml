@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    android:background="@color/errorColor">
+
+    <ImageView
+        android:id="@+id/network_error_image_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/signal_cellular_connected_no_internet_4_bar_white_24dp"/>
+
+    <TextView
+        android:id="@+id/network_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="@string/network_error"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:layout_toEndOf="@+id/network_error_image_view"
+        android:layout_centerVertical="true"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"/>
+</RelativeLayout>

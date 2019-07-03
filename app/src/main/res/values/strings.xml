@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">AdherenceApp</string>
+    <string name="img_dsc">image description</string>
+    <string name="message_desc">enter your phone number below to get sms for registration</string>
+    <string name="send_sms">Send Me SMS</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="have_account">Have an account?</string>
+    <string name="login">Log In</string>
+    <string name="submitting">submitting</string>
+    <string name="submit">submit</string>
+    <string name="required">required</string>
+    <string name="verify">Verify</string>
+    <string name="verification_code">Verification Code</string>
+    <string name="dn_receive_code">Didn\'t receive a code?</string>
+    <string name="resend_in">Resend in</string>
+    <string name="sec_count">%1$d seconds</string>
+    <string name="code_on_sms">enter verification code received on sms</string>
+    <string name="resend">Resend</string>
+    <string name="invalid_code">Invalid Verification Code</string>
+    <string name="network_error">Network Error. Please try again.</string>
+    <string name="invalid_phone">Invalid phone number</string>
+    <string name="enter_phone">Please enter your phone number</string>
+    <string name="enter_code">Please enter your Verification Code</string>
+    <string name="title_activity_tutorial">TutorialActivity</string>
+    <string name="next">next</string>
+    <string name="tutorial_1_text">Keep your hospital appointments organized and quickly check your drug reminders
+        with the Adherence App
+    </string>
+    <string name="done">done</string>
 </resources>

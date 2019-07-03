@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".RegisterActivity"
+        android:background="@android:color/white">
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="50dp">
+        <View
+                android:id="@+id/dot_1"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/circular_bg_red_xs"/>
+        <View
+                android:id="@+id/dot_2"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                app:layout_constraintStart_toEndOf="@+id/dot_1"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/circular_bg_green_xs"
+                android:layout_marginStart="20dp"/>
+
+        <View
+                android:id="@+id/dot_3"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                app:layout_constraintStart_toEndOf="@+id/dot_2"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/circular_bg_green_xs"
+                android:layout_marginStart="20dp"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.viewpager.widget.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cl_dots"
+            app:layout_constraintBottom_toTopOf="@id/btn_next"/>
+    <Button
+            android:id="@+id/btn_next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/next"
+            android:padding="20dp"
+            android:textColor="@android:color/white"
+            android:background="@android:color/holo_green_light"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

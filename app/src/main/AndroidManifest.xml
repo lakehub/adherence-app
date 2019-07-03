@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="com.lakehub.adherenceapp">
 
     <application
@@ -8,7 +9,19 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            tools:ignore="GoogleAppIndexingWarning"
+            android:name=".MainApplication">
+        <activity
+                android:name=".TutorialActivity"
+                android:label="@string/title_activity_tutorial"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity android:name=".VerifyActivity"
+                  android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+                android:name=".RegisterActivity"
+                android:theme="@style/MaterialTheme"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
