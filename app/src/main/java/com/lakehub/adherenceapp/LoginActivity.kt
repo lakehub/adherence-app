@@ -1,28 +1,29 @@
 package com.lakehub.adherenceapp
 
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.activity_register.*
+import kotlinx.android.synthetic.main.activity_login.*
 
-class RegisterActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
+        setContentView(R.layout.activity_login)
 
         supportActionBar?.hide()
 
         hideProgress()
 
         val db = FirebaseFirestore.getInstance()
+
         val usersRef = db.collection("users")
 
         cl_btn_submit.setOnClickListener {
@@ -58,19 +59,19 @@ class RegisterActivity : AppCompatActivity() {
                     usersRef.document(phoneNumber)
                     usersRef.whereEqualTo("phoneNumber", phoneNumber)
                         .get()
-                        .addOnCompleteListener {
+                        .addOnSuccessListener { user ->
                             hideProgress()
-                            if (it.result!!.isEmpty) {
-                                val myIntent = Intent(this@RegisterActivity, VerifyActivity::class.java)
+                            Log.d("TAG", "doc: ${user.documents}")
+                            if (!user.isEmpty) {
+                                val myIntent = Intent(this@LoginActivity, VerifyActivity::class.java)
                                 myIntent.putExtra("phoneNumber", phoneNumber)
-                                myIntent.putExtra("newUser", true)
                                 startActivity(myIntent)
                                 finish()
                             } else {
                                 val toast = Toast(this)
                                 val view: View = layoutInflater.inflate(R.layout.warning, null)
                                 val textView: TextView = view.findViewById(R.id.message)
-                                textView.text = getString(R.string.already_registered)
+                                textView.text = getString(R.string.dnt_register)
                                 toast.view = view
                                 toast.setGravity(Gravity.BOTTOM, 30, 30)
                                 toast.duration = Toast.LENGTH_SHORT
@@ -82,6 +83,7 @@ class RegisterActivity : AppCompatActivity() {
                             hideProgress()
                             Log.d("TAG", "exception: $it")
                         }
+
                 }
             } else {
                 val toast = Toast(this)
@@ -96,17 +98,17 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
-        tv_login.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
+        tv_register.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
             finish()
         }
-
     }
 
     private fun showProgress() {
         tv_btn_submit.text = getString(R.string.submitting)
         tv_btn_submit.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
         progress_bar_submit.visibility = View.VISIBLE
+//        edit_text.isEnabled = false
         cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this, R.color.materialColorGray))
     }
 
@@ -118,5 +120,6 @@ class RegisterActivity : AppCompatActivity() {
 
         progress_bar_submit.visibility = View.GONE
         cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this, R.color.colorYellow))
+//        edit_text.isEnabled = true
     }
 }

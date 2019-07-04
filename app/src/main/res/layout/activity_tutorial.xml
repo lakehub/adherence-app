@@ -57,5 +57,5 @@
             android:text="@string/next"
             android:padding="20dp"
             android:textColor="@android:color/white"
-            android:background="@android:color/holo_green_light"/>
+            android:background="@color/colorGreen"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

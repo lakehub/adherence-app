@@ -6,8 +6,8 @@
     <string name="phone_number">Phone Number</string>
     <string name="have_account">Have an account?</string>
     <string name="login">Log In</string>
-    <string name="submitting">submitting</string>
-    <string name="submit">submit</string>
+    <string name="submitting">Submitting</string>
+    <string name="submit">Submit</string>
     <string name="required">required</string>
     <string name="verify">Verify</string>
     <string name="verification_code">Verification Code</string>
@@ -27,4 +27,39 @@
         with the Adherence App
     </string>
     <string name="done">done</string>
+    <string name="adherence">Adherence</string>
+    <string name="sch_app">scheduling app</string>
+    <string name="login_dsc">enter your phone number below to login</string>
+    <string name="sign_in">Sign In</string>
+    <string name="dnt_account">Dont\'t have an account?</string>
+    <string name="req_one">Request One</string>
+    <string name="dnt_register">Your haven\'t register. Please register.</string>
+    <string name="already_registered">Your had registered. Please login.</string>
+    <string name="cont_client">Continue as Client</string>
+    <string name="cont_chv">Continue as CHV</string>
+    <string name="choose_act_type">Choose account type</string>
+    <string name="good_morning">Good Morning!</string>
+    <string name="good_morning_chv">Good Morning CHV!</string>
+    <string name="ninety_nine_plus">99+</string>
+    <string name="jan">January</string>
+    <string name="feb">February</string>
+    <string name="mar">March</string>
+    <string name="apr">April</string>
+    <string name="may">May</string>
+    <string name="jun">June</string>
+    <string name="jul">July</string>
+    <string name="aug">August</string>
+    <string name="sep">September</string>
+    <string name="oct">October</string>
+    <string name="nov">November</string>
+    <string name="dec">December</string>
+    <string name="mon">Monday</string>
+    <string name="tues">Tuesday</string>
+    <string name="wed">Wednesday</string>
+    <string name="thur">Thursday</string>
+    <string name="fri">Friday</string>
+    <string name="sat">Saturday</string>
+    <string name="sun">Sunday</string>
+    <string name="upcoming_not">Upcoming Notifications</string>
+    <string name="sample_date">July 4, 2019</string>
 </resources>

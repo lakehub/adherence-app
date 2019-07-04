@@ -4,21 +4,33 @@
           package="com.lakehub.adherenceapp">
 
     <application
+            android:name=".MainApplication"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
-            tools:ignore="GoogleAppIndexingWarning"
-            android:name=".MainApplication">
+            tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".ChvDashboardActivity"
+                  android:theme="@style/MaterialTheme.NoActionBar"/>
+        <activity
+                android:name=".ClientHomeActivity"
+                android:theme="@style/MaterialTheme.NoActionBar"/>
+        <activity
+                android:name=".SelectAccountTypeActivity"
+                android:theme="@style/MaterialTheme.NoActionBar"/>
+        <activity
+                android:name=".LoginActivity"
+                android:theme="@style/MaterialTheme"/>
         <activity
                 android:name=".TutorialActivity"
                 android:label="@string/title_activity_tutorial"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".VerifyActivity"
-                  android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+                android:name=".VerifyActivity"
+                android:theme="@style/AppTheme.NoActionBar"/>
         <activity
                 android:name=".RegisterActivity"
                 android:theme="@style/MaterialTheme"/>

@@ -33,7 +33,16 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+//    firebase
     implementation 'com.google.firebase:firebase-core:17.0.0'
     implementation 'com.google.android.material:material:1.1.0-alpha07'
     implementation 'com.google.firebase:firebase-auth:18.0.0'
+    implementation 'com.google.firebase:firebase-firestore:20.1.0'
+
+//     time lib
+    implementation 'net.danlew:android.joda:2.10.1.1'
+
+//    circular image view
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 }

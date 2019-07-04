@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#2C5F20</color>
+    <color name="colorPrimary">#005E20</color>
     <color name="colorPrimaryLight">#AA2C5F20</color>
-    <color name="colorBlueLight">#84CEEB</color>
+    <color name="colorBlueLight">#01709B</color>
     <color name="colorPrimaryTranslucent">#2C5F20</color>
     <color name="colorPrimaryDark">#1E5631</color>
     <color name="colorBlackTranslucent">#80000000</color>
@@ -21,6 +21,8 @@
     <color name="colorGray">#E3E3E3</color>
     <color name="materialColorGray">#CFD8DC</color>
     <color name="colorWhiteSemitransparent">#99FFFFFF</color>
-    <color name="colorGreen">#00FF00</color>
+    <color name="colorGreen">#9DA712</color>
     <color name="colorTranslucent">#BB000000</color>
+    <color name="colorYellow">#FEF200</color>
+    <color name="colorRed">#C62132</color>
 </resources>

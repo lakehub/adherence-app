@@ -7,186 +7,234 @@
         android:layout_height="match_parent"
         tools:context=".VerifyActivity"
         android:background="@color/colorPrimary">
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-        <ImageView
-                android:id="@+id/iv_logo"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:contentDescription="@string/app_name"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/logo"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"/>
-
-        <TextView
-                android:id="@+id/tv_dsc"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/code_on_sms"
-                android:textSize="18sp"
-                android:textAllCaps="true"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/iv_logo"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="20dp"
-                android:textColor="@color/colorBlueLight"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"/>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:boxBackgroundMode="none"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_dsc"
-                android:layout_marginTop="20dp">
-            <ImageView
-                    android:id="@+id/iv_icon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:contentDescription="@string/img_dsc"
-                    android:src="@drawable/icon_password"
-                    android:tint="@color/colorBlueLight"/>
-            <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/input_layout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:padding="30dp"
+                    android:background="@drawable/circular_bg_white">
+                <ImageView
+                        android:id="@+id/iv_logo"
+                        android:layout_width="110dp"
+                        android:layout_height="110dp"
+                        android:contentDescription="@string/app_name"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:src="@drawable/app_logo"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                    android:id="@+id/tv_logo_dsc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_logo"
+                    android:text="@string/adherence"
+                    android:textSize="40sp"
+                    android:fontFamily="@font/product_sans_bold"
+                    android:textStyle="bold"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorYellow"/>
+
+            <TextView
+                    android:id="@+id/tv_logo_dsc_sm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_logo_dsc"
+                    android:text="@string/sch_app"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/product_sans_bold"
+                    android:textStyle="bold"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorYellow"/>
+
+            <TextView
+                    android:id="@+id/tv_dsc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:padding="0dp"
-                    app:errorEnabled="false"
-                    app:helperTextEnabled="false"
-                    app:hintEnabled="false"
-                    app:boxBackgroundMode="none"
-                    app:layout_constraintStart_toEndOf="@+id/iv_icon"
-                    app:layout_constraintTop_toTopOf="@+id/iv_icon"
-                    app:layout_constraintBottom_toBottomOf="@+id/iv_icon"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginBottom="0dp"
-            >
+                    android:text="@string/code_on_sms"
+                    android:textSize="16sp"
+                    android:textAllCaps="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_logo_dsc_sm"
+                    android:gravity="center_horizontal"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/colorBlueLight"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/product_sans_bold"/>
 
-                <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edit_text"
-                        android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_input"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:boxBackgroundMode="none"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_dsc"
+                    android:layout_marginTop="20dp">
+                <ImageView
+                        android:id="@+id/iv_icon"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:contentDescription="@string/img_dsc"
+                        android:src="@drawable/icon_password"
+                        android:tint="@color/colorBlueLight"/>
+                <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/input_layout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/verification_code"
-                        android:inputType="number"
-                        android:textColor="@android:color/white"
-                        android:textColorHint="@android:color/white"
-                        android:textSize="18sp"
+                        android:layout_marginStart="5dp"
+                        android:padding="0dp"
+                        app:errorEnabled="false"
+                        app:helperTextEnabled="false"
+                        app:hintEnabled="false"
+                        app:boxBackgroundMode="none"
+                        app:layout_constraintStart_toEndOf="@+id/iv_icon"
+                        app:layout_constraintTop_toTopOf="@+id/iv_icon"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_icon"
                         android:layout_marginTop="0dp"
                         android:layout_marginBottom="0dp"
-                        android:padding="0dp"
-                />
-            </com.google.android.material.textfield.TextInputLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                >
 
-        <View
-                android:id="@+id/divider_view"
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="@color/colorBlueLight"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cl_input"
-                android:layout_marginTop="10dp"/>
+                    <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/verification_code"
+                            android:inputType="number"
+                            android:textColor="@android:color/white"
+                            android:textColorHint="@android:color/white"
+                            android:textSize="18sp"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginBottom="0dp"
+                            android:padding="0dp"
+                    />
+                </com.google.android.material.textfield.TextInputLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_btn_submit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/holo_green_light"
-                app:layout_constraintTop_toBottomOf="@+id/divider_view"
-                app:layout_constraintStart_toStartOf="parent"
-                android:padding="10dp"
-                android:layout_marginTop="20dp"
-                app:layout_constraintEnd_toEndOf="parent">
+            <View
+                    android:id="@+id/divider_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/colorBlueLight"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_input"
+                    android:layout_marginTop="10dp"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_btn_submit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorYellow"
+                    app:layout_constraintTop_toBottomOf="@+id/divider_view"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:padding="10dp"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:background="@android:color/transparent">
+
+                    <TextView
+                            android:id="@+id/tv_btn_submit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/verify"
+                            android:padding="5dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:textSize="18sp"
+                            android:textAllCaps="false"
+                            android:textColor="@android:color/white"
+                            android:fontFamily="@font/product_sans_bold"/>
+                    <ProgressBar
+                            android:id="@+id/progress_bar_submit"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/tv_btn_submit"
+                            android:indeterminateDuration="1000"
+                            android:indeterminateDrawable="@drawable/button_progress_primary"
+                            android:indeterminate="true"
+                    />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:background="@android:color/transparent">
-
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cl_btn_submit"
+                    android:layout_marginTop="20dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp">
                 <TextView
-                        android:id="@+id/tv_btn_submit"
+                        android:id="@+id/tv_resend_dsc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/verify"
-                        android:padding="5dp"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        android:textSize="18sp"
-                        android:textAllCaps="false"
+                        android:text="@string/dn_receive_code"
+                        android:textSize="15sp"
                         android:textColor="@android:color/white"/>
-                <ProgressBar
-                        android:id="@+id/progress_bar_submit"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+
+                <TextView
+                        android:id="@+id/tv_resend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/tv_btn_submit"
-                        android:indeterminateDuration="1000"
-                        android:indeterminateDrawable="@drawable/button_progress_primary"
-                        android:indeterminate="true"
-                />
+                        app:layout_constraintStart_toEndOf="@+id/tv_resend_dsc"
+                        android:text="@string/resend_in"
+                        android:textSize="15sp"
+                        android:textColor="@color/colorYellow"
+                        android:layout_marginStart="10dp"/>
+
+                <TextView
+                        android:id="@+id/tv_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_resend"
+                        android:text="@string/sec_count"
+                        android:textSize="15sp"
+                        android:textColor="@color/colorRed"
+                        android:layout_marginStart="5dp"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cl_btn_submit"
-                android:layout_marginTop="20dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp">
-            <TextView
-                    android:id="@+id/tv_resend_dsc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:text="@string/dn_receive_code"
-                    android:textSize="15sp"
-                    android:textColor="@android:color/white"/>
-
-            <TextView
-                    android:id="@+id/tv_resend"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/tv_resend_dsc"
-                    android:text="@string/resend_in"
-                    android:textSize="15sp"
-                    android:textColor="@android:color/holo_green_light"
-                    android:layout_marginStart="10dp"/>
-
-            <TextView
-                    android:id="@+id/tv_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/tv_resend"
-                    android:text="@string/sec_count"
-                    android:textSize="15sp"
-                    android:textColor="@android:color/holo_red_light"
-                    android:layout_marginStart="5dp"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

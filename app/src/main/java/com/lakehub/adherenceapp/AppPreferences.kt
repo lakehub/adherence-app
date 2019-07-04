@@ -9,6 +9,7 @@ object AppPreferences {
     lateinit var preferences: SharedPreferences
 
     private val FIRST_RUN = Pair("first_run", true)
+    private val ACCOUNT_TYPE = Pair("account_type", 0)
 
 
     fun init(context: Context) {
@@ -25,5 +26,11 @@ object AppPreferences {
         get() = preferences.getBoolean(FIRST_RUN.first, FIRST_RUN.second)
         set(value) = preferences.edit {
             it.putBoolean(FIRST_RUN.first, value)
+        }
+
+    var accountType: Int
+        get() = preferences.getInt(ACCOUNT_TYPE.first, ACCOUNT_TYPE.second)
+        set(value) = preferences.edit {
+            it.putInt(ACCOUNT_TYPE.first, value)
         }
 }

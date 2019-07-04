@@ -1,6 +1,6 @@
 package com.lakehub.adherenceapp
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.gms.tasks.TaskExecutors
 import com.google.firebase.FirebaseException
@@ -15,14 +16,17 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_verify.*
-import java.lang.NumberFormatException
 import java.util.concurrent.TimeUnit
 
 class VerifyActivity : AppCompatActivity() {
     private var verificationId: String? = null
     private var phoneNumber: String? = null
     private val auth = FirebaseAuth.getInstance()
+    private var newUser: Boolean? = null
+    private lateinit var userRef: CollectionReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +36,12 @@ class VerifyActivity : AppCompatActivity() {
 
         hideProgress()
 
+        val db = FirebaseFirestore.getInstance()
+        userRef = db.collection("users")
+
         val extra = intent.extras
         phoneNumber = extra?.getString("phoneNumber")
+        newUser = extra?.getBoolean("newUser")
 
         retrieveCode()
 
@@ -129,8 +137,11 @@ class VerifyActivity : AppCompatActivity() {
                 val code: String? = p0?.smsCode
                 if (code != null) {
                     showProgress()
-                    PhoneAuthProvider.getCredential(verificationId!!, code)
                     edit_text.setText(code)
+                    if (verificationId != null) {
+                        val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
+                        signInWithPhoneAuthCredential(credential)
+                    }
                 }
             }
 
@@ -143,7 +154,6 @@ class VerifyActivity : AppCompatActivity() {
             override fun onCodeSent(myMerificationId: String?, p1: PhoneAuthProvider.ForceResendingToken?) {
                 super.onCodeSent(myMerificationId, p1)
                 verificationId = myMerificationId
-                Log.d("TAG", "ver id: $verificationId")
             }
 
             override fun onCodeAutoRetrievalTimeOut(p0: String?) {
@@ -162,7 +172,47 @@ class VerifyActivity : AppCompatActivity() {
                     myIntent.putExtra("phoneNumber", user?.phoneNumber)
                     startActivity(myIntent)
                     finish()*/
-                    Toast.makeText(this, "signed in", Toast.LENGTH_LONG).show()
+                    if (newUser != null && newUser == true) {
+                        Toast.makeText(this, "registered as new user", Toast.LENGTH_LONG).show()
+                        val myUser = hashMapOf(
+                            "phoneNumber" to user!!.phoneNumber,
+                            "category" to 0
+                        )
+                        userRef.document(phoneNumber!!)
+                            .set(myUser)
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "user added", Toast.LENGTH_LONG).show()
+
+                                startActivity(Intent(this, SelectAccountTypeActivity::class.java))
+                                finish()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this, "cannot add user: $it", Toast.LENGTH_LONG).show()
+                            }
+                    } else {
+                        val db = FirebaseFirestore.getInstance()
+                        val usersRef = db.collection("users")
+
+                        usersRef.document(phoneNumber!!)
+                        usersRef.whereEqualTo("phoneNumber", phoneNumber)
+                            .get()
+                            .addOnCompleteListener {
+                                hideProgress()
+                                val category = it.result!!.documents[0].get("category")
+                                Log.d("TAG", "cat: $category")
+                                if (category == 1) {
+                                    startActivity(Intent(this@VerifyActivity, ClientHomeActivity::class.java))
+                                } else {
+                                    startActivity(Intent(this@VerifyActivity, ChvDashboardActivity::class.java))
+                                }
+                                finish()
+
+                            }
+                            .addOnFailureListener {
+                                hideProgress()
+                                Log.d("TAG", "exception: $it")
+                            }
+                    }
                 } else {
                     Log.w("TAG", "signInWithCredential:failure", task.exception)
 
@@ -183,7 +233,7 @@ class VerifyActivity : AppCompatActivity() {
 
     private fun showProgress() {
         tv_btn_submit.text = getString(R.string.submitting)
-        tv_btn_submit.setTextColor(ContextCompat.getColor(applicationContext, android.R.color.holo_green_light))
+        tv_btn_submit.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
         progress_bar_submit.visibility = View.VISIBLE
 //        edit_text.isEnabled = false
         cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this, R.color.materialColorGray))
@@ -196,7 +246,7 @@ class VerifyActivity : AppCompatActivity() {
         )
 
         progress_bar_submit.visibility = View.GONE
-        cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_green_light))
+        cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this, R.color.colorYellow))
 //        edit_text.isEnabled = true
     }
 
