@@ -198,11 +198,12 @@ class VerifyActivity : AppCompatActivity() {
                             .get()
                             .addOnCompleteListener {
                                 hideProgress()
-                                val category = it.result!!.documents[0].get("category")
-                                Log.d("TAG", "cat: $category")
+                                val category = it.result!!.documents[0].get("category").toString().toInt()
                                 if (category == 1) {
+                                    AppPreferences.accountType = 1
                                     startActivity(Intent(this@VerifyActivity, ClientHomeActivity::class.java))
                                 } else {
+                                    AppPreferences.accountType = 2
                                     startActivity(Intent(this@VerifyActivity, ChvDashboardActivity::class.java))
                                 }
                                 finish()

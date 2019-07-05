@@ -61,5 +61,38 @@
     <string name="sat">Saturday</string>
     <string name="sun">Sunday</string>
     <string name="upcoming_not">Upcoming Notifications</string>
+    <string name="upcoming_alarm">Upcoming Alarms</string>
     <string name="sample_date">July 4, 2019</string>
+    <string name="home">Home</string>
+    <string name="missed_alarm">Missed Alarms</string>
+    <string name="settings">Settings</string>
+    <string name="my_profile">My Profile</string>
+    <string name="logout">Logout</string>
+    <string name="two">2</string>
+    <string name="add_alarm">Add Alarm</string>
+    <string name="short_dsc">Short Description. E.g, Drug Name</string>
+    <string name="all_day">All Day</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="location">Location</string>
+    <string name="notification">Notification</string>
+    <string name="alarm_tone">Alarm Tone</string>
+    <string name="repeat">Repeat</string>
+    <string name="monthly">Monthly</string>
+    <string name="sample_time">10:00 am</string>
+    <string name="via_popup">via Popup</string>
+    <string name="adhere">Adherence Beep</string>
+    <string name="hospital">Hospital ABC</string>
+    <string-array name="repeat_mode_array">
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+    </string-array>
+    <string-array name="notification_mode_array">
+        <item>via Popup</item>
+        <item>On Status Bar</item>
+    </string-array>
+    <string name="sel_tone">Select Alarm Tone</string>
+    <string name="fill_fields">Please fill all fields.</string>
+    <string name="alarm_add_success">Alarm added successfully</string>
 </resources>

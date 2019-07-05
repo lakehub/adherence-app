@@ -104,6 +104,10 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        this.finishAffinity()
+    }
+
     private fun showProgress() {
         tv_btn_submit.text = getString(R.string.submitting)
         tv_btn_submit.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))

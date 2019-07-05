@@ -4,12 +4,13 @@ import android.content.Context
 import android.content.SharedPreferences
 
 object AppPreferences {
-    private const val NAME = "FitebaseAuth"
+    private const val NAME = "Adherence"
     private const val MODE = Context.MODE_PRIVATE
     lateinit var preferences: SharedPreferences
 
     private val FIRST_RUN = Pair("first_run", true)
     private val ACCOUNT_TYPE = Pair("account_type", 0)
+    private val TONE_PATH = Pair("tone_path", null)
 
 
     fun init(context: Context) {
@@ -32,5 +33,11 @@ object AppPreferences {
         get() = preferences.getInt(ACCOUNT_TYPE.first, ACCOUNT_TYPE.second)
         set(value) = preferences.edit {
             it.putInt(ACCOUNT_TYPE.first, value)
+        }
+
+    var tonePath: String?
+        get() = preferences.getString(TONE_PATH.first, TONE_PATH.second)
+        set(value) = preferences.edit {
+            it.putString(ACCOUNT_TYPE.first, value)
         }
 }
