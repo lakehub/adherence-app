@@ -61,30 +61,6 @@
                     android:fontFamily="@font/product_sans_regular"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:text="@string/all_day"/>
-
-            <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/all_day_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/MySwitch"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-            />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp">
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/holo_red_dark"
-                    android:textSize="15sp"
-                    android:fontFamily="@font/product_sans_regular"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     android:text="@string/from"/>
 
             <TextView
@@ -114,6 +90,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_to_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -159,57 +136,120 @@
                 android:layout_height="0.5dp"
                 android:background="@android:color/darker_gray"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="20dp">
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/holo_red_dark"
-                    android:textSize="15sp"
-                    android:fontFamily="@font/product_sans_regular"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:text="@string/location"/>
-
-            <ImageView
-                    android:id="@+id/iv_location"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    app:layout_constraintEnd_toStartOf="@+id/input_layout_location"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginEnd="7dp"
-                    android:src="@drawable/navigation"
-                    android:tint="@android:color/holo_red_light"
-            />
-
-            <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/input_layout_location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="0dp"
-                    android:padding="0dp"
-                    app:errorEnabled="true"
-                    app:helperTextEnabled="false"
-                    app:hintEnabled="false"
-                    app:boxBackgroundMode="none"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/iv_location"
-                    app:layout_constraintBottom_toBottomOf="@+id/iv_location"
-            >
-
-                <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edit_text_location"
+                android:orientation="vertical"
+                android:paddingTop="20dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="20dp">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="@string/hospital"
-                        android:inputType="text"
-                        android:fontFamily="@font/product_sans_regular"
+                        android:textColor="@android:color/holo_red_dark"
                         android:textSize="15sp"
+                        android:fontFamily="@font/product_sans_regular"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/place_switch"
+                        android:text="@string/place"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/place_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                 />
-            </com.google.android.material.textfield.TextInputLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+            >
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/holo_red_dark"
+                        android:textSize="15sp"
+                        android:fontFamily="@font/product_sans_regular"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_location"
+                        android:text="@string/location"/>
+
+                <ImageView
+                        android:id="@+id/iv_location"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        app:layout_constraintEnd_toStartOf="@+id/input_layout_location"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/navigation"
+                        android:tint="@android:color/holo_red_light"
+                        android:contentDescription="@string/img_dsc"
+                />
+
+                <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/input_layout_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:padding="0dp"
+                        app:errorEnabled="true"
+                        app:helperTextEnabled="false"
+                        app:hintEnabled="false"
+                        app:boxBackgroundMode="none"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/iv_location"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_location"
+                >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_text_location"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/port_florence"
+                            android:inputType="text"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:textSize="15sp"
+                    />
+                </com.google.android.material.textfield.TextInputLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_med_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                   android:layout_marginTop="20dp">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/holo_red_dark"
+                        android:textSize="15sp"
+                        android:fontFamily="@font/product_sans_regular"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:text="@string/med_type"/>
+
+                <Spinner
+                        android:id="@+id/medication_type_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:padding="0dp"
+                        android:gravity="end"
+                        android:background="@null"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
 
         <View
                 android:layout_width="match_parent"
@@ -219,7 +259,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="20dp">
+                android:padding="20dp"
+                android:visibility="gone">
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -244,12 +285,16 @@
         <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@android:color/darker_gray"/>
+                android:background="@android:color/darker_gray"
+                android:visibility="gone"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="20dp">
+                android:paddingTop="20dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="20dp">
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -266,7 +311,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="@string/adhere"
+                    android:text="@string/alarm_tone_1"
                     android:textColor="@android:color/black"
                     android:fontFamily="@font/product_sans_regular"
                     android:textSize="15sp"
@@ -281,7 +326,10 @@
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="20dp">
+                android:paddingTop="20dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="20dp">
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -292,7 +340,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     android:text="@string/repeat"/>
 
-            <Spinner
+            <!--<Spinner
                     android:id="@+id/repeat_mode_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -300,7 +348,18 @@
                     app:layout_constraintTop_toTopOf="parent"
                     android:padding="0dp"
                     android:gravity="end"
-                    android:background="@null"/>
+                    android:background="@null"/>-->
+            <TextView
+                    android:id="@+id/tv_repeat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="@string/once"
+                    android:textColor="@android:color/black"
+                    android:fontFamily="@font/product_sans_regular"
+                    android:textSize="15sp"
+            />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

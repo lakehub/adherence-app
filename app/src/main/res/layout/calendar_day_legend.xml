@@ -1,0 +1,80 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/legendLayout"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:orientation="horizontal"
+              android:paddingTop="20dp">
+
+    <TextView
+            android:id="@+id/legendText1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/mon_short"
+            android:textSize="14sp"
+            android:textAllCaps="true"/>
+
+    <TextView
+            android:id="@+id/legendText2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/tues_short"
+            android:textSize="14sp"
+            android:textAllCaps="true"/>
+
+    <TextView
+            android:id="@+id/legendText3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/wed_short"
+            android:textSize="14sp"
+            android:textAllCaps="true"/>
+
+    <TextView
+            android:id="@+id/legendText4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/thur_short"
+            android:textSize="14sp"
+            android:textAllCaps="true"/>
+
+    <TextView
+            android:id="@+id/legendText5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/fri_short"
+            android:textSize="14sp"
+            android:textAllCaps="true"/>
+
+    <TextView
+            android:id="@+id/legendText6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/sat_short"
+            android:textSize="14sp"
+            android:textAllCaps="true"/>
+
+    <TextView
+            android:id="@+id/legendText7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/sun_short"
+            android:textSize="14sp"
+            android:textAllCaps="true"/>
+
+</LinearLayout>

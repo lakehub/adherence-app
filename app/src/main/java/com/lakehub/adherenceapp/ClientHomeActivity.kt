@@ -5,22 +5,42 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.kizitonwose.calendarview.model.CalendarDay
+import com.kizitonwose.calendarview.model.DayOwner
+import com.kizitonwose.calendarview.model.InDateStyle
+import com.kizitonwose.calendarview.ui.DayBinder
+import com.kizitonwose.calendarview.ui.ViewContainer
+import com.kizitonwose.calendarview.utils.yearMonth
 import kotlinx.android.synthetic.main.activity_client_home.*
 import kotlinx.android.synthetic.main.app_bar_client_home.*
+import kotlinx.android.synthetic.main.app_bar_client_home.view.*
+import kotlinx.android.synthetic.main.calendar_day.view.*
 import kotlinx.android.synthetic.main.content_client_home.*
-import kotlinx.android.synthetic.main.menu.*
+import kotlinx.android.synthetic.main.my_menu.*
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
+import org.threeten.bp.DayOfWeek
+import org.threeten.bp.LocalDate
+import org.threeten.bp.YearMonth
+import org.threeten.bp.format.DateTimeFormatter
+
 
 class ClientHomeActivity : AppCompatActivity() {
     private lateinit var alarmList: ArrayList<Alarm>
     private lateinit var myAdapter: AlarmAdapter
+
+    private val selectedDates = mutableSetOf<LocalDate>()
+    private val today = LocalDate.now()
+    private val monthTitleFormatter = DateTimeFormatter.ofPattern("MMMM")
+    private var selectedDate: LocalDate? = null
+    private var selectedDateStr: String? = null
+    private var currentYearMonth: YearMonth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +62,10 @@ class ClientHomeActivity : AppCompatActivity() {
 
         toolbar.setCollapsible(true)
 
+        registerForContextMenu(recycler_view)
+        recycler_view.makeGone()
+        tv_no_alarm.makeGone()
+
         iv_menu.setOnClickListener {
             if (!drawer_layout.isDrawerOpen(GravityCompat.START)) {
                 drawer_layout.openDrawer(GravityCompat.START, true)
@@ -53,7 +77,12 @@ class ClientHomeActivity : AppCompatActivity() {
         }
 
         add_fab.setOnClickListener {
-            startActivityForResult(Intent(this, AddAlarmActivity::class.java), 101)
+            startActivityForResult(Intent(this, AddAlarmActivity::class.java), 900)
+        }
+
+        cl_settings.setOnClickListener {
+            drawer_layout.closeDrawer(GravityCompat.START, true)
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
 
         alarmList = arrayListOf()
@@ -71,7 +100,11 @@ class ClientHomeActivity : AppCompatActivity() {
             adapter = myAdapter
         }
 
-        fetchData()
+        val mySelectedDateFormat = "yyyy-MM-dd"
+        val mySelectedDateFormatter = DateTimeFormat.forPattern(mySelectedDateFormat)
+        selectedDateStr = mySelectedDateFormatter.print(DateTime.now())
+
+        fetchData(selectedDateStr!!)
 
         cl_logout.setOnClickListener {
             auth.signOut()
@@ -83,6 +116,135 @@ class ClientHomeActivity : AppCompatActivity() {
                 this.finishAffinity()
             }
         }
+
+        val date = DateTime.now()
+
+        val currentMonth = YearMonth.of(date.year, date.monthOfYear)
+        val firstMonth = currentMonth.minusMonths(0)
+        val lastMonth = currentMonth.plusMonths(120)
+        val firstDayOfWeek = DayOfWeek.MONDAY
+        calendar_view.setup(firstMonth, lastMonth, firstDayOfWeek)
+
+        calendar_view.inDateStyle = InDateStyle.FIRST_MONTH
+        calendar_view.maxRowCount = 1
+        calendar_view.hasBoundaries = false
+
+        class DayViewContainer(view: View) : ViewContainer(view) {
+            // Will be set when this container is bound. See the dayBinder.
+            lateinit var day: CalendarDay
+            val textView = view.calendarDayText
+
+            init {
+                view.setOnClickListener {
+
+                    if (day.owner == DayOwner.THIS_MONTH) {
+                        if (selectedDate != day.date) {
+                            val oldDate = selectedDate
+                            selectedDate = day.date
+                            calendar_view.notifyDateChanged(day.date)
+                            oldDate?.let { calendar_view.notifyDateChanged(oldDate) }
+
+                            selectedDateStr = selectedDate.toString()
+
+                            fetchData(selectedDateStr!!)
+
+                        }
+                        calendar_view.notifyDayChanged(day)
+                    }
+                }
+            }
+        }
+
+        /*class DayViewContainer(view: View) : ViewContainer(view) {
+            // Will be set when this container is bound. See the dayBinder.
+            lateinit var day: CalendarDay
+
+            val textView = with(view) {
+                setOnClickListener {
+                    if (day.owner == DayOwner.THIS_MONTH) {
+                        if (selectedDate == day.date) {
+                            selectedDate = null
+                            calendar_view.notifyDayChanged(day)
+                        } else {
+                            val oldDate = selectedDate
+                            selectedDate = day.date
+                            calendar_view.notifyDateChanged(day.date)
+                            oldDate?.let { calendar_view.notifyDateChanged(oldDate) }
+                        }
+                    }
+                }
+                return@with this as TextView
+
+                val textView = view.exOneDayText
+            }
+
+        }*/
+
+        calendar_view.dayBinder = object : DayBinder<DayViewContainer> {
+            override fun create(view: View) = DayViewContainer(view)
+            override fun bind(container: DayViewContainer, day: CalendarDay) {
+                container.day = day
+                val textView = container.textView
+                textView.text = day.date.dayOfMonth.toString()
+                if (day.owner == DayOwner.THIS_MONTH) {
+                    when (day.date) {
+                        selectedDate -> {
+                            textView.setBackgroundResource(R.drawable.circular_bg_gray)
+                        }
+                        today -> {
+                            textView.setTextColorRes(R.color.colorPrimary)
+                            textView.background = null
+                        }
+                        else -> {
+                            textView.setTextColorRes(android.R.color.black)
+                            textView.background = null
+                        }
+                    }
+                } else {
+                    textView.setTextColorRes(android.R.color.white)
+                    textView.background = null
+                }
+            }
+        }
+
+        calendar_view.scrollToDate(LocalDate.now())
+
+        toolbar.iv_next.setOnClickListener {
+            calendar_view.findFirstVisibleDay()?.let {
+                calendar_view.smoothScrollToDate(it.date.plusDays(7))
+            }
+
+        }
+
+        toolbar.iv_prev.setOnClickListener {
+            calendar_view.findFirstVisibleDay()?.let {
+                calendar_view.smoothScrollToDate(it.date.minusDays(7))
+            }
+        }
+
+        calendar_view.monthScrollListener = {
+            // In week mode, we show the header a bit differently.
+            // We show indices with dates from different months since
+            // dates overflow and cells in one index can belong to different
+            // months/years.
+            currentYearMonth = it.yearMonth
+            val firstDate = it.weekDays.first().first().date
+            val lastDate = it.weekDays.last().last().date
+            if (firstDate.yearMonth == lastDate.yearMonth) {
+                toolbar.tv_yr.text = firstDate.yearMonth.year.toString()
+                toolbar.tv_month.text = monthTitleFormatter.format(firstDate)
+            } else {
+                toolbar.tv_month.text =
+                    "${monthTitleFormatter.format(firstDate)} - ${monthTitleFormatter.format(lastDate)}"
+                if (firstDate.year == lastDate.year) {
+                    toolbar.tv_yr.text = firstDate.yearMonth.year.toString()
+                } else {
+                    toolbar.tv_yr.text = "${firstDate.yearMonth.year} - ${lastDate.yearMonth.year}"
+                }
+            }
+
+        }
+
     }
 
     override fun onBackPressed() {
@@ -97,48 +259,80 @@ class ClientHomeActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 900 && resultCode == Activity.RESULT_OK) {
             val success = data?.getBooleanExtra("success", false)
-//            if (success != null && success)
-//                fetchData()
+            if (success != null && success)
+                fetchData(selectedDateStr!!)
         }
     }
 
-    private fun fetchData() {
+    private fun fetchData(dateStr: String) {
         showProgress()
         val phoneNumber = FirebaseAuth.getInstance().currentUser?.phoneNumber
 
         val alarmsRef = FirebaseFirestore.getInstance().collection("alarms")
         alarmsRef.whereEqualTo("phoneNumber", phoneNumber!!)
+            .whereEqualTo("date", dateStr)
             .get()
             .addOnCompleteListener {
                 hideProgress()
                 val documents = it.result?.documents
-                alarmList.clear()
-                for (document in documents!!) {
-                    val alarm = Alarm(
-                        description = document.getString("description")!!,
-                        fromDate = document.getString("fromDate")!!
-                    )
+                if (documents!!.isNotEmpty()) {
+                    showAlarms()
+                    alarmList.clear()
+                    for (document in documents) {
+                        val alarm = Alarm(
+                            description = document.getString("description")!!,
+                            fromDate = document.getString("fromDate")!!
+                        )
 
-                    alarmList.add(alarm)
-                }
-
-                val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
-                    when {
-                        dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> 1
-                        dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> -1
-                        else -> 0
+                        alarmList.add(alarm)
                     }
-                })
 
-                alarmList.clear()
-                alarmList.addAll(sorted)
+                    val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
+                        when {
+                            dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
+                            dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                            else -> 0
+                        }
+                    })
 
-                myAdapter.notifyDataSetChanged()
+                    alarmList.clear()
+                    alarmList.addAll(sorted)
+
+                    myAdapter.notifyDataSetChanged()
+                } else {
+                    hideAlarms()
+                }
             }
             .addOnFailureListener {
                 hideProgress()
             }
+
+        /*recycler_view.addOnItemTouchListener(object : RecyclerItemClickListener(this,
+    object : OnItemClickListener {
+        override fun onItemClick(view: View, position: Int) {
+            val myView = view.findViewById<TextView>(R.id.tv_count)
+//                    openOptionMenu(myView, position)
+            Log.d("TAG", "item touched pos: $position")
+        }
+
+    }) {
+
+})*/
     }
+
+    /*fun openOptionMenu(v: View, position: Int) {
+        val popup = PopupMenu(v.context, v)
+        popup.menuInflater.inflate(R.menu.upcoming_menu, popup.menu)
+        popup.setOnMenuItemClickListener { item ->
+            Toast.makeText(
+                baseContext,
+                "You selected the action : " + item.title + " position " + position,
+                Toast.LENGTH_SHORT
+            ).show()
+            true
+        }
+        popup.show()
+    }*/
 
     private fun showProgress() {
         progress_bar.visibility = View.VISIBLE
@@ -146,5 +340,15 @@ class ClientHomeActivity : AppCompatActivity() {
 
     private fun hideProgress() {
         progress_bar.visibility = View.GONE
+    }
+
+    private fun hideAlarms() {
+        recycler_view.makeGone()
+        tv_no_alarm.makeVisible()
+    }
+
+    private fun showAlarms() {
+        recycler_view.makeVisible()
+        tv_no_alarm.makeGone()
     }
 }

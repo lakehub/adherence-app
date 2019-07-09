@@ -60,6 +60,13 @@
     <string name="fri">Friday</string>
     <string name="sat">Saturday</string>
     <string name="sun">Sunday</string>
+    <string name="mon_short">Mon</string>
+    <string name="tues_short">Tue</string>
+    <string name="wed_short">Wed</string>
+    <string name="thur_short">Thur</string>
+    <string name="fri_short">Fri</string>
+    <string name="sat_short">Sat</string>
+    <string name="sun_short">Sun</string>
     <string name="upcoming_not">Upcoming Notifications</string>
     <string name="upcoming_alarm">Upcoming Alarms</string>
     <string name="sample_date">July 4, 2019</string>
@@ -77,6 +84,13 @@
     <string name="location">Location</string>
     <string name="notification">Notification</string>
     <string name="alarm_tone">Alarm Tone</string>
+    <string name="alarm_tone_1">Alarm Tone 1</string>
+    <string name="alarm_tone_2">Alarm Tone 2</string>
+    <string name="alarm_tone_3">Alarm Tone 3</string>
+    <string name="custom">Custom</string>
+    <string name="once">Once</string>
+    <string name="daily">Daily</string>
+    <string name="weekday">Weekday</string>
     <string name="repeat">Repeat</string>
     <string name="monthly">Monthly</string>
     <string name="sample_time">10:00 am</string>
@@ -84,9 +98,10 @@
     <string name="adhere">Adherence Beep</string>
     <string name="hospital">Hospital ABC</string>
     <string-array name="repeat_mode_array">
+        <item>Once</item>
         <item>Daily</item>
-        <item>Weekly</item>
-        <item>Monthly</item>
+        <item>Weekday</item>
+        <item>Custom</item>
     </string-array>
     <string-array name="notification_mode_array">
         <item>via Popup</item>
@@ -95,4 +110,40 @@
     <string name="sel_tone">Select Alarm Tone</string>
     <string name="fill_fields">Please fill all fields.</string>
     <string name="alarm_add_success">Alarm added successfully</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="cancel">Cancel</string>
+    <string name="edit">Edit</string>
+    <string name="remove">Remove</string>
+    <string name="port_florence">Eg. Port Florence Hospital</string>
+    <string name="place">Place</string>
+    <string name="ok">OK</string>
+    <string name="sample_year">2019</string>
+    <string name="no_alarm">No Alarm set for this date.</string>
+    <string name="user_adher">User Adher</string>
+    <string name="new_adherence">New Adherence</string>
+    <string name="notification_alt">Notification!</string>
+    <string name="drug">drug</string>
+    <string name="drug_alt">drug %1$s</string>
+    <string name="confirm_below">confirm below</string>
+    <string name="taken">I\'ve Taken</string>
+    <string name="attended">I\'ve Attended</string>
+    <string name="snooze">Snooze</string>
+    <string name="remaining">(%1$d remaining)</string>
+    <string name="med_type">Medication Type</string>
+    <string-array name="med_type_array">
+        <item>Treatment</item>
+        <item>ARV</item>
+    </string-array>
 </resources>

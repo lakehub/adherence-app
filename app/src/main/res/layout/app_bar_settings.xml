@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".SettingsActivity"
+        android:padding="0dp">
+
+    <com.google.android.material.appbar.AppBarLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            android:padding="0dp">
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="enterAlways|scroll"
+                android:fitsSystemWindows="true"
+                app:contentScrim="@color/colorPrimary"
+                android:padding="0dp">
+            <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:popupTheme="@style/AppTheme.PopupOverlay"
+                    app:layout_scrollFlags="enterAlways|scroll"
+                    android:padding="0dp"
+                    app:contentInsetStart="0dp"
+                    app:contentInsetEnd="0dp"
+            >
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/user"
+                        android:padding="0dp">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:background="@color/colorTranslucent"
+                            android:paddingBottom="20dp">
+                        <ImageView
+                                android:id="@+id/iv_back"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:src="@drawable/back"
+                                android:tint="@android:color/white"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginTop="15dp"
+                                android:background="?selectableItemBackgroundBorderless"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:padding="10dp"/>
+                        <ImageView
+                                android:id="@+id/iv_continue"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:src="@drawable/logout"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginTop="15dp"
+                                android:tint="@android:color/white"
+                                android:background="?selectableItemBackgroundBorderless"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:padding="10dp"/>
+                        <TextView
+                                android:id="@+id/tv_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintTop_toBottomOf="@id/iv_back"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                android:paddingStart="20dp"
+                                android:paddingEnd="20dp"
+                                android:textSize="30sp"
+                                android:fontFamily="@font/product_sans_bold"
+                                android:textColor="@android:color/white"
+                                android:text="@string/user_adher"
+                                android:layout_marginTop="100dp"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/content_settings"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

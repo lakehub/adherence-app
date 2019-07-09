@@ -2,6 +2,7 @@ package com.lakehub.adherenceapp
 
 import android.app.Application
 import android.content.Context
+import com.jakewharton.threetenabp.AndroidThreeTen
 
 class MainApplication : Application() {
 
@@ -12,6 +13,7 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         AppPreferences.init(this)
+        AndroidThreeTen.init(this)
     }
 
     companion object {

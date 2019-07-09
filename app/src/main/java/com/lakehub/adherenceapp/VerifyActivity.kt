@@ -110,14 +110,14 @@ class VerifyActivity : AppCompatActivity() {
                     input_layout.requestFocus()
                 }
             } else {
-                val toast = Toast(applicationContext)
+                /*val toast = Toast(applicationContext)
                 val view: View = layoutInflater.inflate(R.layout.warning, null)
                 val textView: TextView = view.findViewById(R.id.message)
                 textView.text = getString(R.string.invalid_code)
                 toast.view = view
                 toast.setGravity(Gravity.BOTTOM, 30, 30)
                 toast.duration = Toast.LENGTH_LONG
-                toast.show()
+                toast.show()*/
             }
         }
 

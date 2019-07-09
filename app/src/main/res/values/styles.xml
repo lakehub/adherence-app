@@ -43,7 +43,7 @@
 
     <style name="MySwitch" parent="Theme.AppCompat.Light">
         <!-- active thumb & track color (30% transparency) -->
-        <item name="colorControlActivated">@color/colorPrimaryLight</item>
+        <item name="colorControlActivated">@color/colorRed</item>
 
         <!-- inactive thumb color -->
         <item name="colorSwitchThumbNormal">@color/colorRed</item>
@@ -83,6 +83,15 @@
     <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:backgroundTint">@android:color/transparent</item>
         <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Theme.AppCompat.Translucent" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:background">#33000000</item> <!-- Or any transparency or color you need -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
     </style>
 
 </resources>

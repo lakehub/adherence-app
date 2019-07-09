@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.activity_tutorial.*
 
@@ -55,6 +56,8 @@ class TutorialActivity : AppCompatActivity() {
                 finish()
             }
         }
+
+        window.statusBarColor = ContextCompat.getColor(this, R.color.colorPrimaryDark)
     }
 
     private fun unSelectAllDots () {
