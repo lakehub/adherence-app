@@ -1,12 +1,18 @@
 package com.lakehub.adherenceapp
 
+import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.view.*
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.delete_success_toast.view.*
 
 
 class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
@@ -71,10 +77,34 @@ class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
     }
 
     private fun openOptionMenu(v: View, position: Int) {
+        val alarm = alarms[position]
         val popup = PopupMenu(v.context, v)
         popup.menuInflater.inflate(R.menu.upcoming_menu, popup.menu)
         popup.setOnMenuItemClickListener { item ->
-            Toast.makeText(context, "Feature coming soon", Toast.LENGTH_SHORT).show()
+            when (item.itemId) {
+                R.id.edit -> {
+                    val myIntent = Intent(context, EditAlarmActivity::class.java)
+                    myIntent.putExtra("docId", alarm.docId)
+                    myIntent.putExtra("id", alarm.id)
+                    myIntent.putExtra("description", alarm.description)
+                    myIntent.putExtra("tonePath", alarm.alarmTone)
+                    myIntent.putExtra("fromDate", alarm.fromDate)
+                    myIntent.putExtra("toDate", alarm.toDate)
+                    myIntent.putExtra("isPlace", alarm.isPlace)
+                    myIntent.putExtra("medType", alarm.medType)
+                    myIntent.putExtra("repeatMode", alarm.repeatMode)
+                    myIntent.putExtra("location", alarm.location)
+                    (context as Activity).startActivityForResult(myIntent, 900)
+//                    context.startActivity(myIntent)
+                }
+                R.id.cancel -> {
+                    val myIntent = Intent(context, CancelAlarmActivity::class.java)
+                    myIntent.putExtra("docId", alarm.docId)
+                    myIntent.putExtra("alarmId", alarm.id)
+                    myIntent.putExtra("isPlace", alarm.isPlace)
+                    context.startActivity(myIntent)
+                }
+            }
             true
         }
         popup.show()

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -17,6 +18,7 @@ import com.kizitonwose.calendarview.model.InDateStyle
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarview.utils.yearMonth
+import com.lakehub.adherenceapp.AppPreferences.tonePath
 import kotlinx.android.synthetic.main.activity_client_home.*
 import kotlinx.android.synthetic.main.app_bar_client_home.*
 import kotlinx.android.synthetic.main.app_bar_client_home.view.*
@@ -31,6 +33,7 @@ import org.threeten.bp.YearMonth
 import org.threeten.bp.format.DateTimeFormatter
 
 
+@Suppress("UNCHECKED_CAST")
 class ClientHomeActivity : AppCompatActivity() {
     private lateinit var alarmList: ArrayList<Alarm>
     private lateinit var myAdapter: AlarmAdapter
@@ -278,13 +281,25 @@ class ClientHomeActivity : AppCompatActivity() {
                 if (documents!!.isNotEmpty()) {
                     showAlarms()
                     alarmList.clear()
+
                     for (document in documents) {
                         val alarm = Alarm(
                             description = document.getString("description")!!,
-                            fromDate = document.getString("fromDate")!!
+                            fromDate = document.getString("fromDate")!!,
+                            toDate = document.getString("toDate"),
+                            docId = document.id,
+                            alarmTone = document.getString("alarmTonePath"),
+                            location = document.getString("location"),
+                            isPlace = document.getBoolean("isPlace"),
+                            medType = document.getDouble("medicationType")?.toInt(),
+                            repeatMode = document.get("repeatMode") as ArrayList<Int>,
+                            id = document.getLong("id")?.toInt()!!,
+                            cancelled = document.getBoolean("cancelled")!!
                         )
 
-                        alarmList.add(alarm)
+                        if (!alarm.cancelled) {
+                            alarmList.add(alarm)
+                        }
                     }
 
                     val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
@@ -305,6 +320,47 @@ class ClientHomeActivity : AppCompatActivity() {
             }
             .addOnFailureListener {
                 hideProgress()
+            }
+
+        alarmsRef.whereEqualTo("phoneNumber", phoneNumber)
+            .whereEqualTo("date", dateStr)
+            .addSnapshotListener { querySnapshot, _ ->
+                if (querySnapshot != null && querySnapshot.documents.isNotEmpty()) {
+                    alarmList.clear()
+
+                    for (document in querySnapshot.documents) {
+                        val alarm = Alarm(
+                            description = document.getString("description")!!,
+                            fromDate = document.getString("fromDate")!!,
+                            toDate = document.getString("toDate"),
+                            docId = document.id,
+                            alarmTone = document.getString("alarmTonePath"),
+                            location = document.getString("location"),
+                            isPlace = document.getBoolean("isPlace"),
+                            cancelled = document.getBoolean("cancelled")!!,
+                            medType = document.getDouble("medicationType")?.toInt(),
+                            repeatMode = document.get("repeatMode") as ArrayList<Int>,
+                            id = document.getLong("id")?.toInt()!!
+                        )
+
+                        if (!alarm.cancelled) {
+                            alarmList.add(alarm)
+                        }
+                    }
+
+                    val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
+                        when {
+                            dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
+                            dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                            else -> 0
+                        }
+                    })
+
+                    alarmList.clear()
+                    alarmList.addAll(sorted)
+
+                    myAdapter.notifyDataSetChanged()
+                }
             }
 
         /*recycler_view.addOnItemTouchListener(object : RecyclerItemClickListener(this,

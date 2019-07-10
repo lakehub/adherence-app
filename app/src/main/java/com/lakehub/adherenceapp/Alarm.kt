@@ -1,14 +1,19 @@
 package com.lakehub.adherenceapp
 
-import org.joda.time.DateTime
-
 data class Alarm(
     val description: String = "",
     val allDay: Boolean = false,
     val fromDate: String = "",
-    val toDateTime: String = "",
-    val location: String = "",
+    val toDate: String? = null,
+    val location: String? = null,
     val notificationMode: Int = 0,
     val alarmTone: String? = null,
-    val repeatMode: Int = 0
+    val repeatMode: ArrayList<Int>? = null,
+    val isPlace: Boolean? = null,
+    val id: Int = 0,
+    val medType: Int? = null,
+    val cancelled: Boolean = false,
+    val missed: Boolean = false,
+    val docId: String? = null,
+    val cancellationReason: String? = null
 )

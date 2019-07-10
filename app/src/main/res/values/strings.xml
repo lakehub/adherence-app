@@ -110,6 +110,7 @@
     <string name="sel_tone">Select Alarm Tone</string>
     <string name="fill_fields">Please fill all fields.</string>
     <string name="alarm_add_success">Alarm added successfully</string>
+    <string name="alarm_edit_success">Alarm edited successfully</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -146,4 +147,10 @@
         <item>Treatment</item>
         <item>ARV</item>
     </string-array>
+    <string name="grant_perm">Please grant this app permission to read files in order to use custom alarm tones</string>
+    <string name="edit_alarm">Edit Alarm</string>
+    <string name="alarm_cancel_success">Alarm Cancelled successfully.</string>
+    <string name="undo">Undo</string>
+    <string name="why_cancel">Why Have You Cancelled</string>
+    <string name="reason_to_cancel">Reason To Cancel</string>
 </resources>

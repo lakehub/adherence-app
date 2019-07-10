@@ -55,7 +55,7 @@ class MyNotificationManager(context: Context) {
             .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
             .setChannelId(ALARM_NOTIFICATION_CHANNEL)
             .setAutoCancel(true)
-            .setPriority(IMPORTANCE_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .addAction(takenAction)
             .addAction(snoozeAction)
         val mNotifyMgr = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -86,6 +86,7 @@ class MyNotificationManager(context: Context) {
             channel.vibrationPattern = longArrayOf(300, 400, 500, 400, 300)
             channel.enableLights(true)
             channel.enableVibration(true)
+            channel.importance = IMPORTANCE_HIGH
             mNotifyMgr.createNotificationChannel(channel)
         }
 

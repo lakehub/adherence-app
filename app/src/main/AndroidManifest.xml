@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
             android:name=".MainApplication"
@@ -15,15 +16,28 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".CancelAlarmActivity"
+                  android:theme="@style/Theme.AppCompat.Translucent"/>
+
+        <receiver
+                android:name=".ConfirmAttendPlaceReceiver"
+                android:enabled="true"
+                android:exported="true">
+        </receiver>
+
+        <activity
+                android:name=".EditAlarmActivity"
+                android:theme="@style/MaterialTheme.NoActionBar"/>
+
         <receiver android:name=".BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
-        <service android:name=".MyService"
-                 android:permission="android.permission.BIND_JOB_SERVICE"/>
-
+        <service
+                android:name=".MyService"
+                android:permission="android.permission.BIND_JOB_SERVICE"/>
         <service
                 android:name=".BootCompletedService"
                 android:enabled="true"
@@ -45,7 +59,7 @@
                 android:theme="@style/MaterialTheme.NoActionBar"/>
         <activity
                 android:name=".ClientHomeActivity"
-                android:launchMode="singleTop"
+                android:launchMode="singleInstance"
                 android:screenOrientation="portrait"
                 android:theme="@style/MaterialTheme.NoActionBar"/>
         <activity
