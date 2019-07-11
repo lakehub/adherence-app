@@ -31,7 +31,7 @@
     <string name="sch_app">scheduling app</string>
     <string name="login_dsc">enter your phone number below to login</string>
     <string name="sign_in">Sign In</string>
-    <string name="dnt_account">Dont\'t have an account?</string>
+    <string name="dnt_account">Don\'t have an account?</string>
     <string name="req_one">Request One</string>
     <string name="dnt_register">Your haven\'t register. Please register.</string>
     <string name="already_registered">Your had registered. Please login.</string>
@@ -131,7 +131,8 @@
     <string name="place">Place</string>
     <string name="ok">OK</string>
     <string name="sample_year">2019</string>
-    <string name="no_alarm">No Alarm set for this date.</string>
+    <string name="no_alarm">No Upcoming Alarm.</string>
+    <string name="no_missed_alarm">No Missed Alarm.</string>
     <string name="user_adher">User Adher</string>
     <string name="new_adherence">New Adherence</string>
     <string name="notification_alt">Notification!</string>
@@ -153,4 +154,13 @@
     <string name="undo">Undo</string>
     <string name="why_cancel">Why Have You Cancelled</string>
     <string name="reason_to_cancel">Reason To Cancel</string>
+    <string name="congrats">Congratulations</string>
+    <string name="points_awarded_label">Points Awarded:</string>
+    <string name="total_points_label">Total Points:</string>
+    <string name="point">%1$d point</string>
+    <string name="points">%1$d points</string>
+    <string name="close">close</string>
+    <string name="dismiss">dismiss</string>
+    <string name="snoozed_to">snoozed to</string>
+    <string name="turn_off">turn off</string>
 </resources>

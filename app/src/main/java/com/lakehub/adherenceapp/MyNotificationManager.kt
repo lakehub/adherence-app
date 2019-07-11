@@ -57,7 +57,6 @@ class MyNotificationManager(context: Context) {
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .addAction(takenAction)
-            .addAction(snoozeAction)
         val mNotifyMgr = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         var picture: Bitmap
         /*try {

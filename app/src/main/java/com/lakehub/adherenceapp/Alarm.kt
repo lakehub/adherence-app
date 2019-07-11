@@ -10,10 +10,12 @@ data class Alarm(
     val alarmTone: String? = null,
     val repeatMode: ArrayList<Int>? = null,
     val isPlace: Boolean? = null,
+    val rang: Boolean = false,
     val id: Int = 0,
     val medType: Int? = null,
     val cancelled: Boolean = false,
     val missed: Boolean = false,
     val docId: String? = null,
-    val cancellationReason: String? = null
+    val cancellationReason: String? = null,
+    val snoozed: Int = 0
 )

@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_home"
+            android:id="@+id/cl_home_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20dp"
@@ -42,7 +42,7 @@
             android:background="@android:color/darker_gray"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_upcoming"
+            android:id="@+id/cl_upcoming_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20dp"
@@ -66,7 +66,7 @@
             android:background="@android:color/darker_gray"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_missed"
+            android:id="@+id/cl_missed_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20dp"
@@ -90,7 +90,7 @@
             android:background="@android:color/darker_gray"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_profile"
+            android:id="@+id/cl_profile_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20dp"
@@ -114,7 +114,7 @@
             android:background="@android:color/darker_gray"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_settings"
+            android:id="@+id/cl_settings_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20dp"
@@ -138,7 +138,7 @@
             android:background="@android:color/darker_gray"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_logout"
+            android:id="@+id/cl_logout_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20dp"

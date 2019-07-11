@@ -76,7 +76,6 @@ class VerifyActivity : AppCompatActivity() {
 
         cl_btn_submit.setOnClickListener {
             val code: String? = edit_text.text.toString().trim()
-            Log.d("TAG", "verification id")
 
             if (verificationId != null) {
                 if (code != null && verificationId != null) {
@@ -148,7 +147,6 @@ class VerifyActivity : AppCompatActivity() {
             override fun onVerificationFailed(e: FirebaseException?) {
                 hideProgress()
 
-                Log.d("TAG", "message: ${e?.message}")
             }
 
             override fun onCodeSent(myMerificationId: String?, p1: PhoneAuthProvider.ForceResendingToken?) {
@@ -158,7 +156,6 @@ class VerifyActivity : AppCompatActivity() {
 
             override fun onCodeAutoRetrievalTimeOut(p0: String?) {
                 super.onCodeAutoRetrievalTimeOut(p0)
-                Log.d("TAG", "retrieve code fail")
             }
         }
 
@@ -176,7 +173,8 @@ class VerifyActivity : AppCompatActivity() {
                         Toast.makeText(this, "registered as new user", Toast.LENGTH_LONG).show()
                         val myUser = hashMapOf(
                             "phoneNumber" to user!!.phoneNumber,
-                            "category" to 0
+                            "category" to 0,
+                            "points" to 0
                         )
                         userRef.document(phoneNumber!!)
                             .set(myUser)

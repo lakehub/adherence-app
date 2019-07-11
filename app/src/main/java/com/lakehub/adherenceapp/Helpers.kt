@@ -27,6 +27,13 @@ fun displayTime(dateStr: String): String {
     return  formatter.print(date)
 }
 
+fun displayTime(date: DateTime): String {
+    val format = "hh:mm a"
+    val formatter = DateTimeFormat.forPattern(format)
+    return  formatter.print(date)
+}
+
+
 fun dateMillis(dateStr: String): Long {
     val dateFormat = "yyyy MM dd HH:mm"
     val dateFormatter = DateTimeFormat.forPattern(dateFormat)

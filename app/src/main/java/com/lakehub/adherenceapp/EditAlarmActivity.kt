@@ -526,6 +526,7 @@ class EditAlarmActivity : AppCompatActivity() {
                         newIntent.putExtra("snoozed", 0)
                         newIntent.putExtra("date", dateFormatter.print(myFromDate))
                         newIntent.putExtra("tonePath", tonePath)
+                        newIntent.putExtra("docId", docId)
                         val newPendingIntent =
                         PendingIntent.getBroadcast(this, id, newIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, newPendingIntent)
@@ -542,9 +543,9 @@ class EditAlarmActivity : AppCompatActivity() {
                             alarmManager.setExact(AlarmManager.RTC_WAKEUP, toMillis, placePendingIntent)
                         }
 
-                        val returnIntent = Intent()
-                        returnIntent.putExtra("success", true)
-                        setResult(Activity.RESULT_OK, returnIntent)
+//                        val returnIntent = Intent()
+//                        returnIntent.putExtra("success", true)
+//                        setResult(Activity.RESULT_OK, returnIntent)
                         finish()
                     }
                     .addOnFailureListener {

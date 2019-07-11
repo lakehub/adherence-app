@@ -1,11 +1,9 @@
 package com.lakehub.adherenceapp
 
-import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -18,7 +16,6 @@ import com.kizitonwose.calendarview.model.InDateStyle
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarview.utils.yearMonth
-import com.lakehub.adherenceapp.AppPreferences.tonePath
 import kotlinx.android.synthetic.main.activity_client_home.*
 import kotlinx.android.synthetic.main.app_bar_client_home.*
 import kotlinx.android.synthetic.main.app_bar_client_home.view.*
@@ -33,10 +30,11 @@ import org.threeten.bp.YearMonth
 import org.threeten.bp.format.DateTimeFormatter
 
 
-@Suppress("UNCHECKED_CAST")
 class ClientHomeActivity : AppCompatActivity() {
     private lateinit var alarmList: ArrayList<Alarm>
+    private lateinit var missedAlarmList: ArrayList<Alarm>
     private lateinit var myAdapter: AlarmAdapter
+    private lateinit var missedAlarmAdapter: MissedAlarmAdapter
 
     private val selectedDates = mutableSetOf<LocalDate>()
     private val today = LocalDate.now()
@@ -65,9 +63,11 @@ class ClientHomeActivity : AppCompatActivity() {
 
         toolbar.setCollapsible(true)
 
-        registerForContextMenu(recycler_view)
-        recycler_view.makeGone()
+        registerForContextMenu(recycler_view_upcoming)
+        recycler_view_upcoming.makeGone()
+        recycler_view_missed.makeGone()
         tv_no_alarm.makeGone()
+        tv_no_missed.makeGone()
 
         iv_menu.setOnClickListener {
             if (!drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -83,13 +83,15 @@ class ClientHomeActivity : AppCompatActivity() {
             startActivityForResult(Intent(this, AddAlarmActivity::class.java), 900)
         }
 
-        cl_settings.setOnClickListener {
+        cl_settings_menu.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START, true)
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
         alarmList = arrayListOf()
+        missedAlarmList = arrayListOf()
         myAdapter = AlarmAdapter(this, alarmList)
+        missedAlarmAdapter = MissedAlarmAdapter(this, missedAlarmList)
         val mLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         val dividerItemDecoration = androidx.recyclerview.widget
             .DividerItemDecoration(
@@ -97,20 +99,49 @@ class ClientHomeActivity : AppCompatActivity() {
                 mLayoutManager.orientation
             )
 
-        recycler_view.apply {
+        val missedLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        val missedDividerItemDecoration = androidx.recyclerview.widget
+            .DividerItemDecoration(
+                this,
+                mLayoutManager.orientation
+            )
+
+        recycler_view_upcoming.apply {
             layoutManager = mLayoutManager
             addItemDecoration(dividerItemDecoration)
             adapter = myAdapter
+        }
+
+        recycler_view_missed.apply {
+            layoutManager = missedLayoutManager
+            addItemDecoration(missedDividerItemDecoration)
+            adapter = missedAlarmAdapter
         }
 
         val mySelectedDateFormat = "yyyy-MM-dd"
         val mySelectedDateFormatter = DateTimeFormat.forPattern(mySelectedDateFormat)
         selectedDateStr = mySelectedDateFormatter.print(DateTime.now())
 
-        fetchData(selectedDateStr!!)
+        fetchData()
 
-        cl_logout.setOnClickListener {
+        cl_logout_menu.setOnClickListener {
+            drawer_layout.closeDrawer(GravityCompat.START)
             auth.signOut()
+        }
+
+        cl_home_menu.setOnClickListener {
+            showHome()
+            drawer_layout.closeDrawer(GravityCompat.START)
+        }
+
+        cl_upcoming_menu.setOnClickListener {
+            showUpcoming()
+            drawer_layout.closeDrawer(GravityCompat.START)
+        }
+
+        cl_missed_menu.setOnClickListener {
+            showMissed()
+            drawer_layout.closeDrawer(GravityCompat.START)
         }
 
         auth.addAuthStateListener {
@@ -149,7 +180,7 @@ class ClientHomeActivity : AppCompatActivity() {
 
                             selectedDateStr = selectedDate.toString()
 
-                            fetchData(selectedDateStr!!)
+                            fetchData()
 
                         }
                         calendar_view.notifyDayChanged(day)
@@ -260,108 +291,143 @@ class ClientHomeActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 900 && resultCode == Activity.RESULT_OK) {
+        /*if (requestCode == 900 && resultCode == Activity.RESULT_OK) {
             val success = data?.getBooleanExtra("success", false)
             if (success != null && success)
                 fetchData(selectedDateStr!!)
-        }
+        }*/
     }
 
-    private fun fetchData(dateStr: String) {
-        showProgress()
-        val phoneNumber = FirebaseAuth.getInstance().currentUser?.phoneNumber
+    private fun fetchData() {
+        if (selectedDateStr != null) {
+            showProgress()
+            val phoneNumber = FirebaseAuth.getInstance().currentUser?.phoneNumber
 
-        val alarmsRef = FirebaseFirestore.getInstance().collection("alarms")
-        alarmsRef.whereEqualTo("phoneNumber", phoneNumber!!)
-            .whereEqualTo("date", dateStr)
-            .get()
-            .addOnCompleteListener {
-                hideProgress()
-                val documents = it.result?.documents
-                if (documents!!.isNotEmpty()) {
-                    showAlarms()
-                    alarmList.clear()
+            val alarmsRef = FirebaseFirestore.getInstance().collection("alarms")
+            alarmsRef.whereEqualTo("phoneNumber", phoneNumber!!)
+                .whereEqualTo("date", selectedDateStr)
+                .get()
+                .addOnCompleteListener {
+                    hideProgress()
+                    /*val documents = it.result?.documents
+                    if (documents!!.isNotEmpty()) {
+                        showAlarms()
+                        alarmList.clear()
 
-                    for (document in documents) {
-                        val alarm = Alarm(
-                            description = document.getString("description")!!,
-                            fromDate = document.getString("fromDate")!!,
-                            toDate = document.getString("toDate"),
-                            docId = document.id,
-                            alarmTone = document.getString("alarmTonePath"),
-                            location = document.getString("location"),
-                            isPlace = document.getBoolean("isPlace"),
-                            medType = document.getDouble("medicationType")?.toInt(),
-                            repeatMode = document.get("repeatMode") as ArrayList<Int>,
-                            id = document.getLong("id")?.toInt()!!,
-                            cancelled = document.getBoolean("cancelled")!!
-                        )
+                        for (document in documents) {
+                            val alarm = Alarm(
+                                description = document.getString("description")!!,
+                                fromDate = document.getString("fromDate")!!,
+                                toDate = document.getString("toDate"),
+                                docId = document.id,
+                                alarmTone = document.getString("alarmTonePath"),
+                                location = document.getString("location"),
+                                isPlace = document.getBoolean("isPlace"),
+                                medType = document.getDouble("medicationType")?.toInt(),
+                                repeatMode = document.get("repeatMode") as ArrayList<Int>,
+                                id = document.getLong("id")?.toInt()!!,
+                                cancelled = document.getBoolean("cancelled")!!,
+                                rang = document.getBoolean("rang")!!
+                            )
 
-                        if (!alarm.cancelled) {
-                            alarmList.add(alarm)
+                            if (!alarm.cancelled && !alarm.rang) {
+                                alarmList.add(alarm)
+                            }
                         }
-                    }
 
-                    val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
-                        when {
-                            dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
-                            dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
-                            else -> 0
-                        }
-                    })
+                        val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
+                            when {
+                                dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
+                                dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                                else -> 0
+                            }
+                        })
 
-                    alarmList.clear()
-                    alarmList.addAll(sorted)
+                        alarmList.clear()
+                        alarmList.addAll(sorted)
 
-                    myAdapter.notifyDataSetChanged()
-                } else {
-                    hideAlarms()
+                        myAdapter.notifyDataSetChanged()
+                    } else {
+                        hideAlarms()
+                    }*/
                 }
-            }
-            .addOnFailureListener {
-                hideProgress()
-            }
-
-        alarmsRef.whereEqualTo("phoneNumber", phoneNumber)
-            .whereEqualTo("date", dateStr)
-            .addSnapshotListener { querySnapshot, _ ->
-                if (querySnapshot != null && querySnapshot.documents.isNotEmpty()) {
-                    alarmList.clear()
-
-                    for (document in querySnapshot.documents) {
-                        val alarm = Alarm(
-                            description = document.getString("description")!!,
-                            fromDate = document.getString("fromDate")!!,
-                            toDate = document.getString("toDate"),
-                            docId = document.id,
-                            alarmTone = document.getString("alarmTonePath"),
-                            location = document.getString("location"),
-                            isPlace = document.getBoolean("isPlace"),
-                            cancelled = document.getBoolean("cancelled")!!,
-                            medType = document.getDouble("medicationType")?.toInt(),
-                            repeatMode = document.get("repeatMode") as ArrayList<Int>,
-                            id = document.getLong("id")?.toInt()!!
-                        )
-
-                        if (!alarm.cancelled) {
-                            alarmList.add(alarm)
-                        }
-                    }
-
-                    val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
-                        when {
-                            dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
-                            dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
-                            else -> 0
-                        }
-                    })
-
-                    alarmList.clear()
-                    alarmList.addAll(sorted)
-
-                    myAdapter.notifyDataSetChanged()
+                .addOnFailureListener {
+                    hideProgress()
                 }
-            }
+
+            alarmsRef.whereEqualTo("phoneNumber", phoneNumber)
+                .whereEqualTo("date", selectedDateStr)
+                .addSnapshotListener { querySnapshot, _ ->
+                    hideProgress()
+                    if (querySnapshot != null && querySnapshot.documents.isNotEmpty()) {
+                        alarmList.clear()
+
+                        for (document in querySnapshot.documents) {
+                            val alarm = Alarm(
+                                description = document.getString("description")!!,
+                                fromDate = document.getString("fromDate")!!,
+                                toDate = document.getString("toDate"),
+                                docId = document.id,
+                                alarmTone = document.getString("alarmTonePath"),
+                                location = document.getString("location"),
+                                isPlace = document.getBoolean("isPlace"),
+                                cancelled = document.getBoolean("cancelled")!!,
+                                medType = document.getDouble("medicationType")?.toInt(),
+                                repeatMode = document.get("repeatMode") as ArrayList<Int>,
+                                id = document.getLong("id")?.toInt()!!,
+                                snoozed = document.getLong("snoozed")?.toInt()!!,
+                                rang = document.getBoolean("rang")!!,
+                                missed = document.getBoolean("missed")!!
+                            )
+
+                            if (!alarm.cancelled && !alarm.rang && document.getString("date") == selectedDateStr) {
+                                    alarmList.add(alarm)
+                            } else if (alarm.missed) {
+                                missedAlarmList.add(alarm)
+                            }
+                        }
+
+                        val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
+                            when {
+                                dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
+                                dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                                else -> 0
+                            }
+                        })
+
+                        val missedSorted = missedAlarmList.sortedWith(Comparator { o1, o2 ->
+                            when {
+                                dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
+                                dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                                else -> 0
+                            }
+                        })
+
+                        alarmList.clear()
+                        missedAlarmList.clear()
+                        alarmList.addAll(sorted)
+                        missedAlarmList.addAll(missedSorted)
+
+                        myAdapter.notifyDataSetChanged()
+                        missedAlarmAdapter.notifyDataSetChanged()
+
+                        if (alarmList.isEmpty()) {
+                            hideAlarms()
+                        } else {
+                            showAlarms()
+                        }
+
+                        if (missedAlarmList.isEmpty()) {
+                            hideMissedAlarms()
+                        } else {
+                            showMissedAlarms()
+                        }
+                    } else {
+                        hideAlarms()
+                        hideMissedAlarms()
+                    }
+                }
+        }
 
         /*recycler_view.addOnItemTouchListener(object : RecyclerItemClickListener(this,
     object : OnItemClickListener {
@@ -399,12 +465,37 @@ class ClientHomeActivity : AppCompatActivity() {
     }
 
     private fun hideAlarms() {
-        recycler_view.makeGone()
+        recycler_view_upcoming.makeGone()
         tv_no_alarm.makeVisible()
     }
 
     private fun showAlarms() {
-        recycler_view.makeVisible()
+        recycler_view_upcoming.makeVisible()
         tv_no_alarm.makeGone()
+    }
+
+    private fun hideMissedAlarms() {
+        recycler_view_missed.makeGone()
+        tv_no_missed.makeVisible()
+    }
+
+    private fun showMissedAlarms() {
+        recycler_view_missed.makeVisible()
+        tv_no_missed.makeGone()
+    }
+
+    private fun showHome() {
+        cl_upcoming_alarms.makeVisible()
+        cl_missed_alarms.makeVisible()
+    }
+
+    private fun showUpcoming() {
+        cl_upcoming_alarms.makeVisible()
+        cl_missed_alarms.makeGone()
+    }
+
+    private fun showMissed() {
+        cl_upcoming_alarms.makeGone()
+        cl_missed_alarms.makeVisible()
     }
 }

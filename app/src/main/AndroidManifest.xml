@@ -16,8 +16,16 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".CancelAlarmActivity"
-                  android:theme="@style/Theme.AppCompat.Translucent"/>
+        <activity android:name=".AlarmActivity"
+                  android:theme="@style/Theme.AppCompat.Translucent"
+                  android:showOnLockScreen="true"/>
+        <activity
+                android:name=".CongratulationsActivity"
+                android:theme="@style/Theme.AppCompat.Translucent"
+                android:showOnLockScreen="true"/>
+        <activity
+                android:name=".CancelAlarmActivity"
+                android:theme="@style/Theme.AppCompat.Translucent"/>
 
         <receiver
                 android:name=".ConfirmAttendPlaceReceiver"
@@ -45,14 +53,17 @@
         </service>
 
         <activity
-                android:name=".DrugNotificationPopUpActivity"
-                android:theme="@style/Theme.AppCompat.Translucent"/>
+                android:name=".ConfirmPopUpActivity"
+                android:theme="@style/Theme.AppCompat.Translucent"
+                android:showOnLockScreen="true"/>
         <activity
                 android:name=".SettingsActivity"
                 android:theme="@style/MaterialTheme.NoActionBar"/>
         <activity
                 android:name=".AddAlarmActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:launchMode="singleTask"
+        />
         <activity
                 android:name=".ChvDashboardActivity"
                 android:screenOrientation="portrait"

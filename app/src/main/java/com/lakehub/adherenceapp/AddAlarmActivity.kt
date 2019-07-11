@@ -440,7 +440,8 @@ class AddAlarmActivity : AppCompatActivity() {
                         "snoozed" to 0,
                         "confirmed" to false,
                         "missed" to false,
-                        "reasonToCancel" to ""
+                        "reasonToCancel" to "",
+                        "rang" to false
                     )
 
                     alarmsRef.set(alarm, SetOptions.merge())
@@ -479,6 +480,8 @@ class AddAlarmActivity : AppCompatActivity() {
                             myIntent.putExtra("date", dateFormatter.print(fromDate))
                             myIntent.putExtra("toDate", dateFormatter.print(toDate))
                             myIntent.putExtra("tonePath", tonePath)
+                            myIntent.putExtra("docId", alarmsRef.id)
+                            myIntent.putExtra("repeatMode", repeatModeList)
                             val pendingIntent =
                                 PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                             alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
@@ -490,12 +493,14 @@ class AddAlarmActivity : AppCompatActivity() {
                                 placeIntent.putExtra("id", id)
                                 placeIntent.putExtra("snoozed", 0)
                                 placeIntent.putExtra("date", dateFormatter.print(toDate))
+                                myIntent.putExtra("docId", alarmsRef.id)
+                                myIntent.putExtra("repeatMode", repeatModeList)
                                 val placePendingIntent =
                                     PendingIntent.getBroadcast(this, id, placeIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, toMillis, placePendingIntent)
                             }
 
-                            setResult(Activity.RESULT_OK, returnIntent)
+//                            setResult(Activity.RESULT_OK, returnIntent)
                             finish()
                         }
                         .addOnFailureListener {

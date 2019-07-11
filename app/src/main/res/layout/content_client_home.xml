@@ -35,25 +35,70 @@
                 app:cv_scrollMode="paged"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/day_view"/>
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_upcoming_alarms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/calendar_view"
-                app:layout_constraintStart_toStartOf="parent"
-                android:paddingBottom="100dp"
-        />
-        <TextView
-                android:id="@+id/tv_no_alarm"
+                app:layout_constraintStart_toStartOf="parent">
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_upcoming"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+            />
+            <TextView
+                    android:id="@+id/tv_no_alarm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_alarm"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:padding="20dp"
+                    android:gravity="center"
+                    android:fontFamily="@font/product_sans_regular"
+                    android:textSize="20sp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_missed_alarms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/no_alarm"
-                app:layout_constraintTop_toBottomOf="@+id/calendar_view"
-                app:layout_constraintStart_toStartOf="parent"
-                android:padding="20dp"
-                android:gravity="center"
-                android:fontFamily="@font/product_sans_regular"
-                android:textSize="20sp"/>
+                app:layout_constraintTop_toBottomOf="@+id/cl_upcoming_alarms"
+                app:layout_constraintStart_toStartOf="parent">
+            <TextView
+                    android:id="@+id/tv_missed_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/missed_alarm"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:fontFamily="@font/product_sans_regular"
+                    android:textSize="20sp"
+                    android:background="@color/materialColorGray"
+            android:textColor="@color/colorPrimary"/>
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_missed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_missed_title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:paddingBottom="100dp"
+            />
+            <TextView
+                    android:id="@+id/tv_no_missed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_missed_alarm"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_missed_title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:padding="20dp"
+                    android:gravity="center"
+                    android:fontFamily="@font/product_sans_regular"
+                    android:textSize="20sp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>

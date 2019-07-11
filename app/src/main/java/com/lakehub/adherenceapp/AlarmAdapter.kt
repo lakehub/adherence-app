@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.delete_success_toast.view.*
+import org.joda.time.format.DateTimeFormat
 
 
 class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
@@ -51,6 +52,14 @@ class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
 
         holder.menu.setOnClickListener {
             openOptionMenu(holder.menu, holder.adapterPosition)
+        }
+
+        if (alarm.snoozed > 0) {
+            val format = "yyyy MM dd HH:mm"
+            val myFormatter = DateTimeFormat.forPattern(format)
+            val myDate = myFormatter.parseDateTime(alarm.fromDate)
+            val newDate = myDate.plusMinutes(alarm.snoozed)
+            holder.timeTv.text = displayTime(newDate)
         }
 
         /*holder.tvCount.setOnLongClickListener {

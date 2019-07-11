@@ -12,7 +12,7 @@ class ConfirmAttendPlaceReceiver : BroadcastReceiver() {
         val snoozed = intent.extras?.getInt("snoozed")
         val id = intent.extras?.getInt("id")
 
-        val myIntent = Intent(context, DrugNotificationPopUpActivity::class.java)
+        val myIntent = Intent(context, ConfirmPopUpActivity::class.java)
         myIntent.putExtra("note", location)
         myIntent.putExtra("date", date)
         myIntent.putExtra("id", id)
