@@ -21,13 +21,17 @@ import kotlinx.android.synthetic.main.app_bar_client_home.*
 import kotlinx.android.synthetic.main.app_bar_client_home.view.*
 import kotlinx.android.synthetic.main.calendar_day.view.*
 import kotlinx.android.synthetic.main.content_client_home.*
-import kotlinx.android.synthetic.main.my_menu.*
+import kotlinx.android.synthetic.main.client_menu.*
 import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.YearMonth
 import org.threeten.bp.format.DateTimeFormatter
+import java.util.*
+import kotlin.Comparator
+import kotlin.collections.ArrayList
 
 
 class ClientHomeActivity : AppCompatActivity() {
@@ -147,11 +151,14 @@ class ClientHomeActivity : AppCompatActivity() {
         auth.addAuthStateListener {
             val user = it.currentUser
             if (user == null) {
-                this.finishAffinity()
+                startActivity(Intent(this, LoginActivity::class.java))
+                this.finish()
             }
         }
 
-        val date = DateTime.now()
+        val offset = TimeZone.getDefault().rawOffset
+        val tz = DateTimeZone.forOffsetMillis(offset)
+        val date = DateTime.now(tz)
 
         val currentMonth = YearMonth.of(date.year, date.monthOfYear)
         val firstMonth = currentMonth.minusMonths(0)

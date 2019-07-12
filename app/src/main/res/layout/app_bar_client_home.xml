@@ -128,6 +128,8 @@
                                 android:contentDescription="@string/img_dsc"
                                 android:src="@drawable/chevron_left"
                                 android:background="?selectableItemBackgroundBorderless"
+                                android:clickable="true"
+                                android:focusable="true"
                                 android:padding="10dp"/>
 
                         <ImageView
@@ -139,6 +141,8 @@
                                 android:contentDescription="@string/img_dsc"
                                 android:src="@drawable/chevron_right"
                                 android:background="?selectableItemBackgroundBorderless"
+                                android:clickable="true"
+                                android:focusable="true"
                                 android:padding="10dp"/>
 
                         <TextView

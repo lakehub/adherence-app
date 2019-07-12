@@ -69,3 +69,11 @@ fun getCircleBitmap(bitmap: Bitmap): Bitmap {
 
     return output
 }
+
+fun titleCase(str: String): String {
+    val strArr = str.split(" ").toTypedArray()
+    for (i in 0 until strArr.size) {
+        strArr[i] = strArr[i].capitalize()
+    }
+    return strArr.joinToString(" ")
+}

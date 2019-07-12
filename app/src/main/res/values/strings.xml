@@ -78,6 +78,7 @@
     <string name="two">2</string>
     <string name="add_alarm">Add Alarm</string>
     <string name="short_dsc">Short Description. E.g, Drug Name</string>
+    <string name="short_dsc_chv">Short Description. E.g, Visit Port Florence Hospital</string>
     <string name="all_day">All Day</string>
     <string name="from">From</string>
     <string name="to">To</string>
@@ -132,6 +133,7 @@
     <string name="ok">OK</string>
     <string name="sample_year">2019</string>
     <string name="no_alarm">No Upcoming Alarm.</string>
+    <string name="no_client">You\'ve not added any client.</string>
     <string name="no_missed_alarm">No Missed Alarm.</string>
     <string name="user_adher">User Adher</string>
     <string name="new_adherence">New Adherence</string>
@@ -163,4 +165,17 @@
     <string name="dismiss">dismiss</string>
     <string name="snoozed_to">snoozed to</string>
     <string name="turn_off">turn off</string>
+    <string name="reports">Reports</string>
+    <string name="appointment">Appointment</string>
+    <string name="add_reminder">Add Reminder</string>
+    <string name="client">Client</string>
+    <string name="clients">Clients</string>
+    <string name="add_client">Add Client</string>
+    <string name="full_name">Full Name</string>
+    <string name="client_add_success">Client Added Successfully</string>
+    <string name="client_exist">Client exists</string>
+    <string name="sample_phone_no">0700123123</string>
+    <string name="sample_name">Mary Susan</string>
+    <string name="sample_location">Mlimani</string>
+    <string name="delete">Delete</string>
 </resources>

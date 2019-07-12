@@ -16,13 +16,25 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".AlarmActivity"
-                  android:theme="@style/Theme.AppCompat.Translucent"
-                  android:showOnLockScreen="true"/>
+        <activity android:name=".SelectClientActivity">
+        </activity>
+        <activity
+                android:name=".AddClientActivity"
+                android:theme="@style/MaterialTheme.NoActionBar"/>
+        <activity
+                android:name=".ClientsActivity"
+                android:theme="@style/MaterialTheme.NoActionBar"/>
+        <activity
+                android:name=".AddChvReminderActivity"
+                android:theme="@style/MaterialTheme.NoActionBar"/>
+        <activity
+                android:name=".AlarmActivity"
+                android:showOnLockScreen="true"
+                android:theme="@style/Theme.AppCompat.Translucent"/>
         <activity
                 android:name=".CongratulationsActivity"
-                android:theme="@style/Theme.AppCompat.Translucent"
-                android:showOnLockScreen="true"/>
+                android:showOnLockScreen="true"
+                android:theme="@style/Theme.AppCompat.Translucent"/>
         <activity
                 android:name=".CancelAlarmActivity"
                 android:theme="@style/Theme.AppCompat.Translucent"/>
@@ -54,16 +66,15 @@
 
         <activity
                 android:name=".ConfirmPopUpActivity"
-                android:theme="@style/Theme.AppCompat.Translucent"
-                android:showOnLockScreen="true"/>
+                android:showOnLockScreen="true"
+                android:theme="@style/Theme.AppCompat.Translucent"/>
         <activity
                 android:name=".SettingsActivity"
                 android:theme="@style/MaterialTheme.NoActionBar"/>
         <activity
                 android:name=".AddAlarmActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"
                 android:launchMode="singleTask"
-        />
+                android:theme="@style/MaterialTheme.NoActionBar"/>
         <activity
                 android:name=".ChvDashboardActivity"
                 android:screenOrientation="portrait"

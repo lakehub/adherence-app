@@ -1,6 +1,5 @@
 package com.lakehub.adherenceapp
 
-import android.Manifest
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -8,31 +7,24 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.media.MediaPlayer
 import android.media.RingtoneManager
-import android.net.Uri
-import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.os.Parcelable
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.PopupMenu
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
-import kotlinx.android.synthetic.main.activity_add_alarm.*
-import kotlinx.android.synthetic.main.content_add_alarm.*
+import kotlinx.android.synthetic.main.activity_add_chv_reminder.*
+import kotlinx.android.synthetic.main.content_add_chv_reminder.*
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
@@ -40,8 +32,7 @@ import org.joda.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
-class AddAlarmActivity : AppCompatActivity() {
-    private var path: String? = null
+class AddChvReminderActivity : AppCompatActivity() {
     private lateinit var fromDatePickerDialog: DatePickerDialog
     private lateinit var toDatePickerDialog: DatePickerDialog
     private lateinit var fromTimePickerDialog: TimePickerDialog
@@ -71,18 +62,67 @@ class AddAlarmActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_alarm)
+        setContentView(R.layout.activity_add_chv_reminder)
 
         supportActionBar?.hide()
-
         supportActionBar?.setDisplayShowTitleEnabled(false)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.colorRedDark)
 
-//        val imgView: ImageView = toolbar.findViewById(R.id.iv_cancel)
+        mediaPlayer = MediaPlayer()
+
+        fab.setColorFilter(Color.WHITE)
+
+        val states = arrayOf(
+            intArrayOf(-android.R.attr.state_enabled),
+            intArrayOf(android.R.attr.state_enabled),
+            intArrayOf(android.R.attr.state_pressed)
+        )
+
+        val colors = intArrayOf(
+            ContextCompat.getColor(this, R.color.materialColorGray),
+            ContextCompat.getColor(this, R.color.colorRedDark),
+            ContextCompat.getColor(this, R.color.colorMaroon)
+        )
+        val colorList = ColorStateList(states, colors)
+        fab.backgroundTintList = colorList
+
+        val switchStatesThumb =
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf(-android.R.attr.state_checked))
+
+
+        val switchColorsThumb = intArrayOf(
+            ContextCompat.getColor(this, R.color.colorRed),
+            ContextCompat.getColor(this, R.color.colorPrimary)
+        )
+        val switchColorListThumb = ColorStateList(switchStatesThumb, switchColorsThumb)
+
+        val switchStatesTrack =
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf(-android.R.attr.state_checked))
+
+
+        val switchColorsTrack = intArrayOf(
+            ContextCompat.getColor(this, R.color.colorGreen),
+            ContextCompat.getColor(this, R.color.colorRed)
+        )
+        val switchColorListTrack = ColorStateList(switchStatesTrack, switchColorsTrack)
+
+        appointment_switch.thumbTintList = switchColorListThumb
+        appointment_switch.trackTintList = switchColorListTrack
 
         iv_cancel.setOnClickListener {
             val returnIntent = Intent()
             setResult(Activity.RESULT_CANCELED, returnIntent)
             finish()
+        }
+
+        cl_client.makeGone()
+
+        appointment_switch.setOnCheckedChangeListener { _, checked ->
+            if (checked) {
+                cl_client.makeVisible()
+            } else {
+                cl_client.makeGone()
+            }
         }
 
         hideProgress()
@@ -231,69 +271,6 @@ class AddAlarmActivity : AppCompatActivity() {
         tv_from_time.text = myTimeFmt.print(fromDate)
         tv_to_time.text = myTimeFmt.print(toDate)
 
-        fab.setColorFilter(Color.WHITE)
-
-        val states = arrayOf(
-            intArrayOf(-android.R.attr.state_enabled),
-            intArrayOf(android.R.attr.state_enabled),
-            intArrayOf(android.R.attr.state_pressed)
-        )
-
-        val colors = intArrayOf(
-            ContextCompat.getColor(this, R.color.materialColorGray),
-            ContextCompat.getColor(this, R.color.colorGreen),
-            ContextCompat.getColor(this, R.color.colorPrimaryLight)
-        )
-        val colorList = ColorStateList(states, colors)
-        fab.backgroundTintList = colorList
-
-        val switchStatesThumb =
-            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf(-android.R.attr.state_checked))
-
-
-        val switchColorsThumb = intArrayOf(
-            ContextCompat.getColor(this, R.color.colorPrimary),
-            ContextCompat.getColor(this, R.color.colorRed)
-        )
-        val switchColorListThumb = ColorStateList(switchStatesThumb, switchColorsThumb)
-
-        val switchStatesTrack =
-            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf(-android.R.attr.state_checked))
-
-
-        val switchColorsTrack = intArrayOf(
-            ContextCompat.getColor(this, R.color.colorRed),
-            ContextCompat.getColor(this, R.color.colorGreen)
-        )
-        val switchColorListTrack = ColorStateList(switchStatesTrack, switchColorsTrack)
-
-        place_switch.thumbTintList = switchColorListThumb
-        place_switch.trackTintList = switchColorListTrack
-
-        ArrayAdapter.createFromResource(
-            applicationContext, R.array.med_type_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            medication_type_spinner.adapter = adapter
-        }
-
-        /*ArrayAdapter.createFromResource(
-            applicationContext, R.array.repeat_mode_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            repeat_mode_spinner.adapter = adapter
-        }
-
-        ArrayAdapter.createFromResource(
-            applicationContext, R.array.notification_mode_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            notification_mode_spinner.adapter = adapter
-        }*/
-
         tv_tone.setOnClickListener {
             handler.removeCallbacksAndMessages(null)
             mediaPlayer.stop()
@@ -305,7 +282,7 @@ class AddAlarmActivity : AppCompatActivity() {
         }
 
         fromDatePickerDialog = DatePickerDialog(
-            this, R.style.DatePickerTheme,
+            this, R.style.DatePickerThemeChv,
             DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 val format = "yyyy MM dd HH:mm"
                 val timeFormat = "HH:mm"
@@ -320,7 +297,7 @@ class AddAlarmActivity : AppCompatActivity() {
         )
 
         fromTimePickerDialog = TimePickerDialog(
-            this, R.style.TimePickerTheme,
+            this, R.style.TimePickerThemeChv,
             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
                 val format = "yyyy MM dd HH:mm"
                 val dateFormat = "yyyy MM dd"
@@ -338,7 +315,7 @@ class AddAlarmActivity : AppCompatActivity() {
         )
 
         toDatePickerDialog = DatePickerDialog(
-            this, R.style.DatePickerTheme,
+            this, R.style.DatePickerThemeChv,
             DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 val format = "yyyy MM dd HH:mm"
                 val timeFormat = "HH:mm"
@@ -353,7 +330,7 @@ class AddAlarmActivity : AppCompatActivity() {
         )
 
         toTimePickerDialog = TimePickerDialog(
-            this, R.style.TimePickerTheme,
+            this, R.style.TimePickerThemeChv,
             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
                 val format = "yyyy MM dd HH:mm"
                 val dateFormat = "yyyy MM dd"
@@ -389,25 +366,15 @@ class AddAlarmActivity : AppCompatActivity() {
             val dateFormat = "yyyy MM dd HH:mm"
             val dateFormatter = DateTimeFormat.forPattern(dateFormat)
             val description = edit_text.text.toString().trim()
-            val location = edit_text_location.text.toString().trim()
-            val isPlace = place_switch.isChecked
-            val medType = if (!isPlace) {
-                medication_type_spinner.selectedItemPosition.plus(1)
-            } else {
-                null
-            }
-            val toDateStr = if (isPlace) {
-                dateFormatter.print(toDate)
-            } else {
-                null
-            }
+            val appointment = appointment_switch.isChecked
+            val toDateStr = dateFormatter.print(toDate)
 
             val myFinalDateFormat = "yyyy-MM-dd"
             val myFinalDateFormatter = DateTimeFormat.forPattern(myFinalDateFormat)
             val myFinalDateStr = myFinalDateFormatter.print(fromDate)
 
             if (!inProgress) {
-                if (description == "" || (isPlace && location.isEmpty())) {
+                if (description == "") {
                     val toast = Toast(this)
                     val view: View = layoutInflater.inflate(R.layout.warning, null)
                     val textView: TextView = view.findViewById(R.id.message)
@@ -428,14 +395,12 @@ class AddAlarmActivity : AppCompatActivity() {
                         "id" to id,
                         "phoneNumber" to phoneNumber,
                         "description" to description,
-                        "location" to location,
                         "alarmTonePath" to tonePath,
                         "repeatMode" to repeatModeList,
                         "fromDate" to dateFormatter.print(fromDate),
                         "toDate" to toDateStr,
-                        "isPlace" to isPlace,
+                        "appointment" to appointment,
                         "date" to myFinalDateStr,
-                        "medicationType" to medType,
                         "cancelled" to false,
                         "snoozed" to 0,
                         "confirmed" to false,
@@ -458,16 +423,6 @@ class AddAlarmActivity : AppCompatActivity() {
                             val returnIntent = Intent()
                             returnIntent.putExtra("success", true)
 
-
-                            /*val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-                            val myIntent = Intent(this, AlarmReceiver::class.java)
-                            val pendingIntent = PendingIntent.getBroadcast(this, 1, myIntent, 0)
-                            alarmManager.setInexactRepeating(
-                                AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                                fromDate.millis, 60 * 1000, pendingIntent
-                            )*/
-
                             val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
                             val millis = toUtc(fromDate).millis
@@ -475,7 +430,6 @@ class AddAlarmActivity : AppCompatActivity() {
                             val myIntent = Intent(MainApplication.applicationContext(), AlarmReceiver::class.java)
                             myIntent.putExtra("note", description)
                             myIntent.putExtra("id", id)
-                            myIntent.putExtra("isPlace", isPlace)
                             myIntent.putExtra("snoozed", 0)
                             myIntent.putExtra("date", dateFormatter.print(fromDate))
                             myIntent.putExtra("toDate", dateFormatter.print(toDate))
@@ -486,21 +440,18 @@ class AddAlarmActivity : AppCompatActivity() {
                                 PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                             alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
 
-                            if (isPlace) {
-                                val toMillis = toUtc(toDate).millis
-                                val placeIntent = Intent(MainApplication.applicationContext(), ConfirmAttendPlaceReceiver::class.java)
-                                placeIntent.putExtra("location", location)
-                                placeIntent.putExtra("id", id)
-                                placeIntent.putExtra("snoozed", 0)
-                                placeIntent.putExtra("date", dateFormatter.print(toDate))
-                                myIntent.putExtra("docId", alarmsRef.id)
-                                myIntent.putExtra("repeatMode", repeatModeList)
-                                val placePendingIntent =
-                                    PendingIntent.getBroadcast(this, id, placeIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, toMillis, placePendingIntent)
-                            }
+                            val toMillis = toUtc(toDate).millis
+                            val placeIntent = Intent(MainApplication.applicationContext(), ConfirmAttendPlaceReceiver::class.java)
+                            placeIntent.putExtra("note", description)
+                            placeIntent.putExtra("id", id)
+                            placeIntent.putExtra("snoozed", 0)
+                            placeIntent.putExtra("date", dateFormatter.print(toDate))
+                            myIntent.putExtra("docId", alarmsRef.id)
+                            myIntent.putExtra("repeatMode", repeatModeList)
+                            val placePendingIntent =
+                                PendingIntent.getBroadcast(this, id, placeIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            alarmManager.setExact(AlarmManager.RTC_WAKEUP, toMillis, placePendingIntent)
 
-//                            setResult(Activity.RESULT_OK, returnIntent)
                             finish()
                         }
                         .addOnFailureListener {
@@ -516,91 +467,16 @@ class AddAlarmActivity : AppCompatActivity() {
                 }
             }
         }
-
-        cl_location.visibility = View.GONE
-        cl_to_date.visibility = View.GONE
-        cl_med_type.visibility = View.VISIBLE
-
-        place_switch.setOnCheckedChangeListener { _, checked ->
-            if (checked) {
-                cl_location.visibility = View.VISIBLE
-                cl_to_date.visibility = View.VISIBLE
-                cl_med_type.visibility = View.GONE
-            } else {
-                cl_location.visibility = View.GONE
-                cl_to_date.visibility = View.GONE
-                cl_med_type.visibility = View.VISIBLE
-            }
-        }
-
-        mediaPlayer = MediaPlayer.create(this, R.raw.best_alarm_ringtone_2019)
-
-        if (Build.VERSION.SDK_INT >= 23) {
-            Dexter.withActivity(this)
-                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                .withListener(object : PermissionListener {
-                    override fun onPermissionRationaleShouldBeShown(
-                        permission: PermissionRequest?,
-                        token: PermissionToken?
-                    ) {
-                        token?.continuePermissionRequest()
-                    }
-
-                    override fun onPermissionGranted(response: PermissionGrantedResponse?) {
-                        permissionGranted = true
-                    }
-
-                    override fun onPermissionDenied(response: PermissionDeniedResponse?) {
-                        val toast = Toast(this@AddAlarmActivity)
-                        val view: View = layoutInflater.inflate(R.layout.warning, null)
-                        val textView: TextView = view.findViewById(R.id.message)
-                        textView.text = getString(R.string.grant_perm)
-                        toast.view = view
-                        toast.setGravity(Gravity.BOTTOM, 30, 30)
-                        toast.duration = Toast.LENGTH_SHORT
-                        toast.show()
-                    }
-
-                }).check()
-        } else {
-            permissionGranted = true
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
-            val uri: Uri = data!!.getParcelableExtra<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) as Uri
-            tonePath = uri.path
-
-            val arr = tonePath?.split("/")
-            val filename = arr!![arr.size - 1]
-            val finalFilename = filename.split(".")[0]
-            tv_tone.text = limitStringLength(finalFilename, 20)
-            /*RingtoneManager.setActualDefaultRingtoneUri(
-                this,
-                RingtoneManager.TYPE_RINGTONE,
-                uri
-            )*/
-        }
-    }
-
-    override fun onBackPressed() {
-        val returnIntent = Intent()
-        setResult(Activity.RESULT_CANCELED, returnIntent)
-        finish()
     }
 
     private fun showProgress() {
         inProgress = true
         progress_bar.visibility = View.VISIBLE
-//        fab.isEnabled = false
     }
 
     private fun hideProgress() {
         inProgress = false
         progress_bar.visibility = View.GONE
-//        fab.isEnabled = true
     }
 
     private fun openToneMenu() {
@@ -708,4 +584,6 @@ class AddAlarmActivity : AppCompatActivity() {
         checkBoxSun.isChecked = false
         checkBoxSat.isChecked = false
     }
+
+
 }

@@ -11,10 +11,11 @@
     <com.google.android.material.appbar.AppBarLayout
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:layout_insetEdge="none">
         <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="250dp"
                 app:layout_scrollFlags="enterAlways|scroll"
                 android:fitsSystemWindows="true"
                 app:contentScrim="@color/colorPrimary"
@@ -27,11 +28,12 @@
                     app:popupTheme="@style/AppTheme.PopupOverlay"
                     app:layout_scrollFlags="enterAlways|scroll"
                     android:padding="0dp"
+                    app:contentInsetStart="0dp"
+                    app:contentInsetEnd="0dp"
             >
                 <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:paddingBottom="30dp">
+                        android:layout_height="250dp">
                     <ImageView
                             android:id="@+id/iv_menu"
                             android:layout_width="30dp"
@@ -40,7 +42,7 @@
                             android:tint="@android:color/white"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            android:layout_marginStart="10dp"
+                            android:layout_marginStart="20dp"
                             android:layout_marginTop="20dp"/>
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -78,33 +80,89 @@
                             android:text="@string/good_morning_chv"
                             android:layout_marginTop="10dp"/>
 
-                    <TextView
-                            android:id="@+id/tv_wk_day"
-                            android:layout_width="wrap_content"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/thur"
+                            app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/iv_user"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:textSize="30sp"
                             android:layout_marginTop="30dp"
-                            android:textColor="@android:color/white"
-                    />
+                            android:paddingStart="5dp"
+                            android:paddingEnd="15dp">
 
-                    <TextView
-                            android:id="@+id/tv_date"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/sample_date"
-                            app:layout_constraintTop_toBottomOf="@+id/tv_wk_day"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            android:fontFamily="@font/product_sans_bold"
-                            android:textSize="18sp"
-                            android:textColor="@android:color/white"
-                            android:layout_marginTop="10dp"
-                    />
+                        <TextView
+                                android:id="@+id/tv_yr"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintStart_toEndOf="@+id/iv_prev"
+                                app:layout_constraintEnd_toStartOf="@+id/iv_next"
+                                app:layout_constraintTop_toTopOf="parent"
+                                android:text="@string/sample_year"
+                                android:textAllCaps="true"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:textColor="@android:color/white"
+                                android:textSize="20sp"/>
+
+                        <ImageView
+                                android:id="@+id/iv_prev"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_yr"
+                                android:contentDescription="@string/img_dsc"
+                                android:src="@drawable/chevron_left"
+                                android:background="?selectableItemBackgroundBorderless"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:padding="10dp"/>
+
+                        <ImageView
+                                android:id="@+id/iv_next"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_yr"
+                                android:contentDescription="@string/img_dsc"
+                                android:src="@drawable/chevron_right"
+                                android:background="?selectableItemBackgroundBorderless"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:padding="10dp"/>
+
+                        <TextView
+                                android:id="@+id/tv_month"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintStart_toEndOf="@+id/iv_prev"
+                                app:layout_constraintEnd_toStartOf="@+id/iv_next"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_yr"
+                                app:layout_constraintBottom_toBottomOf="@+id/iv_next"
+                                android:text="@string/jan"
+                                android:textAllCaps="true"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:textColor="@android:color/white"
+                                android:textSize="20sp"/>
+                        <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintTop_toBottomOf="@+id/iv_prev"
+                                app:layout_constraintStart_toStartOf="parent"
+                                android:orientation="vertical"
+                                android:layout_marginTop="-10dp">
+                            <include
+                                    android:id="@+id/day_view"
+                                    layout="@layout/calendar_day_legend"/>
+                            <com.kizitonwose.calendarview.CalendarView
+                                    android:id="@+id/calendar_view"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    app:cv_dayViewResource="@layout/calendar_day"
+                                    app:cv_orientation="horizontal"
+                                    app:cv_outDateStyle="endOfRow"
+                                    app:cv_inDateStyle="allMonths"
+                                    app:cv_scrollMode="paged"/>
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
