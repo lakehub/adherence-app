@@ -130,7 +130,12 @@ class ClientHomeActivity : AppCompatActivity() {
 
         cl_logout_menu.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START)
-            auth.signOut()
+//            auth.signOut()
+//            FirebaseFirestore.getInstance().clearPersistence()
+            AppPreferences.loggedIn = false
+            AppPreferences.phoneNo = null
+            AppPreferences.accountType = 0
+            finish()
         }
 
         cl_home_menu.setOnClickListener {
@@ -148,13 +153,13 @@ class ClientHomeActivity : AppCompatActivity() {
             drawer_layout.closeDrawer(GravityCompat.START)
         }
 
-        auth.addAuthStateListener {
+        /*auth.addAuthStateListener {
             val user = it.currentUser
             if (user == null) {
-                startActivity(Intent(this, LoginActivity::class.java))
+//                startActivity(Intent(this, LoginActivity::class.java))
                 this.finish()
             }
-        }
+        }*/
 
         val offset = TimeZone.getDefault().rawOffset
         val tz = DateTimeZone.forOffsetMillis(offset)
@@ -308,7 +313,7 @@ class ClientHomeActivity : AppCompatActivity() {
     private fun fetchData() {
         if (selectedDateStr != null) {
             showProgress()
-            val phoneNumber = FirebaseAuth.getInstance().currentUser?.phoneNumber
+            val phoneNumber = AppPreferences.phoneNo
 
             val alarmsRef = FirebaseFirestore.getInstance().collection("alarms")
             alarmsRef.whereEqualTo("phoneNumber", phoneNumber!!)
@@ -368,6 +373,7 @@ class ClientHomeActivity : AppCompatActivity() {
                     hideProgress()
                     if (querySnapshot != null && querySnapshot.documents.isNotEmpty()) {
                         alarmList.clear()
+                        missedAlarmList.clear()
 
                         for (document in querySnapshot.documents) {
                             val alarm = Alarm(
@@ -388,7 +394,7 @@ class ClientHomeActivity : AppCompatActivity() {
                             )
 
                             if (!alarm.cancelled && !alarm.rang && document.getString("date") == selectedDateStr) {
-                                    alarmList.add(alarm)
+                                alarmList.add(alarm)
                             } else if (alarm.missed) {
                                 missedAlarmList.add(alarm)
                             }

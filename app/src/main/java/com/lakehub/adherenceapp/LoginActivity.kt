@@ -57,31 +57,58 @@ class LoginActivity : AppCompatActivity() {
                 } else {
                     showProgress()
                     usersRef.document(phoneNumber)
-                    usersRef.whereEqualTo("phoneNumber", phoneNumber)
                         .get()
-                        .addOnSuccessListener { user ->
-                            hideProgress()
-                            Log.d("TAG", "doc: ${user.documents}")
-                            if (!user.isEmpty) {
-                                val myIntent = Intent(this@LoginActivity, VerifyActivity::class.java)
-                                myIntent.putExtra("phoneNumber", phoneNumber)
-                                startActivity(myIntent)
-                                finish()
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                hideProgress()
+                                if (it.result!!.data != null) {
+                                    val category = it.result!!.getDouble("category")?.toInt()
+                                    AppPreferences.accountType = category!!
+                                    AppPreferences.loggedIn = true
+                                    AppPreferences.phoneNo = phoneNumber
+                                    if (category == 1) {
+                                        startActivity(Intent(this, ClientHomeActivity::class.java))
+                                        finish()
+                                    } else {
+                                        startActivity(Intent(this, ChvDashboardActivity::class.java))
+                                        finish()
+                                    }
+                                } else {
+                                    val toast = Toast(this)
+                                    val view: View = layoutInflater.inflate(R.layout.warning, null)
+                                    val textView: TextView = view.findViewById(R.id.message)
+                                    textView.text = getString(R.string.dnt_register)
+                                    toast.view = view
+                                    toast.setGravity(Gravity.BOTTOM, 30, 30)
+                                    toast.duration = Toast.LENGTH_SHORT
+                                    toast.show()
+                                }
+                                /*if (it.result?.exists()!!) {
+                                    val myIntent = Intent(this@LoginActivity, VerifyActivity::class.java)
+                                    myIntent.putExtra("phoneNumber", phoneNumber)
+                                    myIntent.putExtra("newUser", false)
+                                    startActivity(myIntent)
+                                    finish()
+                                } else {
+                                    val toast = Toast(this)
+                                    val view: View = layoutInflater.inflate(R.layout.warning, null)
+                                    val textView: TextView = view.findViewById(R.id.message)
+                                    textView.text = getString(R.string.dnt_register)
+                                    toast.view = view
+                                    toast.setGravity(Gravity.BOTTOM, 30, 30)
+                                    toast.duration = Toast.LENGTH_SHORT
+                                    toast.show()
+                                    input_layout.requestFocus()
+                                }*/
                             } else {
+                                hideProgress()
                                 val toast = Toast(this)
-                                val view: View = layoutInflater.inflate(R.layout.warning, null)
-                                val textView: TextView = view.findViewById(R.id.message)
-                                textView.text = getString(R.string.dnt_register)
+                                val view: View = layoutInflater.inflate(R.layout.network_error, null)
                                 toast.view = view
                                 toast.setGravity(Gravity.BOTTOM, 30, 30)
                                 toast.duration = Toast.LENGTH_SHORT
                                 toast.show()
-                                input_layout.requestFocus()
                             }
-                        }
-                        .addOnFailureListener {
-                            hideProgress()
-                            Log.d("TAG", "exception: $it")
                         }
 
                 }

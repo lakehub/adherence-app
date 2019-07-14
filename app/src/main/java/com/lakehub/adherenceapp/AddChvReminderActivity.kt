@@ -1,5 +1,6 @@
 package com.lakehub.adherenceapp
 
+import android.Manifest
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -7,22 +8,27 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.media.MediaPlayer
 import android.media.RingtoneManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.CheckBox
-import android.widget.PopupMenu
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.activity_add_chv_reminder.*
 import kotlinx.android.synthetic.main.content_add_chv_reminder.*
 import org.joda.time.DateTime
@@ -33,10 +39,8 @@ import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 class AddChvReminderActivity : AppCompatActivity() {
-    private lateinit var fromDatePickerDialog: DatePickerDialog
-    private lateinit var toDatePickerDialog: DatePickerDialog
-    private lateinit var fromTimePickerDialog: TimePickerDialog
-    private lateinit var toTimePickerDialog: TimePickerDialog
+    private lateinit var datePickerDialog: DatePickerDialog
+    private lateinit var timePickerDialog: TimePickerDialog
     private var inProgress = false
     private var tonePath: String? = "1"
     private var repeatModeList = arrayListOf<Int>()
@@ -106,7 +110,9 @@ class AddChvReminderActivity : AppCompatActivity() {
         )
         val switchColorListTrack = ColorStateList(switchStatesTrack, switchColorsTrack)
 
+        drug_switch.thumbTintList = switchColorListThumb
         appointment_switch.thumbTintList = switchColorListThumb
+        drug_switch.trackTintList = switchColorListTrack
         appointment_switch.trackTintList = switchColorListTrack
 
         iv_cancel.setOnClickListener {
@@ -115,14 +121,40 @@ class AddChvReminderActivity : AppCompatActivity() {
             finish()
         }
 
-        cl_client.makeGone()
+        cl_med_type.makeGone()
+
+        drug_switch.setOnCheckedChangeListener { _, checked ->
+            if (checked) {
+                cl_med_type.makeVisible()
+                appointment_container.makeGone()
+                appointment_divider.makeGone()
+            } else {
+                cl_med_type.makeGone()
+                appointment_container.makeVisible()
+                appointment_divider.makeVisible()
+            }
+        }
 
         appointment_switch.setOnCheckedChangeListener { _, checked ->
             if (checked) {
-                cl_client.makeVisible()
+                drug_container.makeGone()
+                drug_divider.makeGone()
             } else {
-                cl_client.makeGone()
+                drug_container.makeVisible()
+                drug_divider.makeVisible()
             }
+        }
+
+        medication_type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, p2: Int, p3: Long) {
+                (parent?.getChildAt(0) as TextView)
+                    .setTextColor(ContextCompat.getColor(this@AddChvReminderActivity, android.R.color.white))
+            }
+
         }
 
         hideProgress()
@@ -267,9 +299,7 @@ class AddChvReminderActivity : AppCompatActivity() {
         val myDateFmt: DateTimeFormatter = DateTimeFormat.forPattern(myDateFormat)
 
         tv_from_date.text = myDateFmt.print(fromDate)
-        tv_to_date.text = myDateFmt.print(toDate)
         tv_from_time.text = myTimeFmt.print(fromDate)
-        tv_to_time.text = myTimeFmt.print(toDate)
 
         tv_tone.setOnClickListener {
             handler.removeCallbacksAndMessages(null)
@@ -281,7 +311,38 @@ class AddChvReminderActivity : AppCompatActivity() {
             openRepeatModeMenu()
         }
 
-        fromDatePickerDialog = DatePickerDialog(
+        if (Build.VERSION.SDK_INT >= 23) {
+            Dexter.withActivity(this)
+                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                .withListener(object : PermissionListener {
+                    override fun onPermissionRationaleShouldBeShown(
+                        permission: PermissionRequest?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+
+                    override fun onPermissionGranted(response: PermissionGrantedResponse?) {
+                        permissionGranted = true
+                    }
+
+                    override fun onPermissionDenied(response: PermissionDeniedResponse?) {
+                        val toast = Toast(this@AddChvReminderActivity)
+                        val view: View = layoutInflater.inflate(R.layout.warning, null)
+                        val textView: TextView = view.findViewById(R.id.message)
+                        textView.text = getString(R.string.grant_perm)
+                        toast.view = view
+                        toast.setGravity(Gravity.BOTTOM, 30, 30)
+                        toast.duration = Toast.LENGTH_SHORT
+                        toast.show()
+                    }
+
+                }).check()
+        } else {
+            permissionGranted = true
+        }
+
+        datePickerDialog = DatePickerDialog(
             this, R.style.DatePickerThemeChv,
             DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 val format = "yyyy MM dd HH:mm"
@@ -296,7 +357,7 @@ class AddChvReminderActivity : AppCompatActivity() {
             }, fromDate.year, fromDate.monthOfYear - 1, fromDate.dayOfMonth
         )
 
-        fromTimePickerDialog = TimePickerDialog(
+        timePickerDialog = TimePickerDialog(
             this, R.style.TimePickerThemeChv,
             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
                 val format = "yyyy MM dd HH:mm"
@@ -313,68 +374,32 @@ class AddChvReminderActivity : AppCompatActivity() {
                 tv_from_time.text = displayFmt.print(fromDate)
             }, fromDate.hourOfDay, fromDate.minuteOfHour, false
         )
-
-        toDatePickerDialog = DatePickerDialog(
-            this, R.style.DatePickerThemeChv,
-            DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
-                val format = "yyyy MM dd HH:mm"
-                val timeFormat = "HH:mm"
-                val displayFormat = "MMM dd, yyyy"
-                val fmt: DateTimeFormatter = DateTimeFormat.forPattern(format)
-                val timeFmt: DateTimeFormatter = DateTimeFormat.forPattern(timeFormat)
-                val displayFmt: DateTimeFormatter = DateTimeFormat.forPattern(displayFormat)
-                val dateStr = "$year ${month + 1} $dayOfMonth ${timeFmt.print(toDate)}"
-                toDate = fmt.parseDateTime(dateStr)
-                tv_to_date.text = displayFmt.print(toDate)
-            }, toDate.year, toDate.monthOfYear - 1, toDate.dayOfMonth
-        )
-
-        toTimePickerDialog = TimePickerDialog(
-            this, R.style.TimePickerThemeChv,
-            TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
-                val format = "yyyy MM dd HH:mm"
-                val dateFormat = "yyyy MM dd"
-                val displayFormat = "hh:mm a"
-                val fmt: DateTimeFormatter = DateTimeFormat.forPattern(format)
-                val dateFmt: DateTimeFormatter = DateTimeFormat.forPattern(dateFormat)
-                val displayFmt: DateTimeFormatter = DateTimeFormat.forPattern(displayFormat)
-                var dateStr = "${dateFmt.print(toDate)} $hourOfDay:$minute"
-                if (minute < 10) {
-                    dateStr = "${dateFmt.print(toDate)} $hourOfDay:0$minute"
-                }
-                toDate = fmt.parseDateTime(dateStr)
-                tv_to_time.text = displayFmt.print(toDate)
-            }, toDate.hourOfDay, toDate.minuteOfHour, false
-        )
         tv_from_date.setOnClickListener {
-            fromDatePickerDialog.show()
+            datePickerDialog.show()
         }
 
         tv_from_time.setOnClickListener {
-            fromTimePickerDialog.show()
-        }
-
-        tv_to_date.setOnClickListener {
-            toDatePickerDialog.show()
-        }
-
-        tv_to_time.setOnClickListener {
-            toTimePickerDialog.show()
+            timePickerDialog.show()
         }
 
         fab.setOnClickListener {
             val dateFormat = "yyyy MM dd HH:mm"
             val dateFormatter = DateTimeFormat.forPattern(dateFormat)
             val description = edit_text.text.toString().trim()
-            val appointment = appointment_switch.isChecked
-            val toDateStr = dateFormatter.print(toDate)
+            val isDrug = drug_switch.isChecked
+            val isAppointment = appointment_switch.isChecked
+            val medType = if (isDrug) {
+                medication_type_spinner.selectedItemPosition.plus(1)
+            } else {
+                null
+            }
 
             val myFinalDateFormat = "yyyy-MM-dd"
             val myFinalDateFormatter = DateTimeFormat.forPattern(myFinalDateFormat)
             val myFinalDateStr = myFinalDateFormatter.print(fromDate)
 
             if (!inProgress) {
-                if (description == "") {
+                if (description.isEmpty()) {
                     val toast = Toast(this)
                     val view: View = layoutInflater.inflate(R.layout.warning, null)
                     val textView: TextView = view.findViewById(R.id.message)
@@ -386,10 +411,9 @@ class AddChvReminderActivity : AppCompatActivity() {
                 } else {
                     showProgress()
                     val id = ThreadLocalRandom.current().nextInt()
-                    val phoneNumber = FirebaseAuth.getInstance().currentUser?.phoneNumber
-                    val alarmsRef = FirebaseFirestore.getInstance()
-                        .collection("alarms")
-                        .document()
+                    val phoneNumber = AppPreferences.phoneNo
+                    val db = FirebaseFirestore.getInstance()
+                    val alarmsRef = db.collection("chv_reminders").document()
 
                     val alarm = hashMapOf(
                         "id" to id,
@@ -397,73 +421,55 @@ class AddChvReminderActivity : AppCompatActivity() {
                         "description" to description,
                         "alarmTonePath" to tonePath,
                         "repeatMode" to repeatModeList,
-                        "fromDate" to dateFormatter.print(fromDate),
-                        "toDate" to toDateStr,
-                        "appointment" to appointment,
+                        "dateTime" to dateFormatter.print(fromDate),
+                        "isDrug" to isDrug,
+                        "isAppointment" to isAppointment,
                         "date" to myFinalDateStr,
                         "cancelled" to false,
                         "snoozed" to 0,
                         "confirmed" to false,
                         "missed" to false,
                         "reasonToCancel" to "",
-                        "rang" to false
+                        "rang" to false,
+                        "medicationType" to medType
                     )
 
                     alarmsRef.set(alarm, SetOptions.merge())
                         .addOnCompleteListener {
-                            hideProgress()
-                            val toast = Toast(this)
-                            val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
-                            val textView: TextView = view.findViewById(R.id.message)
-                            textView.text = getString(R.string.alarm_add_success)
-                            toast.view = view
-                            toast.setGravity(Gravity.BOTTOM, 30, 30)
-                            toast.duration = Toast.LENGTH_SHORT
-                            toast.show()
-                            val returnIntent = Intent()
-                            returnIntent.putExtra("success", true)
+                            if (it.isSuccessful) {
+                                hideProgress()
+                                val toast = Toast(this)
+                                val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
+                                val textView: TextView = view.findViewById(R.id.message)
+                                textView.text = getString(R.string.alarm_add_success)
+                                toast.view = view
+                                toast.setGravity(Gravity.BOTTOM, 30, 30)
+                                toast.duration = Toast.LENGTH_SHORT
+                                toast.show()
 
-                            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-                            val millis = toUtc(fromDate).millis
+                                val millis = toUtc(fromDate).millis
 
-                            val myIntent = Intent(MainApplication.applicationContext(), AlarmReceiver::class.java)
-                            myIntent.putExtra("note", description)
-                            myIntent.putExtra("id", id)
-                            myIntent.putExtra("snoozed", 0)
-                            myIntent.putExtra("date", dateFormatter.print(fromDate))
-                            myIntent.putExtra("toDate", dateFormatter.print(toDate))
-                            myIntent.putExtra("tonePath", tonePath)
-                            myIntent.putExtra("docId", alarmsRef.id)
-                            myIntent.putExtra("repeatMode", repeatModeList)
-                            val pendingIntent =
-                                PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
+                                val myIntent =
+                                    Intent(MainApplication.applicationContext(), ChvReminderReceiver::class.java)
+                                myIntent.putExtra("note", description)
+                                myIntent.putExtra("id", id)
+                                myIntent.putExtra("snoozed", 0)
+                                myIntent.putExtra("date", dateFormatter.print(fromDate))
+                                myIntent.putExtra("tonePath", tonePath)
+                                myIntent.putExtra("docId", alarmsRef.id)
+                                myIntent.putExtra("repeatMode", repeatModeList)
+                                myIntent.putExtra("isDrug", isDrug)
+                                myIntent.putExtra("isAppointment", isAppointment)
+                                val pendingIntent =
+                                    PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
 
-                            val toMillis = toUtc(toDate).millis
-                            val placeIntent = Intent(MainApplication.applicationContext(), ConfirmAttendPlaceReceiver::class.java)
-                            placeIntent.putExtra("note", description)
-                            placeIntent.putExtra("id", id)
-                            placeIntent.putExtra("snoozed", 0)
-                            placeIntent.putExtra("date", dateFormatter.print(toDate))
-                            myIntent.putExtra("docId", alarmsRef.id)
-                            myIntent.putExtra("repeatMode", repeatModeList)
-                            val placePendingIntent =
-                                PendingIntent.getBroadcast(this, id, placeIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            alarmManager.setExact(AlarmManager.RTC_WAKEUP, toMillis, placePendingIntent)
-
-                            finish()
+                                finish()
+                            }
                         }
-                        .addOnFailureListener {
-                            hideProgress()
-                            val toast = Toast(this)
-                            val view: View = layoutInflater.inflate(R.layout.network_error, null)
-                            toast.view = view
-                            toast.setGravity(Gravity.BOTTOM, 30, 30)
-                            toast.duration = Toast.LENGTH_SHORT
-                            toast.show()
-                            finish()
-                        }
+
                 }
             }
         }

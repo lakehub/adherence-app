@@ -10,7 +10,6 @@ class MyService : JobIntentService() {
 
     override fun onHandleWork(@NonNull intent: Intent) {
         Log.d("TAG", "boot completed")
-            MainApplication.applicationContext().startActivity(Intent(MainApplication.applicationContext(), ClientHomeActivity::class.java))
     }
 
     companion object {

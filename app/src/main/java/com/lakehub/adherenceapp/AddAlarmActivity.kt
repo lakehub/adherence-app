@@ -417,9 +417,8 @@ class AddAlarmActivity : AppCompatActivity() {
                     toast.duration = Toast.LENGTH_SHORT
                     toast.show()
                 } else {
-                    showProgress()
                     val id = ThreadLocalRandom.current().nextInt()
-                    val phoneNumber = FirebaseAuth.getInstance().currentUser?.phoneNumber
+                    val phoneNumber = AppPreferences.phoneNo
                     val alarmsRef = FirebaseFirestore.getInstance()
                         .collection("alarms")
                         .document()
@@ -446,20 +445,21 @@ class AddAlarmActivity : AppCompatActivity() {
 
                     alarmsRef.set(alarm, SetOptions.merge())
                         .addOnCompleteListener {
-                            hideProgress()
-                            val toast = Toast(this)
-                            val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
-                            val textView: TextView = view.findViewById(R.id.message)
-                            textView.text = getString(R.string.alarm_add_success)
-                            toast.view = view
-                            toast.setGravity(Gravity.BOTTOM, 30, 30)
-                            toast.duration = Toast.LENGTH_SHORT
-                            toast.show()
-                            val returnIntent = Intent()
-                            returnIntent.putExtra("success", true)
+                            if (it.isComplete) {
+                                hideProgress()
+                                val toast = Toast(this)
+                                val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
+                                val textView: TextView = view.findViewById(R.id.message)
+                                textView.text = getString(R.string.alarm_add_success)
+                                toast.view = view
+                                toast.setGravity(Gravity.BOTTOM, 30, 30)
+                                toast.duration = Toast.LENGTH_SHORT
+                                toast.show()
+                                val returnIntent = Intent()
+                                returnIntent.putExtra("success", true)
 
 
-                            /*val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                                /*val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
                             val myIntent = Intent(this, AlarmReceiver::class.java)
                             val pendingIntent = PendingIntent.getBroadcast(this, 1, myIntent, 0)
@@ -468,50 +468,49 @@ class AddAlarmActivity : AppCompatActivity() {
                                 fromDate.millis, 60 * 1000, pendingIntent
                             )*/
 
-                            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-                            val millis = toUtc(fromDate).millis
+                                val millis = toUtc(fromDate).millis
 
-                            val myIntent = Intent(MainApplication.applicationContext(), AlarmReceiver::class.java)
-                            myIntent.putExtra("note", description)
-                            myIntent.putExtra("id", id)
-                            myIntent.putExtra("isPlace", isPlace)
-                            myIntent.putExtra("snoozed", 0)
-                            myIntent.putExtra("date", dateFormatter.print(fromDate))
-                            myIntent.putExtra("toDate", dateFormatter.print(toDate))
-                            myIntent.putExtra("tonePath", tonePath)
-                            myIntent.putExtra("docId", alarmsRef.id)
-                            myIntent.putExtra("repeatMode", repeatModeList)
-                            val pendingIntent =
-                                PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
-
-                            if (isPlace) {
-                                val toMillis = toUtc(toDate).millis
-                                val placeIntent = Intent(MainApplication.applicationContext(), ConfirmAttendPlaceReceiver::class.java)
-                                placeIntent.putExtra("location", location)
-                                placeIntent.putExtra("id", id)
-                                placeIntent.putExtra("snoozed", 0)
-                                placeIntent.putExtra("date", dateFormatter.print(toDate))
+                                val myIntent = Intent(MainApplication.applicationContext(), AlarmReceiver::class.java)
+                                myIntent.putExtra("note", description)
+                                myIntent.putExtra("id", id)
+                                myIntent.putExtra("isPlace", isPlace)
+                                myIntent.putExtra("snoozed", 0)
+                                myIntent.putExtra("date", dateFormatter.print(fromDate))
+                                myIntent.putExtra("toDate", dateFormatter.print(toDate))
+                                myIntent.putExtra("tonePath", tonePath)
                                 myIntent.putExtra("docId", alarmsRef.id)
                                 myIntent.putExtra("repeatMode", repeatModeList)
-                                val placePendingIntent =
-                                    PendingIntent.getBroadcast(this, id, placeIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, toMillis, placePendingIntent)
-                            }
+                                val pendingIntent =
+                                    PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
+
+                                if (isPlace) {
+                                    val toMillis = toUtc(toDate).millis
+                                    val placeIntent = Intent(
+                                        MainApplication.applicationContext(),
+                                        ConfirmAttendPlaceReceiver::class.java
+                                    )
+                                    placeIntent.putExtra("location", location)
+                                    placeIntent.putExtra("id", id)
+                                    placeIntent.putExtra("snoozed", 0)
+                                    placeIntent.putExtra("date", dateFormatter.print(toDate))
+                                    myIntent.putExtra("docId", alarmsRef.id)
+                                    myIntent.putExtra("repeatMode", repeatModeList)
+                                    val placePendingIntent =
+                                        PendingIntent.getBroadcast(
+                                            this,
+                                            id,
+                                            placeIntent,
+                                            PendingIntent.FLAG_UPDATE_CURRENT
+                                        )
+                                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, toMillis, placePendingIntent)
+                                }
 
 //                            setResult(Activity.RESULT_OK, returnIntent)
-                            finish()
-                        }
-                        .addOnFailureListener {
-                            hideProgress()
-                            val toast = Toast(this)
-                            val view: View = layoutInflater.inflate(R.layout.network_error, null)
-                            toast.view = view
-                            toast.setGravity(Gravity.BOTTOM, 30, 30)
-                            toast.duration = Toast.LENGTH_SHORT
-                            toast.show()
-                            finish()
+                                finish()
+                            }
                         }
                 }
             }

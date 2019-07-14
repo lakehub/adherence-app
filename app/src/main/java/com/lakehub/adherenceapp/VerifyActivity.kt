@@ -43,6 +43,7 @@ class VerifyActivity : AppCompatActivity() {
         phoneNumber = extra?.getString("phoneNumber")
         newUser = extra?.getBoolean("newUser")
 
+
         retrieveCode()
 
         tv_count.text = getString(R.string.sec_count, 60)
@@ -170,33 +171,29 @@ class VerifyActivity : AppCompatActivity() {
                     startActivity(myIntent)
                     finish()*/
                     if (newUser != null && newUser == true) {
-                        Toast.makeText(this, "registered as new user", Toast.LENGTH_LONG).show()
                         val myUser = hashMapOf(
                             "phoneNumber" to user!!.phoneNumber,
-                            "category" to 0,
+                            "category" to 2,
                             "points" to 0
                         )
                         userRef.document(phoneNumber!!)
                             .set(myUser)
-                            .addOnSuccessListener {
-                                Toast.makeText(this, "user added", Toast.LENGTH_LONG).show()
-
-                                startActivity(Intent(this, SelectAccountTypeActivity::class.java))
-                                finish()
-                            }
-                            .addOnFailureListener {
-                                Toast.makeText(this, "cannot add user: $it", Toast.LENGTH_LONG).show()
+                            .addOnCompleteListener {
+                                if (it.isComplete) {
+//                                    startActivity(Intent(this, ChvDashboardActivity::class.java))
+//                                    finish()
+                                }
                             }
                     } else {
                         val db = FirebaseFirestore.getInstance()
                         val usersRef = db.collection("users")
 
                         usersRef.document(phoneNumber!!)
-                        usersRef.whereEqualTo("phoneNumber", phoneNumber)
                             .get()
                             .addOnCompleteListener {
                                 hideProgress()
-                                val category = it.result!!.documents[0].get("category").toString().toInt()
+                                Log.d("TAG", "type: ${it.result?.getDouble("category")?.toInt()}")
+                                /*val category = it.result!!.documents[0].get("category").toString().toInt()
                                 if (category == 1) {
                                     AppPreferences.accountType = 1
                                     startActivity(Intent(this@VerifyActivity, ClientHomeActivity::class.java))
@@ -204,17 +201,11 @@ class VerifyActivity : AppCompatActivity() {
                                     AppPreferences.accountType = 2
                                     startActivity(Intent(this@VerifyActivity, ChvDashboardActivity::class.java))
                                 }
-                                finish()
+                                finish()*/
 
-                            }
-                            .addOnFailureListener {
-                                hideProgress()
-                                Log.d("TAG", "exception: $it")
                             }
                     }
                 } else {
-                    Log.w("TAG", "signInWithCredential:failure", task.exception)
-
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         // The verification code entered was invalid
                         val toast = Toast(applicationContext)

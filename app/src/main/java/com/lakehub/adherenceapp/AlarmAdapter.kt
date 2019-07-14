@@ -103,8 +103,8 @@ class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
                     myIntent.putExtra("medType", alarm.medType)
                     myIntent.putExtra("repeatMode", alarm.repeatMode)
                     myIntent.putExtra("location", alarm.location)
-                    (context as Activity).startActivityForResult(myIntent, 900)
-//                    context.startActivity(myIntent)
+//                    (context as Activity).startActivityForResult(myIntent, 900)
+                    context.startActivity(myIntent)
                 }
                 R.id.cancel -> {
                     val myIntent = Intent(context, CancelAlarmActivity::class.java)

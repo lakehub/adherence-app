@@ -18,6 +18,9 @@ import org.joda.time.format.DateTimeFormat
 import java.io.File
 import java.io.FileNotFoundException
 import android.view.WindowManager
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
+import java.util.*
 
 
 class AlarmActivity : AppCompatActivity() {
@@ -40,6 +43,7 @@ class AlarmActivity : AppCompatActivity() {
 
         val db = FirebaseFirestore.getInstance()
         alarmDoc = db.collection("alarms").document(docId!!)
+        val handler = Handler()
 
         alarmDoc.update("rang", true)
 
@@ -94,6 +98,7 @@ class AlarmActivity : AppCompatActivity() {
         tv_time.text = displayTime(date!!)
 
         btn_turn_off.setOnClickListener {
+            handler.removeCallbacksAndMessages(null)
             Handler().postDelayed({
                 if (!isPlace && !haveSnoozed) {
                     val myIntent = Intent(this@AlarmActivity, ConfirmPopUpActivity::class.java)
@@ -120,6 +125,7 @@ class AlarmActivity : AppCompatActivity() {
         }
 
         cl_snooze.setOnClickListener {
+            handler.removeCallbacksAndMessages(null)
             haveSnoozed = true
             if (snoozed < 3) {
                 alarmDoc.update("rang", false)
@@ -133,9 +139,10 @@ class AlarmActivity : AppCompatActivity() {
                         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
                         val format = "yyyy MM dd HH:mm"
                         val myFormatter = DateTimeFormat.forPattern(format)
-                        val myDate = myFormatter.parseDateTime(date)
-                        val newDate = myDate.plusMinutes(1)
-                        val millis = toUtc(newDate).millis + 60 * 1000
+                        val offset = TimeZone.getDefault().rawOffset
+                        val tz = DateTimeZone.forOffsetMillis(offset)
+                        val newDate = DateTime.now(tz).plusMinutes(1)
+                        val millis = newDate.millis
 
                         val newIntent = Intent(MainApplication.applicationContext(), AlarmReceiver::class.java)
                         newIntent.putExtra("note", note)
@@ -156,7 +163,7 @@ class AlarmActivity : AppCompatActivity() {
             }
         }
 
-        Handler().postDelayed({
+        handler.postDelayed({
             runOnUiThread {
                 mediaPlayer.stop()
                 if (!haveSnoozed) {

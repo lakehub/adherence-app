@@ -138,7 +138,7 @@
     <string name="user_adher">User Adher</string>
     <string name="new_adherence">New Adherence</string>
     <string name="notification_alt">Notification!</string>
-    <string name="drug">drug</string>
+    <string name="drug">Drug</string>
     <string name="drug_alt">drug %1$s</string>
     <string name="confirm_below">confirm below</string>
     <string name="taken">I\'ve Taken</string>
@@ -173,9 +173,17 @@
     <string name="add_client">Add Client</string>
     <string name="full_name">Full Name</string>
     <string name="client_add_success">Client Added Successfully</string>
+    <string name="client_edit_success">Client Edited Successfully</string>
     <string name="client_exist">Client exists</string>
     <string name="sample_phone_no">0700123123</string>
     <string name="sample_name">Mary Susan</string>
     <string name="sample_location">Mlimani</string>
     <string name="delete">Delete</string>
+    <string name="date_and_time"><![CDATA[Date & Time]]></string>
+    <string name="phone_no">0%1$s</string>
+    <string name="deactivate_client">Deactivate Client</string>
+    <string name="edit_client">Edit Client</string>
+    <string name="deactivate_client_dsc">Do you want to deactivate this client?</string>
+    <string name="client_deactivate_success">Client deactivated successfully</string>
+    <string name="edit_reminder">Edit Reminder</string>
 </resources>

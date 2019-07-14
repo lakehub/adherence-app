@@ -23,27 +23,87 @@ class RegisterActivity : AppCompatActivity() {
         hideProgress()
 
         val db = FirebaseFirestore.getInstance()
+        db.enableNetwork()
         val usersRef = db.collection("users")
 
         cl_btn_submit.setOnClickListener {
             var phoneNumber: String = edit_text.text.toString().trim()
 
             if (phoneNumber.isNotEmpty()) {
-                var list = phoneNumber.split("")
-                if (list[0] == "")
-                    list = list.subList(1, list.size)
-
-                if (list[0] != "+") {
-                    if (list[0] == "0") {
-                        list = list.subList(1, list.size)
-                        phoneNumber = "+254${list.joinToString("")}"
-                    } else {
-                        phoneNumber = "+254${list.joinToString("")}"
+                if (phoneNumber.length == 10 || phoneNumber.length == 13) {
+                    if (phoneNumber.length == 10) {
+                        phoneNumber = "+254${phoneNumber.substring(1)}"
                     }
-                }
-
-
-                if (phoneNumber.length < 10 || phoneNumber.length > 13) {
+                    showProgress()
+                    usersRef.document(phoneNumber)
+                        .get()
+                        .addOnCompleteListener {
+                            hideProgress()
+                            if (it.isSuccessful) {
+                                if (it.result!!.data == null) {
+                                    val userRef = db.collection("users")
+                                    val myUser = hashMapOf(
+                                        "phoneNumber" to phoneNumber,
+                                        "category" to 2,
+                                        "points" to 0
+                                    )
+                                    userRef.document(phoneNumber)
+                                        .set(myUser)
+                                        .addOnCompleteListener { task ->
+                                            if (task.isSuccessful) {
+                                                AppPreferences.accountType = 2
+                                                AppPreferences.loggedIn = true
+                                                AppPreferences.phoneNo = phoneNumber
+                                                startActivity(Intent(this, ChvDashboardActivity::class.java))
+                                                finish()
+                                            } else {
+                                                hideProgress()
+                                                val toast = Toast(this)
+                                                val view: View = layoutInflater.inflate(R.layout.network_error, null)
+                                                toast.view = view
+                                                toast.setGravity(Gravity.BOTTOM, 30, 30)
+                                                toast.duration = Toast.LENGTH_SHORT
+                                                toast.show()
+                                            }
+                                        }
+                                } else {
+                                    val toast = Toast(this)
+                                    val view: View = layoutInflater.inflate(R.layout.warning, null)
+                                    val textView: TextView = view.findViewById(R.id.message)
+                                    textView.text = getString(R.string.already_registered)
+                                    toast.view = view
+                                    toast.setGravity(Gravity.BOTTOM, 30, 30)
+                                    toast.duration = Toast.LENGTH_SHORT
+                                    toast.show()
+                                }
+                                /*if (!it.result?.exists()!!) {
+                                    val myIntent = Intent(this@RegisterActivity, VerifyActivity::class.java)
+                                    myIntent.putExtra("phoneNumber", phoneNumber)
+                                    myIntent.putExtra("newUser", true)
+                                    startActivity(myIntent)
+                                    finish()
+                                } else {
+                                    val toast = Toast(this)
+                                    val view: View = layoutInflater.inflate(R.layout.warning, null)
+                                    val textView: TextView = view.findViewById(R.id.message)
+                                    textView.text = getString(R.string.already_registered)
+                                    toast.view = view
+                                    toast.setGravity(Gravity.BOTTOM, 30, 30)
+                                    toast.duration = Toast.LENGTH_SHORT
+                                    toast.show()
+                                    input_layout.requestFocus()
+                                }*/
+                            } else {
+                                hideProgress()
+                                val toast = Toast(this)
+                                val view: View = layoutInflater.inflate(R.layout.network_error, null)
+                                toast.view = view
+                                toast.setGravity(Gravity.BOTTOM, 30, 30)
+                                toast.duration = Toast.LENGTH_SHORT
+                                toast.show()
+                            }
+                        }
+                } else {
                     val toast = Toast(this)
                     val view: View = layoutInflater.inflate(R.layout.warning, null)
                     val textView: TextView = view.findViewById(R.id.message)
@@ -53,35 +113,6 @@ class RegisterActivity : AppCompatActivity() {
                     toast.duration = Toast.LENGTH_SHORT
                     toast.show()
                     input_layout.requestFocus()
-                } else {
-                    showProgress()
-                    usersRef.document(phoneNumber)
-                    usersRef.whereEqualTo("phoneNumber", phoneNumber)
-                        .get()
-                        .addOnCompleteListener {
-                            hideProgress()
-                            if (it.result!!.isEmpty) {
-                                val myIntent = Intent(this@RegisterActivity, VerifyActivity::class.java)
-                                myIntent.putExtra("phoneNumber", phoneNumber)
-                                myIntent.putExtra("newUser", true)
-                                startActivity(myIntent)
-                                finish()
-                            } else {
-                                val toast = Toast(this)
-                                val view: View = layoutInflater.inflate(R.layout.warning, null)
-                                val textView: TextView = view.findViewById(R.id.message)
-                                textView.text = getString(R.string.already_registered)
-                                toast.view = view
-                                toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                toast.duration = Toast.LENGTH_SHORT
-                                toast.show()
-                                input_layout.requestFocus()
-                            }
-                        }
-                        .addOnFailureListener {
-                            hideProgress()
-                            Log.d("TAG", "exception: $it")
-                        }
                 }
             } else {
                 val toast = Toast(this)

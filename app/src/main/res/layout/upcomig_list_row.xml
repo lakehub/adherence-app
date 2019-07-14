@@ -19,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/active_view"
+            app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="25dp"
             android:paddingTop="20dp"
             android:paddingBottom="20dp"

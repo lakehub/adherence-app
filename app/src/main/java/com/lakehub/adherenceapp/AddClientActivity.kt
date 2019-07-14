@@ -70,62 +70,57 @@ class AddClientActivity : AppCompatActivity() {
                         }
                         val db = FirebaseFirestore.getInstance()
                         val userRef = db.collection("users").document(phoneNumber)
-                        val chvPhoneNumber = FirebaseAuth.getInstance().currentUser?.phoneNumber
+                        val chvPhoneNumber = AppPreferences.phoneNo
 
                         userRef.get()
                             .addOnCompleteListener {
-                                if (it.result?.data == null) {
-                                    val data = hashMapOf(
-                                        "phoneNumber" to phoneNumber,
-                                        "location" to location,
-                                        "name" to name,
-                                        "points" to 0,
-                                        "chvPhoneNumber" to chvPhoneNumber,
-                                        "category" to 1
-                                    )
+                                if (it.isSuccessful) {
+                                    if (it.result?.data == null) {
+                                        val data = hashMapOf(
+                                            "phoneNumber" to phoneNumber,
+                                            "location" to location,
+                                            "name" to name,
+                                            "points" to 0,
+                                            "chvPhoneNumber" to chvPhoneNumber,
+                                            "category" to 1,
+                                            "active" to true
+                                        )
 
-                                    userRef.set(data)
-                                        .addOnCompleteListener {
-                                            hideProgress()
-                                            val toast = Toast(this)
-                                            val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
-                                            val textView: TextView = view.findViewById(R.id.message)
-                                            textView.text = getString(R.string.client_add_success)
-                                            toast.view = view
-                                            toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                            toast.duration = Toast.LENGTH_SHORT
-                                            toast.show()
-                                            finish()
-                                        }
-                                        .addOnFailureListener {
-                                            hideProgress()
-                                            val toast = Toast(this)
-                                            val view: View = layoutInflater.inflate(R.layout.network_error, null)
-                                            toast.view = view
-                                            toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                            toast.duration = Toast.LENGTH_SHORT
-                                            toast.show()
-                                        }
+                                        userRef.set(data)
+                                            .addOnCompleteListener {task ->
+                                                if (task.isComplete) {
+                                                    hideProgress()
+                                                    val toast = Toast(this)
+                                                    val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
+                                                    val textView: TextView = view.findViewById(R.id.message)
+                                                    textView.text = getString(R.string.client_add_success)
+                                                    toast.view = view
+                                                    toast.setGravity(Gravity.BOTTOM, 30, 30)
+                                                    toast.duration = Toast.LENGTH_SHORT
+                                                    toast.show()
+                                                    finish()
+                                                }
+                                            }
+                                    } else {
+                                        hideProgress()
+                                        val toast = Toast(this)
+                                        val view: View = layoutInflater.inflate(R.layout.warning, null)
+                                        val textView: TextView = view.findViewById(R.id.message)
+                                        textView.text = getString(R.string.client_exist)
+                                        toast.view = view
+                                        toast.setGravity(Gravity.BOTTOM, 30, 30)
+                                        toast.duration = Toast.LENGTH_SHORT
+                                        toast.show()
+                                    }
                                 } else {
                                     hideProgress()
                                     val toast = Toast(this)
-                                    val view: View = layoutInflater.inflate(R.layout.warning, null)
-                                    val textView: TextView = view.findViewById(R.id.message)
-                                    textView.text = getString(R.string.client_exist)
+                                    val view: View = layoutInflater.inflate(R.layout.network_error, null)
                                     toast.view = view
                                     toast.setGravity(Gravity.BOTTOM, 30, 30)
                                     toast.duration = Toast.LENGTH_SHORT
                                     toast.show()
                                 }
-                            }
-                            .addOnFailureListener {
-                                hideProgress()
-                                val toast = Toast(this)
-                                val view: View = layoutInflater.inflate(R.layout.network_error, null)
-                                toast.view = view
-                                toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                toast.duration = Toast.LENGTH_SHORT
-                                toast.show()
                             }
 
                     } else {

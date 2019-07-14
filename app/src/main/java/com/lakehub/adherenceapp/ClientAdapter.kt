@@ -1,6 +1,7 @@
 package com.lakehub.adherenceapp
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class ClientAdapter(val context: Context, private val clients: ArrayList<Client>) :
@@ -29,7 +31,7 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
         holder.locationTv.text = client.location
         holder.nameTv.text = titleCase(client.name)
         holder.locationTv.text = titleCase(client.location)
-        holder.phoneTv.text = client.phoneNumber.substring(4)
+        holder.phoneTv.text = context.getString(R.string.phone_no, client.phoneNumber.substring(4))
 
         holder.menu.setOnClickListener {
             openOptionMenu(holder.menu, holder.adapterPosition)
@@ -50,10 +52,16 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.edit -> {
-
+                    val myIntent = Intent(context, EditClientActivity::class.java)
+                    myIntent.putExtra("phoneNo", client.phoneNumber)
+                    myIntent.putExtra("location", client.location)
+                    myIntent.putExtra("name", client.name)
+                    context.startActivity(myIntent)
                 }
                 R.id.delete -> {
-
+                    val myIntent = Intent(context, DeactivateClientActivity::class.java)
+                    myIntent.putExtra("phoneNo", client.phoneNumber)
+                    context.startActivity(myIntent)
                 }
             }
             true

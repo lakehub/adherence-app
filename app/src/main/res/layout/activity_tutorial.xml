@@ -48,7 +48,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cl_dots"
             app:layout_constraintBottom_toTopOf="@id/btn_next"/>
-    <Button
+    <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_next"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -57,5 +57,6 @@
             android:text="@string/next"
             android:padding="20dp"
             android:textColor="@android:color/white"
-            android:background="@color/colorGreen"/>
+            android:background="@color/colorGreen"
+            app:cornerRadius="0dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,23 +19,27 @@ class CongratulationsActivity : AppCompatActivity() {
         showProgress()
 
         val user = FirebaseAuth.getInstance().currentUser
-        val phoneNo = user?.phoneNumber
+        val phoneNo = AppPreferences.phoneNo
         val db = FirebaseFirestore.getInstance()
         val usersDoc = db.collection("users").document(phoneNo!!)
         usersDoc.get()
             .addOnCompleteListener {
-                val result = it.result
-                val points = result?.getLong("points")!!.toInt().plus(1)
-                usersDoc.update("points", points)
-                    .addOnCompleteListener {
-                        hideProgress()
-                        tv_points.text = getString(R.string.point, 1)
-                        if (points > 1) {
-                            tv_total_points.text = getString(R.string.points, points)
-                        } else {
-                            tv_total_points.text = getString(R.string.point, points)
+                if (it.isComplete) {
+                    val result = it.result
+                    val points = result?.getLong("points")!!.toInt().plus(1)
+                    usersDoc.update("points", points)
+                        .addOnCompleteListener {task ->
+                            if (task.isComplete) {
+                                hideProgress()
+                                tv_points.text = getString(R.string.point, 1)
+                                if (points > 1) {
+                                    tv_total_points.text = getString(R.string.points, points)
+                                } else {
+                                    tv_total_points.text = getString(R.string.point, points)
+                                }
+                            }
                         }
-                    }
+                }
             }
             .addOnFailureListener {
 

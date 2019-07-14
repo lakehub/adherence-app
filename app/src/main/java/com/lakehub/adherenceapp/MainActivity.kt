@@ -61,12 +61,26 @@ class MainActivity : AppCompatActivity() {
             override fun run() {
                 if (AppPreferences.firstRun) {
                     startActivity(Intent(this@MainActivity, TutorialActivity::class.java))
+                    finish()
                 } else {
-                    FirebaseAuth.getInstance().addAuthStateListener {
+                    if (AppPreferences.loggedIn) {
+                        if (AppPreferences.accountType == 1) {
+                            startActivity(Intent(this@MainActivity, ClientHomeActivity::class.java))
+                            finish()
+                        } else {
+                            startActivity(Intent(this@MainActivity, ChvDashboardActivity::class.java))
+                            finish()
+                        }
+                    } else {
+                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                        finish()
+                    }
+
+                    /*FirebaseAuth.getInstance().addAuthStateListener {
                         val user = it.currentUser
 
                         if (user == null) {
-                            startActivity(Intent(this@MainActivity, RegisterActivity::class.java))
+                            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                             finish()
                         } else {
                             when (AppPreferences.accountType) {
@@ -84,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         }
-                    }
+                    }*/
                 }
 
             }

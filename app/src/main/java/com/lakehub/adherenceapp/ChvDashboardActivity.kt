@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.model.InDateStyle
@@ -20,6 +21,7 @@ import kotlinx.android.synthetic.main.app_bar_chv_dashboard.*
 import kotlinx.android.synthetic.main.app_bar_chv_dashboard.view.*
 import kotlinx.android.synthetic.main.calendar_day.view.*
 import kotlinx.android.synthetic.main.chv_menu.*
+import kotlinx.android.synthetic.main.content_chv_dashboard.*
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
@@ -36,6 +38,10 @@ class ChvDashboardActivity : AppCompatActivity() {
     private var selectedDate: LocalDate? = null
     private var selectedDateStr: String? = null
     private var currentYearMonth: YearMonth? = null
+    private lateinit var alarmList: ArrayList<ChvReminder>
+    private lateinit var missedAlarmList: ArrayList<ChvReminder>
+    private lateinit var myAdapter: ChvReminderAdapter
+    private lateinit var missedAlarmAdapter: ChvMissedReminderAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +70,21 @@ class ChvDashboardActivity : AppCompatActivity() {
             drawer_layout.closeDrawer(GravityCompat.START, true)
         }
 
+        cl_home_menu.setOnClickListener {
+            showHome()
+            drawer_layout.closeDrawer(GravityCompat.START)
+        }
+
+        cl_upcoming_menu.setOnClickListener {
+            showUpcoming()
+            drawer_layout.closeDrawer(GravityCompat.START)
+        }
+
+        cl_missed_menu.setOnClickListener {
+            showMissed()
+            drawer_layout.closeDrawer(GravityCompat.START)
+        }
+
         add_fab.setOnClickListener {
             startActivityForResult(Intent(this, AddChvReminderActivity::class.java), 900)
         }
@@ -75,12 +96,43 @@ class ChvDashboardActivity : AppCompatActivity() {
 
         cl_logout_menu.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START)
-            auth.signOut()
+//            auth.signOut()
+//            FirebaseFirestore.getInstance().clearPersistence()
+            AppPreferences.loggedIn = false
+            AppPreferences.phoneNo = null
+            AppPreferences.accountType = 0
+            finish()
         }
 
         cl_clients_menu.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START)
             startActivity(Intent(this, ClientsActivity::class.java))
+        }
+
+        /*auth.addAuthStateListener {
+            val user = it.currentUser
+            if (user == null) {
+//                startActivity(Intent(this, LoginActivity::class.java))
+                this.finish()
+            }
+        }*/
+
+        alarmList = arrayListOf()
+        missedAlarmList = arrayListOf()
+        myAdapter = ChvReminderAdapter(this, alarmList)
+        missedAlarmAdapter = ChvMissedReminderAdapter(this, missedAlarmList)
+        val mLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+
+        val missedLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+
+        recycler_view_upcoming.apply {
+            layoutManager = mLayoutManager
+            adapter = myAdapter
+        }
+
+        recycler_view_missed.apply {
+            layoutManager = missedLayoutManager
+            adapter = missedAlarmAdapter
         }
 
         val offset = TimeZone.getDefault().rawOffset
@@ -91,7 +143,7 @@ class ChvDashboardActivity : AppCompatActivity() {
         val mySelectedDateFormatter = DateTimeFormat.forPattern(mySelectedDateFormat)
         selectedDateStr = mySelectedDateFormatter.print(date)
 
-//        fetchData()
+        fetchData()
 
         val currentMonth = YearMonth.of(date.year, date.monthOfYear)
         val firstMonth = currentMonth.minusMonths(0)
@@ -120,7 +172,7 @@ class ChvDashboardActivity : AppCompatActivity() {
 
                             selectedDateStr = selectedDate.toString()
 
-//                            fetchData()
+                            fetchData()
 
                         }
                         toolbar.calendar_view.notifyDayChanged(day)
@@ -193,5 +245,139 @@ class ChvDashboardActivity : AppCompatActivity() {
             }
 
         }
+    }
+
+    private fun fetchData() {
+        if (selectedDateStr != null) {
+            showProgress()
+            val phoneNumber = AppPreferences.phoneNo
+
+            val alarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
+            alarmsRef.whereEqualTo("phoneNumber", phoneNumber!!)
+                .whereEqualTo("date", selectedDateStr)
+                .get()
+                .addOnCompleteListener {
+                    hideProgress()
+                }
+                .addOnFailureListener {
+                    hideProgress()
+                }
+
+            alarmsRef.whereEqualTo("phoneNumber", phoneNumber)
+                .whereEqualTo("date", selectedDateStr)
+                .addSnapshotListener { querySnapshot, _ ->
+                    hideProgress()
+                    if (querySnapshot != null && querySnapshot.documents.isNotEmpty()) {
+                        alarmList.clear()
+                        missedAlarmList.clear()
+
+                        for (document in querySnapshot.documents) {
+                            val alarm = ChvReminder(
+                                description = document.getString("description")!!,
+                                fromDate = document.getString("dateTime")!!,
+                                docId = document.id,
+                                alarmTone = document.getString("alarmTonePath"),
+                                isDrug = document.getBoolean("isDrug"),
+                                isAppointment = document.getBoolean("isAppointment"),
+                                cancelled = document.getBoolean("cancelled")!!,
+                                medType = document.getDouble("medicationType")?.toInt(),
+                                repeatMode = document.get("repeatMode") as ArrayList<Int>,
+                                id = document.getLong("id")?.toInt()!!,
+                                snoozed = document.getLong("snoozed")?.toInt()!!,
+                                rang = document.getBoolean("rang")!!,
+                                missed = document.getBoolean("missed")!!
+                            )
+
+                            if (!alarm.cancelled && !alarm.rang && document.getString("date") == selectedDateStr) {
+                                alarmList.add(alarm)
+                            } else if (alarm.missed && document.getString("date") == selectedDateStr) {
+                                missedAlarmList.add(alarm)
+                            }
+                        }
+
+                        val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
+                            when {
+                                dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
+                                dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                                else -> 0
+                            }
+                        })
+
+                        val missedSorted = missedAlarmList.sortedWith(Comparator { o1, o2 ->
+                            when {
+                                dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
+                                dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                                else -> 0
+                            }
+                        })
+
+                        alarmList.clear()
+                        missedAlarmList.clear()
+                        alarmList.addAll(sorted)
+                        missedAlarmList.addAll(missedSorted)
+
+                        myAdapter.notifyDataSetChanged()
+                        missedAlarmAdapter.notifyDataSetChanged()
+
+                        if (alarmList.isEmpty()) {
+                            hideAlarms()
+                        } else {
+                            showAlarms()
+                        }
+
+                        if (missedAlarmList.isEmpty()) {
+                            hideMissedAlarms()
+                        } else {
+                            showMissedAlarms()
+                        }
+                    } else {
+                        hideAlarms()
+                        hideMissedAlarms()
+                    }
+                }
+        }
+    }
+
+    private fun showProgress() {
+        progress_bar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgress() {
+        progress_bar.visibility = View.GONE
+    }
+
+    private fun hideAlarms() {
+        recycler_view_upcoming.makeGone()
+        tv_no_alarm.makeVisible()
+    }
+
+    private fun showAlarms() {
+        recycler_view_upcoming.makeVisible()
+        tv_no_alarm.makeGone()
+    }
+
+    private fun hideMissedAlarms() {
+        recycler_view_missed.makeGone()
+        tv_no_missed.makeVisible()
+    }
+
+    private fun showMissedAlarms() {
+        recycler_view_missed.makeVisible()
+        tv_no_missed.makeGone()
+    }
+
+    private fun showHome() {
+        cl_upcoming_alarms.makeVisible()
+        cl_missed_alarms.makeVisible()
+    }
+
+    private fun showUpcoming() {
+        cl_upcoming_alarms.makeVisible()
+        cl_missed_alarms.makeGone()
+    }
+
+    private fun showMissed() {
+        cl_upcoming_alarms.makeGone()
+        cl_missed_alarms.makeVisible()
     }
 }

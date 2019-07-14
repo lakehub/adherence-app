@@ -9,8 +9,10 @@ object AppPreferences {
     lateinit var preferences: SharedPreferences
 
     private val FIRST_RUN = Pair("first_run", true)
+    private val LOGGED_IN = Pair("logged_in", false)
     private val ACCOUNT_TYPE = Pair("account_type", 0)
     private val TONE_PATH = Pair("tone_path", null)
+    private val PHONE_NO = Pair("phone_no", null)
 
 
     fun init(context: Context) {
@@ -29,6 +31,12 @@ object AppPreferences {
             it.putBoolean(FIRST_RUN.first, value)
         }
 
+    var loggedIn: Boolean
+        get() = preferences.getBoolean(LOGGED_IN.first, LOGGED_IN.second)
+        set(value) = preferences.edit {
+            it.putBoolean(LOGGED_IN.first, value)
+        }
+
     var accountType: Int
         get() = preferences.getInt(ACCOUNT_TYPE.first, ACCOUNT_TYPE.second)
         set(value) = preferences.edit {
@@ -38,6 +46,12 @@ object AppPreferences {
     var tonePath: String?
         get() = preferences.getString(TONE_PATH.first, TONE_PATH.second)
         set(value) = preferences.edit {
-            it.putString(ACCOUNT_TYPE.first, value)
+            it.putString(TONE_PATH.first, value)
+        }
+
+    var phoneNo: String?
+        get() = preferences.getString(PHONE_NO.first, PHONE_NO.second)
+        set(value) = preferences.edit {
+            it.putString(PHONE_NO.first, value)
         }
 }

@@ -49,9 +49,11 @@ class ConfirmPopUpActivity : AppCompatActivity() {
             progress_bar.makeVisible()
             alarmDoc.update("confirmed", true)
                 .addOnCompleteListener {
-                    progress_bar.makeVisible()
-                    startActivity(Intent(this, CongratulationsActivity::class.java))
-                    finish()
+                    if (it.isComplete) {
+                        progress_bar.makeVisible()
+                        startActivity(Intent(this, CongratulationsActivity::class.java))
+                        finish()
+                    }
                 }
         }
 

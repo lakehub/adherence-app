@@ -58,7 +58,7 @@ class ClientsActivity : AppCompatActivity() {
 
     private fun fetchData() {
         showProgress()
-        val phoneNo = FirebaseAuth.getInstance().currentUser?.phoneNumber
+        val phoneNo = AppPreferences.phoneNo
 
         val userRef = FirebaseFirestore.getInstance().collection("users")
         userRef.whereEqualTo("chvPhoneNumber", phoneNo!!)
@@ -72,6 +72,7 @@ class ClientsActivity : AppCompatActivity() {
             }
 
         userRef.whereEqualTo("chvPhoneNumber", phoneNo)
+            .whereEqualTo("active", true)
             .addSnapshotListener { querySnapshot, _ ->
                 hideProgress()
                 if (querySnapshot != null && querySnapshot.documents.isNotEmpty()) {
@@ -82,7 +83,8 @@ class ClientsActivity : AppCompatActivity() {
                         val client = Client(
                             location = document.getString("location")!!,
                             name = document.getString("name")!!,
-                            phoneNumber = document.getString("phoneNumber")!!
+                            phoneNumber = document.getString("phoneNumber")!!,
+                            active = document.getBoolean("active")!!
                         )
                         clients.add(client)
                     }

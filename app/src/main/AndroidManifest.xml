@@ -16,6 +16,40 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".EditChvReminderActivity"
+                  android:theme="@style/MaterialTheme.NoActionBar"/>
+
+        <meta-data
+                android:name="google_analytics_adid_collection_enabled"
+                android:value="false"/>
+        <meta-data
+                android:name="firebase_analytics_collection_deactivated"
+                android:value="true"/>
+
+        <activity
+                android:name=".DeactivateClientActivity"
+                android:theme="@style/Theme.AppCompat.Translucent"/>
+        <activity
+                android:name=".EditClientActivity"
+                android:theme="@style/MaterialTheme.NoActionBar"/>
+
+        <receiver
+                android:name=".ChvPlaceReceiver"
+                android:enabled="true"
+                android:exported="false">
+        </receiver>
+
+        <activity
+                android:name=".ChvReminderActivity"
+                android:showOnLockScreen="true"
+                android:theme="@style/Theme.AppCompat.Translucent"/>
+
+        <receiver
+                android:name=".ChvReminderReceiver"
+                android:enabled="true"
+                android:exported="false">
+        </receiver>
+
         <activity android:name=".SelectClientActivity">
         </activity>
         <activity
@@ -42,7 +76,7 @@
         <receiver
                 android:name=".ConfirmAttendPlaceReceiver"
                 android:enabled="true"
-                android:exported="true">
+                android:exported="false">
         </receiver>
 
         <activity

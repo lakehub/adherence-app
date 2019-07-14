@@ -62,9 +62,9 @@
                     android:textColor="@color/colorRed"
                     android:textSize="15sp"
                     android:fontFamily="@font/product_sans_regular"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:text="@string/from" android:layout_marginBottom="8dp"
+                    android:text="@string/date_and_time"
+                    android:layout_marginBottom="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
             <TextView
@@ -93,54 +93,13 @@
             />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_to_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:layout_marginBottom="20dp">
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorRed"
-                    android:textSize="15sp"
-                    android:fontFamily="@font/product_sans_regular"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:text="@string/to"/>
-
-            <TextView
-                    android:id="@+id/tv_to_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toStartOf="@+id/tv_to_time"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:text="@string/sample_date"
-                    android:textColor="@android:color/white"
-                    android:fontFamily="@font/product_sans_regular"
-                    android:textSize="15sp"
-                    android:layout_marginEnd="20dp"
-            />
-
-            <TextView
-                    android:id="@+id/tv_to_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:text="@string/sample_time"
-                    android:textColor="@android:color/white"
-                    android:fontFamily="@font/product_sans_regular"
-                    android:textSize="15sp"
-            />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
         <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:background="@android:color/darker_gray"/>
 
         <LinearLayout
+                android:id="@+id/drug_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -159,11 +118,11 @@
                         android:fontFamily="@font/product_sans_regular"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="@+id/appointment_switch"
-                        android:text="@string/appointment"/>
+                        app:layout_constraintBottom_toBottomOf="@+id/drug_switch"
+                        android:text="@string/drug"/>
 
                 <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/appointment_switch"
+                        android:id="@+id/drug_switch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -172,22 +131,22 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cl_client"
+                    android:id="@+id/cl_med_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@android:color/holo_red_dark"
+                        android:textColor="@color/colorRed"
                         android:textSize="15sp"
                         android:fontFamily="@font/product_sans_regular"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        android:text="@string/client"/>
+                        android:text="@string/med_type"/>
 
                 <Spinner
-                        android:id="@+id/client_spinner"
+                        android:id="@+id/medication_type_spinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -195,12 +154,44 @@
                         android:padding="0dp"
                         android:gravity="end"
                         android:background="@null"
+                        android:entries="@array/med_type_array"
                 />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 
         <View
+                android:id="@+id/drug_divider"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@android:color/darker_gray"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/appointment_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorRed"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/product_sans_regular"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/appointment_switch"
+                    android:text="@string/appointment"/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/appointment_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+            />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+                android:id="@+id/appointment_divider"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:background="@android:color/darker_gray"/>

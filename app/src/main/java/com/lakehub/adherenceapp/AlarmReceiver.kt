@@ -3,10 +3,6 @@ package com.lakehub.adherenceapp
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.media.MediaPlayer
-import com.google.firebase.firestore.FirebaseFirestore
-import java.io.File
-import java.io.FileNotFoundException
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
