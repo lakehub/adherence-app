@@ -5,7 +5,6 @@ data class Alarm(
     val allDay: Boolean = false,
     val fromDate: String = "",
     val toDate: String? = null,
-    val location: String? = null,
     val notificationMode: Int = 0,
     val alarmTone: String? = null,
     val repeatMode: ArrayList<Int>? = null,
@@ -17,5 +16,6 @@ data class Alarm(
     val missed: Boolean = false,
     val docId: String? = null,
     val cancellationReason: String? = null,
-    val snoozed: Int = 0
+    val snoozed: Int = 0,
+    val recent: Boolean = false
 )

@@ -27,8 +27,13 @@ class MissedAlarmAdapter(val context: Context, private val alarms: ArrayList<Ala
         val alarm = alarms[position]
 
         holder.tvDescription.text = limitStringLength(alarm.description, 50)
-        holder.timeTv.text = displayTime(alarm.fromDate)
         holder.tvCount.text = (position + 1).toString()
+
+        if (alarm.recent) {
+            holder.timeTv.text = displayDateTime(alarm.fromDate)
+        } else {
+            holder.timeTv.text = displayTime(alarm.fromDate)
+        }
 
         if (alarm.snoozed > 0) {
             val format = "yyyy MM dd HH:mm"

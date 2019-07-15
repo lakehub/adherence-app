@@ -5,10 +5,8 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_clients.*
 import kotlinx.android.synthetic.main.content_clients.*
@@ -76,7 +74,7 @@ class ClientsActivity : AppCompatActivity() {
             .addSnapshotListener { querySnapshot, _ ->
                 hideProgress()
                 if (querySnapshot != null && querySnapshot.documents.isNotEmpty()) {
-                    showAlarms()
+                    showClients()
                     clients.clear()
 
                     for (document in querySnapshot.documents) {
@@ -92,7 +90,7 @@ class ClientsActivity : AppCompatActivity() {
                     myAdapter.notifyDataSetChanged()
 
                 } else {
-                    hideAlarms()
+                    hideClients()
                 }
             }
     }
@@ -105,12 +103,12 @@ class ClientsActivity : AppCompatActivity() {
         progress_bar.visibility = View.GONE
     }
 
-    private fun showAlarms() {
+    private fun showClients() {
         recycler_view.makeVisible()
         tv_no_clients.makeGone()
     }
 
-    private fun hideAlarms() {
+    private fun hideClients() {
         recycler_view.makeGone()
         tv_no_clients.makeVisible()
     }

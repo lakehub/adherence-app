@@ -171,7 +171,7 @@
                 />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <!--<androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -186,7 +186,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintBottom_toBottomOf="@+id/iv_location"
-                        android:text="@string/location"/>
+                        android:text="@string/location" android:layout_marginStart="8dp"/>
 
                 <ImageView
                         android:id="@+id/iv_location"
@@ -226,7 +226,7 @@
                             android:enabled="false"
                     />
                 </com.google.android.material.textfield.TextInputLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>-->
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_med_type"

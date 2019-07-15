@@ -30,7 +30,7 @@ class CancelAlarmActivity : AppCompatActivity() {
         cl_btn_submit.setOnClickListener {
             val reason = edit_text.text.toString()
 
-            if (reason.isNotEmpty()) {
+            if (reason.isNotBlank()) {
                 showProgress()
                 val data = mapOf(
                     "cancelled" to true,
@@ -42,7 +42,7 @@ class CancelAlarmActivity : AppCompatActivity() {
 
                 alarmsRef.update(data)
                     .addOnCompleteListener {
-                        if (it.isSuccessful) {
+                        if (it.isComplete) {
                             hideProgress()
                             val toast = Toast(MainApplication.applicationContext())
                             val view: View = View.inflate(
@@ -83,8 +83,9 @@ class CancelAlarmActivity : AppCompatActivity() {
                                         PendingIntent.FLAG_UPDATE_CURRENT
                                     )
                                 alarmManager.cancel(placePendingIntent)
-                                finish()
                             }
+
+                            finish()
                         }
                     }
             } else {

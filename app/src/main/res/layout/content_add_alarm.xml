@@ -156,7 +156,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintBottom_toBottomOf="@+id/place_switch"
-                        android:text="@string/place"/>
+                        android:text="@string/hos"/>
 
                 <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/place_switch"
@@ -165,62 +165,6 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                 />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cl_location"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-            >
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@android:color/holo_red_dark"
-                        android:textSize="15sp"
-                        android:fontFamily="@font/product_sans_regular"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="@+id/iv_location"
-                        android:text="@string/location"/>
-
-                <ImageView
-                        android:id="@+id/iv_location"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        app:layout_constraintEnd_toStartOf="@+id/input_layout_location"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginEnd="5dp"
-                        android:src="@drawable/navigation"
-                        android:tint="@android:color/holo_red_light"
-                        android:contentDescription="@string/img_dsc"
-                />
-
-                <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/input_layout_location"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="0dp"
-                        android:padding="0dp"
-                        app:errorEnabled="true"
-                        app:helperTextEnabled="false"
-                        app:hintEnabled="false"
-                        app:boxBackgroundMode="none"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/iv_location"
-                        app:layout_constraintBottom_toBottomOf="@+id/iv_location"
-                >
-
-                    <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edit_text_location"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/port_florence"
-                            android:inputType="text"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:textSize="15sp"
-                    />
-                </com.google.android.material.textfield.TextInputLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout

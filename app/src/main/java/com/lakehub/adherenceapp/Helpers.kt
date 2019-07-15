@@ -27,6 +27,15 @@ fun displayTime(dateStr: String): String {
     return  formatter.print(date)
 }
 
+fun displayDateTime(dateStr: String): String {
+    val dateFormat = "yyyy MM dd HH:mm"
+    val dateFormatter = DateTimeFormat.forPattern(dateFormat)
+    val date = dateFormatter.parseDateTime(dateStr)
+    val format = "yyyy MMM dd, hh:mm a"
+    val formatter = DateTimeFormat.forPattern(format)
+    return  formatter.print(date)
+}
+
 fun displayTime(date: DateTime): String {
     val format = "hh:mm a"
     val formatter = DateTimeFormat.forPattern(format)

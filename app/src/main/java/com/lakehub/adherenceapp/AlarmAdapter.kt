@@ -1,18 +1,12 @@
 package com.lakehub.adherenceapp
 
-import android.app.Activity
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.view.*
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.delete_success_toast.view.*
 import org.joda.time.format.DateTimeFormat
 
 
@@ -41,8 +35,13 @@ class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
         val alarm = alarms[position]
 
         holder.tvDescription.text = limitStringLength(alarm.description, 50)
-        holder.timeTv.text = displayTime(alarm.fromDate)
         holder.tvCount.text = (position + 1).toString()
+
+        if (alarm.recent) {
+            holder.timeTv.text = displayDateTime(alarm.fromDate)
+        } else {
+            holder.timeTv.text = displayTime(alarm.fromDate)
+        }
 
         if (holder.adapterPosition == 0) {
             holder.activeView.visibility = View.VISIBLE
@@ -102,7 +101,6 @@ class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
                     myIntent.putExtra("isPlace", alarm.isPlace)
                     myIntent.putExtra("medType", alarm.medType)
                     myIntent.putExtra("repeatMode", alarm.repeatMode)
-                    myIntent.putExtra("location", alarm.location)
 //                    (context as Activity).startActivityForResult(myIntent, 900)
                     context.startActivity(myIntent)
                 }

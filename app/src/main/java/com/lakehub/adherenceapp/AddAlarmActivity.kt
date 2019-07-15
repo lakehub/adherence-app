@@ -218,8 +218,8 @@ class AddAlarmActivity : AppCompatActivity() {
 
         val offset = TimeZone.getDefault().rawOffset
         val jodaTz = DateTimeZone.forOffsetMillis(offset)
-        var fromDate = DateTime(jodaTz)
-        var toDate = DateTime(jodaTz).plusHours(1)
+        var fromDate = DateTime.now(jodaTz)
+        var toDate = fromDate.plusHours(1)
 
         val myDateFormat = "MMM dd, yyyy"
         val myTimeFormat = "hh:mm a"
@@ -389,7 +389,6 @@ class AddAlarmActivity : AppCompatActivity() {
             val dateFormat = "yyyy MM dd HH:mm"
             val dateFormatter = DateTimeFormat.forPattern(dateFormat)
             val description = edit_text.text.toString().trim()
-            val location = edit_text_location.text.toString().trim()
             val isPlace = place_switch.isChecked
             val medType = if (!isPlace) {
                 medication_type_spinner.selectedItemPosition.plus(1)
@@ -407,7 +406,7 @@ class AddAlarmActivity : AppCompatActivity() {
             val myFinalDateStr = myFinalDateFormatter.print(fromDate)
 
             if (!inProgress) {
-                if (description == "" || (isPlace && location.isEmpty())) {
+                if (description.isBlank()) {
                     val toast = Toast(this)
                     val view: View = layoutInflater.inflate(R.layout.warning, null)
                     val textView: TextView = view.findViewById(R.id.message)
@@ -416,7 +415,26 @@ class AddAlarmActivity : AppCompatActivity() {
                     toast.setGravity(Gravity.BOTTOM, 30, 30)
                     toast.duration = Toast.LENGTH_SHORT
                     toast.show()
+                } else if (toUtc(fromDate).isBeforeNow || toUtc(fromDate).isEqualNow) {
+                    val toast = Toast(this)
+                    val view: View = layoutInflater.inflate(R.layout.warning, null)
+                    val textView: TextView = view.findViewById(R.id.message)
+                    textView.text = getString(R.string.after_now)
+                    toast.view = view
+                    toast.setGravity(Gravity.BOTTOM, 30, 30)
+                    toast.duration = Toast.LENGTH_SHORT
+                    toast.show()
+                } else if (isPlace && toUtc(toDate).millis.minus(toUtc(fromDate).millis) < 60 * 60 * 1000) {
+                    val toast = Toast(this)
+                    val view: View = layoutInflater.inflate(R.layout.warning, null)
+                    val textView: TextView = view.findViewById(R.id.message)
+                    textView.text = getString(R.string.at_least_one_hr)
+                    toast.view = view
+                    toast.setGravity(Gravity.BOTTOM, 30, 30)
+                    toast.duration = Toast.LENGTH_SHORT
+                    toast.show()
                 } else {
+                    showProgress()
                     val id = ThreadLocalRandom.current().nextInt()
                     val phoneNumber = AppPreferences.phoneNo
                     val alarmsRef = FirebaseFirestore.getInstance()
@@ -427,7 +445,6 @@ class AddAlarmActivity : AppCompatActivity() {
                         "id" to id,
                         "phoneNumber" to phoneNumber,
                         "description" to description,
-                        "location" to location,
                         "alarmTonePath" to tonePath,
                         "repeatMode" to repeatModeList,
                         "fromDate" to dateFormatter.print(fromDate),
@@ -440,10 +457,11 @@ class AddAlarmActivity : AppCompatActivity() {
                         "confirmed" to false,
                         "missed" to false,
                         "reasonToCancel" to "",
-                        "rang" to false
+                        "rang" to false,
+                        "millis" to fromDate.millis
                     )
 
-                    alarmsRef.set(alarm, SetOptions.merge())
+                    alarmsRef.set(alarm)
                         .addOnCompleteListener {
                             if (it.isComplete) {
                                 hideProgress()
@@ -492,12 +510,11 @@ class AddAlarmActivity : AppCompatActivity() {
                                         MainApplication.applicationContext(),
                                         ConfirmAttendPlaceReceiver::class.java
                                     )
-                                    placeIntent.putExtra("location", location)
                                     placeIntent.putExtra("id", id)
                                     placeIntent.putExtra("snoozed", 0)
                                     placeIntent.putExtra("date", dateFormatter.print(toDate))
-                                    myIntent.putExtra("docId", alarmsRef.id)
-                                    myIntent.putExtra("repeatMode", repeatModeList)
+                                    placeIntent.putExtra("docId", alarmsRef.id)
+                                    placeIntent.putExtra("repeatMode", repeatModeList)
                                     val placePendingIntent =
                                         PendingIntent.getBroadcast(
                                             this,
@@ -516,17 +533,14 @@ class AddAlarmActivity : AppCompatActivity() {
             }
         }
 
-        cl_location.visibility = View.GONE
         cl_to_date.visibility = View.GONE
         cl_med_type.visibility = View.VISIBLE
 
         place_switch.setOnCheckedChangeListener { _, checked ->
             if (checked) {
-                cl_location.visibility = View.VISIBLE
                 cl_to_date.visibility = View.VISIBLE
                 cl_med_type.visibility = View.GONE
             } else {
-                cl_location.visibility = View.GONE
                 cl_to_date.visibility = View.GONE
                 cl_med_type.visibility = View.VISIBLE
             }

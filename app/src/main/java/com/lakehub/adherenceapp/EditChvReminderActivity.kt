@@ -457,53 +457,65 @@ class EditChvReminderActivity : AppCompatActivity() {
             val myFinalDateStr = myFinalDateFormatter.print(myFromDate)
 
             if (!inProgress) {
-                showProgress()
-                val phoneNumber = FirebaseAuth.getInstance().currentUser?.phoneNumber
-                val alarmsRef = FirebaseFirestore.getInstance()
-                    .collection("chv_reminders")
-                    .document(docId!!)
+                if (toUtc(myFromDate).isBeforeNow || toUtc(myFromDate).isEqualNow) {
+                    val toast = Toast(this)
+                    val view: View = layoutInflater.inflate(R.layout.warning, null)
+                    val textView: TextView = view.findViewById(R.id.message)
+                    textView.text = getString(R.string.after_now)
+                    toast.view = view
+                    toast.setGravity(Gravity.BOTTOM, 30, 30)
+                    toast.duration = Toast.LENGTH_SHORT
+                    toast.show()
+                } else {
+                    showProgress()
+                    val phoneNumber = FirebaseAuth.getInstance().currentUser?.phoneNumber
+                    val alarmsRef = FirebaseFirestore.getInstance()
+                        .collection("chv_reminders")
+                        .document(docId!!)
 
-                val data = mapOf(
-                    "alarmTonePath" to tonePath,
-                    "dateTime" to dateFormatter.print(myFromDate),
-                    "repeatMode" to repeatModeList,
-                    "medicationType" to medication_type_spinner.selectedItemPosition.plus(1),
-                    "isDrug" to drug_switch.isChecked,
-                    "isAppointment" to appointment_switch.isChecked
-                )
+                    val data = mapOf(
+                        "alarmTonePath" to tonePath,
+                        "dateTime" to dateFormatter.print(myFromDate),
+                        "repeatMode" to repeatModeList,
+                        "medicationType" to medication_type_spinner.selectedItemPosition.plus(1),
+                        "isDrug" to drug_switch.isChecked,
+                        "isAppointment" to appointment_switch.isChecked
+                    )
 
-                alarmsRef.update(data)
-                    .addOnCompleteListener {
-                        if (it.isComplete) {
-                            hideProgress()
-                            val toast = Toast(this)
-                            val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
-                            val textView: TextView = view.findViewById(R.id.message)
-                            textView.text = getString(R.string.alarm_edit_success)
-                            toast.view = view
-                            toast.setGravity(Gravity.BOTTOM, 30, 30)
-                            toast.duration = Toast.LENGTH_SHORT
-                            toast.show()
+                    alarmsRef.update(data)
+                        .addOnCompleteListener {
+                            if (it.isComplete) {
+                                hideProgress()
+                                val toast = Toast(this)
+                                val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
+                                val textView: TextView = view.findViewById(R.id.message)
+                                textView.text = getString(R.string.alarm_edit_success)
+                                toast.view = view
+                                toast.setGravity(Gravity.BOTTOM, 30, 30)
+                                toast.duration = Toast.LENGTH_SHORT
+                                toast.show()
 
-                            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                            val millis = toUtc(myFromDate).millis
+                                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                                val millis = toUtc(myFromDate).millis
 
-                            val myIntent = Intent(MainApplication.applicationContext(), ChvReminderReceiver::class.java)
-                            myIntent.putExtra("note", description)
-                            myIntent.putExtra("id", id)
-                            myIntent.putExtra("snoozed", 0)
-                            myIntent.putExtra("date", dateFormatter.print(myFromDate))
-                            myIntent.putExtra("tonePath", tonePath)
-                            myIntent.putExtra("docId", docId)
-                            myIntent.putExtra("repeatMode", repeatModeList)
-                            myIntent.putExtra("isDrug", drug_switch.isChecked)
-                            myIntent.putExtra("isAppointment", appointment_switch.isChecked)
-                            val pendingIntent =
-                                PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
-                            finish()
+                                val myIntent =
+                                    Intent(MainApplication.applicationContext(), ChvReminderReceiver::class.java)
+                                myIntent.putExtra("note", description)
+                                myIntent.putExtra("id", id)
+                                myIntent.putExtra("snoozed", 0)
+                                myIntent.putExtra("date", dateFormatter.print(myFromDate))
+                                myIntent.putExtra("tonePath", tonePath)
+                                myIntent.putExtra("docId", docId)
+                                myIntent.putExtra("repeatMode", repeatModeList)
+                                myIntent.putExtra("isDrug", drug_switch.isChecked)
+                                myIntent.putExtra("isAppointment", appointment_switch.isChecked)
+                                val pendingIntent =
+                                    PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
+                                finish()
+                            }
                         }
-                    }
+                }
             }
         }
 

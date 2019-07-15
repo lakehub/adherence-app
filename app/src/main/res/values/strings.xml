@@ -186,4 +186,10 @@
     <string name="deactivate_client_dsc">Do you want to deactivate this client?</string>
     <string name="client_deactivate_success">Client deactivated successfully</string>
     <string name="edit_reminder">Edit Reminder</string>
+    <string name="follow_up">Follow Up</string>
+    <string name="hos">Hospital</string>
+    <string name="after_now">Please choose date after now</string>
+    <string name="at_least_one_hr">The difference between to and from date should be at least an hour</string>
+    <string name="select_client">Select Client</string>
+    <string name="choose_client">Choose Client…</string>
 </resources>

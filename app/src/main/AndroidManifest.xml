@@ -16,8 +16,11 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".EditChvReminderActivity"
-                  android:theme="@style/MaterialTheme.NoActionBar"/>
+        <activity android:name=".FollowUpActivity">
+        </activity>
+        <activity
+                android:name=".EditChvReminderActivity"
+                android:theme="@style/MaterialTheme.NoActionBar"/>
 
         <meta-data
                 android:name="google_analytics_adid_collection_enabled"
@@ -50,8 +53,9 @@
                 android:exported="false">
         </receiver>
 
-        <activity android:name=".SelectClientActivity">
-        </activity>
+        <activity android:name=".SelectClientActivity"
+                  android:theme="@style/MaterialTheme.NoActionBar"/>
+
         <activity
                 android:name=".AddClientActivity"
                 android:theme="@style/MaterialTheme.NoActionBar"/>

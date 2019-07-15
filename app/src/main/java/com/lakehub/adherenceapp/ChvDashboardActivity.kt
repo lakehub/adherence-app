@@ -167,8 +167,10 @@ class ChvDashboardActivity : AppCompatActivity() {
                         if (selectedDate != day.date) {
                             val oldDate = selectedDate
                             selectedDate = day.date
-                            toolbar.calendar_view.notifyDateChanged(day.date)
-                            oldDate?.let { toolbar.calendar_view.notifyDateChanged(oldDate) }
+                            if (toolbar.calendar_view != null) {
+                                toolbar.calendar_view.notifyDateChanged(day.date)
+                                oldDate?.let { toolbar.calendar_view.notifyDateChanged(oldDate) }
+                            }
 
                             selectedDateStr = selectedDate.toString()
 

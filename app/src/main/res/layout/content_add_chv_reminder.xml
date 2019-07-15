@@ -190,6 +190,37 @@
             />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_client"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="20dp">
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorRed"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/product_sans_regular"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:text="@string/client"/>
+
+            <TextView
+                    android:id="@+id/tv_client"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="@string/choose_client"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/product_sans_regular"
+                    android:textSize="15sp"
+            />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <View
                 android:id="@+id/appointment_divider"
                 android:layout_width="match_parent"

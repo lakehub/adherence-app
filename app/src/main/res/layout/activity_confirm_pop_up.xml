@@ -148,6 +148,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_view_3"
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal"
+                android:background="@android:color/white"
         >
             <Button
                     android:id="@+id/btn_turn_off"
@@ -156,7 +157,7 @@
                     android:background="@color/colorGreenLight"
                     android:textColor="@android:color/white"
                     android:text="@string/taken"
-                    android:padding="30dp"
+                    android:padding="20dp"
                     android:textSize="18sp"
                     app:layout_constraintTop_toTopOf="@+id/btn_dismiss"
                     app:layout_constraintStart_toStartOf="parent"
@@ -168,7 +169,7 @@
                     android:background="@color/colorPurple"
                     android:textColor="@android:color/white"
                     android:text="@string/dismiss"
-                    android:padding="30dp"
+                    android:padding="20dp"
                     android:textSize="18sp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

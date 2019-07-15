@@ -122,6 +122,7 @@ class AddChvReminderActivity : AppCompatActivity() {
         }
 
         cl_med_type.makeGone()
+        cl_client.makeGone()
 
         drug_switch.setOnCheckedChangeListener { _, checked ->
             if (checked) {
@@ -139,9 +140,11 @@ class AddChvReminderActivity : AppCompatActivity() {
             if (checked) {
                 drug_container.makeGone()
                 drug_divider.makeGone()
+                cl_client.makeVisible()
             } else {
                 drug_container.makeVisible()
                 drug_divider.makeVisible()
+                cl_client.makeGone()
             }
         }
 
@@ -311,6 +314,10 @@ class AddChvReminderActivity : AppCompatActivity() {
             openRepeatModeMenu()
         }
 
+        tv_client.setOnClickListener {
+            startActivityForResult(Intent(this, SelectClientActivity::class.java), 1001)
+        }
+
         if (Build.VERSION.SDK_INT >= 23) {
             Dexter.withActivity(this)
                 .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -399,11 +406,20 @@ class AddChvReminderActivity : AppCompatActivity() {
             val myFinalDateStr = myFinalDateFormatter.print(fromDate)
 
             if (!inProgress) {
-                if (description.isEmpty()) {
+                if (description.isBlank()) {
                     val toast = Toast(this)
                     val view: View = layoutInflater.inflate(R.layout.warning, null)
                     val textView: TextView = view.findViewById(R.id.message)
                     textView.text = getString(R.string.fill_fields)
+                    toast.view = view
+                    toast.setGravity(Gravity.BOTTOM, 30, 30)
+                    toast.duration = Toast.LENGTH_SHORT
+                    toast.show()
+                } else if (toUtc(fromDate).isBeforeNow || toUtc(fromDate).isEqualNow) {
+                    val toast = Toast(this)
+                    val view: View = layoutInflater.inflate(R.layout.warning, null)
+                    val textView: TextView = view.findViewById(R.id.message)
+                    textView.text = getString(R.string.after_now)
                     toast.view = view
                     toast.setGravity(Gravity.BOTTOM, 30, 30)
                     toast.duration = Toast.LENGTH_SHORT

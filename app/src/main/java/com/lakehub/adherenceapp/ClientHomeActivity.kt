@@ -4,12 +4,14 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.model.InDateStyle
@@ -46,6 +48,7 @@ class ClientHomeActivity : AppCompatActivity() {
     private var selectedDate: LocalDate? = null
     private var selectedDateStr: String? = null
     private var currentYearMonth: YearMonth? = null
+    private var selected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,8 +129,6 @@ class ClientHomeActivity : AppCompatActivity() {
         val mySelectedDateFormatter = DateTimeFormat.forPattern(mySelectedDateFormat)
         selectedDateStr = mySelectedDateFormatter.print(DateTime.now())
 
-        fetchData()
-
         cl_logout_menu.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START)
 //            auth.signOut()
@@ -182,7 +183,6 @@ class ClientHomeActivity : AppCompatActivity() {
 
             init {
                 view.setOnClickListener {
-
                     if (day.owner == DayOwner.THIS_MONTH) {
                         if (selectedDate != day.date) {
                             val oldDate = selectedDate
@@ -191,11 +191,11 @@ class ClientHomeActivity : AppCompatActivity() {
                             oldDate?.let { calendar_view.notifyDateChanged(oldDate) }
 
                             selectedDateStr = selectedDate.toString()
-
-                            fetchData()
+                            selected = true
+                            fetchByDate()
 
                         }
-                        calendar_view.notifyDayChanged(day)
+//                        calendar_view.notifyDayChanged(day)
                     }
                 }
             }
@@ -226,6 +226,7 @@ class ClientHomeActivity : AppCompatActivity() {
 
         }*/
 
+
         calendar_view.dayBinder = object : DayBinder<DayViewContainer> {
             override fun create(view: View) = DayViewContainer(view)
             override fun bind(container: DayViewContainer, day: CalendarDay) {
@@ -233,17 +234,33 @@ class ClientHomeActivity : AppCompatActivity() {
                 val textView = container.textView
                 textView.text = day.date.dayOfMonth.toString()
                 if (day.owner == DayOwner.THIS_MONTH) {
-                    when (day.date) {
-                        selectedDate -> {
-                            textView.setBackgroundResource(R.drawable.circular_bg_gray)
+                    if (selected) {
+                        when {
+                            day.date == selectedDate -> {
+                                textView.setBackgroundResource(R.drawable.circular_bg_gray)
+                            }
+                            day.date == today -> {
+                                textView.setTextColorRes(R.color.colorPrimary)
+                                textView.background = null
+                            }
+                            else -> {
+                                textView.setTextColorRes(android.R.color.black)
+                                textView.background = null
+                            }
                         }
-                        today -> {
-                            textView.setTextColorRes(R.color.colorPrimary)
-                            textView.background = null
-                        }
-                        else -> {
-                            textView.setTextColorRes(android.R.color.black)
-                            textView.background = null
+                    } else {
+                        when {
+                            day.date == selectedDate && day.date != today -> {
+                                textView.setBackgroundResource(R.drawable.circular_bg_gray)
+                            }
+                            day.date == today -> {
+                                textView.setTextColorRes(R.color.colorPrimary)
+                                textView.background = null
+                            }
+                            else -> {
+                                textView.setTextColorRes(android.R.color.black)
+                                textView.background = null
+                            }
                         }
                     }
                 } else {
@@ -291,6 +308,8 @@ class ClientHomeActivity : AppCompatActivity() {
 
         }
 
+        fetchRecent()
+
     }
 
     override fun onBackPressed() {
@@ -306,21 +325,24 @@ class ClientHomeActivity : AppCompatActivity() {
         /*if (requestCode == 900 && resultCode == Activity.RESULT_OK) {
             val success = data?.getBooleanExtra("success", false)
             if (success != null && success)
-                fetchData(selectedDateStr!!)
+                fetchByDate(selectedDateStr!!)
         }*/
     }
 
-    private fun fetchData() {
+    private fun fetchByDate() {
         if (selectedDateStr != null) {
             showProgress()
             val phoneNumber = AppPreferences.phoneNo
 
             val alarmsRef = FirebaseFirestore.getInstance().collection("alarms")
-            alarmsRef.whereEqualTo("phoneNumber", phoneNumber!!)
+                .whereEqualTo("phoneNumber", phoneNumber!!)
                 .whereEqualTo("date", selectedDateStr)
-                .get()
+                .whereEqualTo("cancelled", false)
+
+            alarmsRef.get()
                 .addOnCompleteListener {
-                    hideProgress()
+                    if (it.isComplete)
+                        hideProgress()
                     /*val documents = it.result?.documents
                     if (documents!!.isNotEmpty()) {
                         showAlarms()
@@ -363,14 +385,10 @@ class ClientHomeActivity : AppCompatActivity() {
                         hideAlarms()
                     }*/
                 }
-                .addOnFailureListener {
-                    hideProgress()
-                }
 
-            alarmsRef.whereEqualTo("phoneNumber", phoneNumber)
-                .whereEqualTo("date", selectedDateStr)
-                .addSnapshotListener { querySnapshot, _ ->
-                    hideProgress()
+            alarmsRef.addSnapshotListener { querySnapshot, _ ->
+                hideProgress()
+                if (selected) {
                     if (querySnapshot != null && querySnapshot.documents.isNotEmpty()) {
                         alarmList.clear()
                         missedAlarmList.clear()
@@ -382,7 +400,6 @@ class ClientHomeActivity : AppCompatActivity() {
                                 toDate = document.getString("toDate"),
                                 docId = document.id,
                                 alarmTone = document.getString("alarmTonePath"),
-                                location = document.getString("location"),
                                 isPlace = document.getBoolean("isPlace"),
                                 cancelled = document.getBoolean("cancelled")!!,
                                 medType = document.getDouble("medicationType")?.toInt(),
@@ -440,6 +457,7 @@ class ClientHomeActivity : AppCompatActivity() {
                         hideMissedAlarms()
                     }
                 }
+            }
         }
 
         /*recycler_view.addOnItemTouchListener(object : RecyclerItemClickListener(this,
@@ -468,6 +486,137 @@ class ClientHomeActivity : AppCompatActivity() {
         }
         popup.show()
     }*/
+
+    private fun fetchRecent() {
+        selected = false
+        selectDate(LocalDate.now())
+        val offset = TimeZone.getDefault().rawOffset
+        val tz = DateTimeZone.forOffsetMillis(offset)
+        val millis = DateTime.now(tz).millis
+        showProgress()
+        val phoneNumber = AppPreferences.phoneNo
+
+        val alarmsRef = FirebaseFirestore.getInstance().collection("alarms")
+            .whereEqualTo("phoneNumber", phoneNumber!!)
+            .whereEqualTo("cancelled", false)
+            .whereEqualTo("rang", false)
+            .whereGreaterThanOrEqualTo("millis", millis)
+            .orderBy("millis", Query.Direction.ASCENDING)
+            .limit(5)
+
+        val missedAlarmsRef = FirebaseFirestore.getInstance().collection("alarms")
+            .whereEqualTo("phoneNumber", phoneNumber)
+            .whereEqualTo("missed", true)
+            .orderBy("millis", Query.Direction.ASCENDING)
+            .limit(5)
+        /*alarmsRef.get()
+            .addOnCompleteListener {
+                if (it.isComplete) {
+                    hideProgress()
+                }
+            }*/
+
+        alarmsRef.addSnapshotListener { querySnapshot, _ ->
+            hideProgress()
+            if (!selected) {
+                if (querySnapshot != null && !querySnapshot.isEmpty) {
+                    alarmList.clear()
+
+                    for (document in querySnapshot.documents) {
+                        val alarm = Alarm(
+                            description = document.getString("description")!!,
+                            fromDate = document.getString("fromDate")!!,
+                            toDate = document.getString("toDate"),
+                            docId = document.id,
+                            alarmTone = document.getString("alarmTonePath"),
+                            isPlace = document.getBoolean("isPlace"),
+                            cancelled = document.getBoolean("cancelled")!!,
+                            medType = document.getDouble("medicationType")?.toInt(),
+                            repeatMode = document.get("repeatMode") as ArrayList<Int>,
+                            id = document.getLong("id")?.toInt()!!,
+                            snoozed = document.getLong("snoozed")?.toInt()!!,
+                            rang = document.getBoolean("rang")!!,
+                            missed = document.getBoolean("missed")!!,
+                            recent = true
+                        )
+                        alarmList.add(alarm)
+
+                    }
+
+                    val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
+                        when {
+                            dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
+                            dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                            else -> 0
+                        }
+                    })
+
+                    alarmList.clear()
+                    alarmList.addAll(sorted)
+
+                    myAdapter.notifyDataSetChanged()
+
+                    if (alarmList.isEmpty()) {
+                        hideAlarms()
+                    } else {
+                        showAlarms()
+                    }
+                } else {
+                    hideAlarms()
+                }
+            }
+        }
+
+        missedAlarmsRef.addSnapshotListener { querySnapshot, e ->
+            if (!selected) {
+                if (querySnapshot != null && !querySnapshot.isEmpty) {
+                    missedAlarmList.clear()
+
+                    for (document in querySnapshot.documents) {
+                        val alarm = Alarm(
+                            description = document.getString("description")!!,
+                            fromDate = document.getString("fromDate")!!,
+                            toDate = document.getString("toDate"),
+                            docId = document.id,
+                            alarmTone = document.getString("alarmTonePath"),
+                            isPlace = document.getBoolean("isPlace"),
+                            cancelled = document.getBoolean("cancelled")!!,
+                            medType = document.getDouble("medicationType")?.toInt(),
+                            repeatMode = document.get("repeatMode") as ArrayList<Int>,
+                            id = document.getLong("id")?.toInt()!!,
+                            snoozed = document.getLong("snoozed")?.toInt()!!,
+                            rang = document.getBoolean("rang")!!,
+                            missed = document.getBoolean("missed")!!,
+                            recent = true
+                        )
+                        missedAlarmList.add(alarm)
+
+                    }
+
+                    val missedSorted = missedAlarmList.sortedWith(Comparator { o1, o2 ->
+                        when {
+                            dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
+                            dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                            else -> 0
+                        }
+                    })
+
+                    missedAlarmList.clear()
+                    missedAlarmList.addAll(missedSorted)
+
+                    missedAlarmAdapter.notifyDataSetChanged()
+
+                    if (missedAlarmList.isEmpty()) {
+                        hideMissedAlarms()
+                    } else {
+                        showMissedAlarms()
+                    }
+                } else {
+                    hideMissedAlarms()
+                }
+            }
+        }
+    }
 
     private fun showProgress() {
         progress_bar.visibility = View.VISIBLE
@@ -498,17 +647,31 @@ class ClientHomeActivity : AppCompatActivity() {
     }
 
     private fun showHome() {
+        fetchRecent()
         cl_upcoming_alarms.makeVisible()
         cl_missed_alarms.makeVisible()
     }
 
     private fun showUpcoming() {
+        fetchRecent()
         cl_upcoming_alarms.makeVisible()
         cl_missed_alarms.makeGone()
     }
 
     private fun showMissed() {
+        fetchRecent()
         cl_upcoming_alarms.makeGone()
         cl_missed_alarms.makeVisible()
+    }
+
+    private fun selectDate(date: LocalDate) {
+        calendar_view.smoothScrollToDate(date)
+        if (selectedDate != date) {
+            val oldDate = selectedDate
+            selectedDate = date
+            oldDate?.let { calendar_view.notifyDateChanged(it) }
+            calendar_view.notifyDateChanged(date)
+
+        }
     }
 }

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:background="@android:color/black"
+        android:paddingTop="20dp">
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_user"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/user"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraint_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/iv_user"
+            app:layout_constraintTop_toTopOf="@+id/iv_user"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_user">
+        <TextView
+                android:id="@+id/tv_phone_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sample_phone_no"
+                android:textSize="15sp"
+                android:fontFamily="@font/product_sans_regular"
+                android:textColor="@android:color/white"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="10dp"
+        />
+
+        <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sample_name"
+                android:textSize="15sp"
+                android:fontFamily="@font/product_sans_regular"
+                android:textColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@+id/tv_phone_no"
+                app:layout_constraintStart_toStartOf="@+id/tv_phone_no"
+        />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/iv_user"
+            android:background="@color/colorTranslucent"
+            app:layout_constraintStart_toStartOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
