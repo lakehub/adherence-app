@@ -1,4 +1,4 @@
-package com.lakehub.adherenceapp
+package com.lakehub.adherenceapp.data
 
 data class Client(
     val name: String,

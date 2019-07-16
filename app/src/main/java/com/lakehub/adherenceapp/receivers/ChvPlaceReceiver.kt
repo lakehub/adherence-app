@@ -1,4 +1,4 @@
-package com.lakehub.adherenceapp
+package com.lakehub.adherenceapp.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context

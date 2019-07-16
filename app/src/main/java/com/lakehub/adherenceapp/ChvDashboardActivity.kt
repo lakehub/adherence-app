@@ -10,12 +10,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.model.InDateStyle
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarview.utils.yearMonth
+import com.lakehub.adherenceapp.adapters.ChvMissedReminderAdapter
+import com.lakehub.adherenceapp.adapters.ChvReminderAdapter
+import com.lakehub.adherenceapp.data.ChvReminder
 import kotlinx.android.synthetic.main.activity_chv_dashboard.*
 import kotlinx.android.synthetic.main.app_bar_chv_dashboard.*
 import kotlinx.android.synthetic.main.app_bar_chv_dashboard.view.*
@@ -42,6 +46,7 @@ class ChvDashboardActivity : AppCompatActivity() {
     private lateinit var missedAlarmList: ArrayList<ChvReminder>
     private lateinit var myAdapter: ChvReminderAdapter
     private lateinit var missedAlarmAdapter: ChvMissedReminderAdapter
+    private var selected: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,11 +90,16 @@ class ChvDashboardActivity : AppCompatActivity() {
             drawer_layout.closeDrawer(GravityCompat.START)
         }
 
+        cl_follow_up_menu.setOnClickListener {
+            startActivity(Intent(this, FollowUpActivity::class.java))
+            drawer_layout.closeDrawer(GravityCompat.START)
+        }
+
         add_fab.setOnClickListener {
             startActivityForResult(Intent(this, AddChvReminderActivity::class.java), 900)
         }
 
-        cl_settings_menu.setOnClickListener {
+        cl_profile_menu.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START, true)
             startActivity(Intent(this, SettingsActivity::class.java))
         }
@@ -143,8 +153,6 @@ class ChvDashboardActivity : AppCompatActivity() {
         val mySelectedDateFormatter = DateTimeFormat.forPattern(mySelectedDateFormat)
         selectedDateStr = mySelectedDateFormatter.print(date)
 
-        fetchData()
-
         val currentMonth = YearMonth.of(date.year, date.monthOfYear)
         val firstMonth = currentMonth.minusMonths(0)
         val lastMonth = currentMonth.plusMonths(120)
@@ -173,11 +181,12 @@ class ChvDashboardActivity : AppCompatActivity() {
                             }
 
                             selectedDateStr = selectedDate.toString()
+                            selected = true
 
-                            fetchData()
+                            fetchByDate()
 
                         }
-                        toolbar.calendar_view.notifyDayChanged(day)
+//                        toolbar.calendar_view.notifyDayChanged(day)
                     }
                 }
             }
@@ -190,17 +199,33 @@ class ChvDashboardActivity : AppCompatActivity() {
                 val textView = container.textView
                 textView.text = day.date.dayOfMonth.toString()
                 if (day.owner == DayOwner.THIS_MONTH) {
-                    when (day.date) {
-                        selectedDate -> {
-                            textView.setBackgroundResource(R.drawable.circular_bg_gray)
+                    if (selected) {
+                        when {
+                            day.date == selectedDate -> {
+                                textView.setBackgroundResource(R.drawable.circular_bg_gray)
+                            }
+                            day.date == today -> {
+                                textView.setTextColorRes(R.color.colorPrimary)
+                                textView.background = null
+                            }
+                            else -> {
+                                textView.setTextColorRes(android.R.color.black)
+                                textView.background = null
+                            }
                         }
-                        today -> {
-                            textView.setTextColorRes(R.color.colorPrimary)
-                            textView.background = null
-                        }
-                        else -> {
-                            textView.setTextColorRes(android.R.color.black)
-                            textView.background = null
+                    } else {
+                        when {
+                            day.date == selectedDate && day.date != today -> {
+                                textView.setBackgroundResource(R.drawable.circular_bg_gray)
+                            }
+                            day.date == today -> {
+                                textView.setTextColorRes(R.color.colorPrimary)
+                                textView.background = null
+                            }
+                            else -> {
+                                textView.setTextColorRes(android.R.color.black)
+                                textView.background = null
+                            }
                         }
                     }
                 } else {
@@ -247,28 +272,88 @@ class ChvDashboardActivity : AppCompatActivity() {
             }
 
         }
+
+        fetchRecent()
     }
 
-    private fun fetchData() {
+    private fun showProgress() {
+        progress_bar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgress() {
+        progress_bar.visibility = View.GONE
+    }
+
+    private fun hideAlarms() {
+        recycler_view_upcoming.makeGone()
+        tv_no_alarm.makeVisible()
+    }
+
+    private fun showAlarms() {
+        recycler_view_upcoming.makeVisible()
+        tv_no_alarm.makeGone()
+    }
+
+    private fun hideMissedAlarms() {
+        recycler_view_missed.makeGone()
+        tv_no_missed.makeVisible()
+    }
+
+    private fun showMissedAlarms() {
+        recycler_view_missed.makeVisible()
+        tv_no_missed.makeGone()
+    }
+
+    private fun showHome() {
+        fetchRecent()
+        cl_upcoming_alarms.makeVisible()
+        cl_missed_alarms.makeVisible()
+    }
+
+    private fun showUpcoming() {
+        fetchRecent()
+        cl_upcoming_alarms.makeVisible()
+        cl_missed_alarms.makeGone()
+    }
+
+    private fun showMissed() {
+        fetchRecent()
+        cl_upcoming_alarms.makeGone()
+        cl_missed_alarms.makeVisible()
+    }
+
+
+
+    private fun selectDate(date: LocalDate) {
+        calendar_view.smoothScrollToDate(date)
+        if (selectedDate != date) {
+            val oldDate = selectedDate
+            selectedDate = date
+            oldDate?.let { calendar_view.notifyDateChanged(it) }
+            calendar_view.notifyDateChanged(date)
+
+        }
+    }
+
+    private fun fetchByDate() {
         if (selectedDateStr != null) {
             showProgress()
             val phoneNumber = AppPreferences.phoneNo
 
             val alarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
-            alarmsRef.whereEqualTo("phoneNumber", phoneNumber!!)
+                .whereEqualTo("phoneNumber", phoneNumber!!)
                 .whereEqualTo("date", selectedDateStr)
-                .get()
+                .whereEqualTo("cancelled", false)
+
+            alarmsRef.get()
                 .addOnCompleteListener {
-                    hideProgress()
-                }
-                .addOnFailureListener {
-                    hideProgress()
+                    if (it.isComplete)
+                        hideProgress()
                 }
 
-            alarmsRef.whereEqualTo("phoneNumber", phoneNumber)
-                .whereEqualTo("date", selectedDateStr)
-                .addSnapshotListener { querySnapshot, _ ->
-                    hideProgress()
+            alarmsRef.addSnapshotListener { querySnapshot, _ ->
+                hideProgress()
+                if (selected) {
                     if (querySnapshot != null && querySnapshot.documents.isNotEmpty()) {
                         alarmList.clear()
                         missedAlarmList.clear()
@@ -279,6 +364,8 @@ class ChvDashboardActivity : AppCompatActivity() {
                                 fromDate = document.getString("dateTime")!!,
                                 docId = document.id,
                                 alarmTone = document.getString("alarmTonePath"),
+                                clientPhoneNo = document.getString("clientPhoneNo"),
+                                clientName = document.getString("clientName"),
                                 isDrug = document.getBoolean("isDrug"),
                                 isAppointment = document.getBoolean("isAppointment"),
                                 cancelled = document.getBoolean("cancelled")!!,
@@ -290,9 +377,9 @@ class ChvDashboardActivity : AppCompatActivity() {
                                 missed = document.getBoolean("missed")!!
                             )
 
-                            if (!alarm.cancelled && !alarm.rang && document.getString("date") == selectedDateStr) {
+                            if (!alarm.rang && document.getString("date") == selectedDateStr) {
                                 alarmList.add(alarm)
-                            } else if (alarm.missed && document.getString("date") == selectedDateStr) {
+                            } else if (alarm.missed) {
                                 missedAlarmList.add(alarm)
                             }
                         }
@@ -337,49 +424,142 @@ class ChvDashboardActivity : AppCompatActivity() {
                         hideMissedAlarms()
                     }
                 }
+            }
         }
     }
 
-    private fun showProgress() {
-        progress_bar.visibility = View.VISIBLE
-    }
+    private fun fetchRecent() {
+        selected = false
+        selectDate(LocalDate.now())
+        val offset = TimeZone.getDefault().rawOffset
+        val tz = DateTimeZone.forOffsetMillis(offset)
+        val millis = DateTime.now(tz).millis
+        showProgress()
+        val phoneNumber = AppPreferences.phoneNo
 
-    private fun hideProgress() {
-        progress_bar.visibility = View.GONE
-    }
+        val alarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
+            .whereEqualTo("phoneNumber", phoneNumber!!)
+            .whereEqualTo("cancelled", false)
+            .whereEqualTo("rang", false)
+            .whereGreaterThanOrEqualTo("millis", millis)
+            .orderBy("millis", Query.Direction.ASCENDING)
+            .limit(5)
 
-    private fun hideAlarms() {
-        recycler_view_upcoming.makeGone()
-        tv_no_alarm.makeVisible()
-    }
+        val missedAlarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
+            .whereEqualTo("phoneNumber", phoneNumber)
+            .whereEqualTo("missed", true)
+            .orderBy("millis", Query.Direction.ASCENDING)
+            .limit(5)
+        /*alarmsRef.get()
+            .addOnCompleteListener {
+                if (it.isComplete) {
+                    hideProgress()
+                }
+            }*/
 
-    private fun showAlarms() {
-        recycler_view_upcoming.makeVisible()
-        tv_no_alarm.makeGone()
-    }
+        alarmsRef.addSnapshotListener { querySnapshot, _ ->
+            hideProgress()
+            if (!selected) {
+                if (querySnapshot != null && !querySnapshot.isEmpty) {
+                    alarmList.clear()
 
-    private fun hideMissedAlarms() {
-        recycler_view_missed.makeGone()
-        tv_no_missed.makeVisible()
-    }
+                    for (document in querySnapshot.documents) {
+                        val alarm = ChvReminder(
+                            description = document.getString("description")!!,
+                            fromDate = document.getString("dateTime")!!,
+                            docId = document.id,
+                            alarmTone = document.getString("alarmTonePath"),
+                            isDrug = document.getBoolean("isDrug"),
+                            isAppointment = document.getBoolean("isAppointment"),
+                            cancelled = document.getBoolean("cancelled")!!,
+                            medType = document.getDouble("medicationType")?.toInt(),
+                            repeatMode = document.get("repeatMode") as ArrayList<Int>,
+                            id = document.getLong("id")?.toInt()!!,
+                            snoozed = document.getLong("snoozed")?.toInt()!!,
+                            rang = document.getBoolean("rang")!!,
+                            missed = document.getBoolean("missed")!!,
+                            clientPhoneNo = document.getString("clientPhoneNo"),
+                            clientName = document.getString("clientName"),
+                            recent = true
+                        )
+                        alarmList.add(alarm)
 
-    private fun showMissedAlarms() {
-        recycler_view_missed.makeVisible()
-        tv_no_missed.makeGone()
-    }
+                    }
 
-    private fun showHome() {
-        cl_upcoming_alarms.makeVisible()
-        cl_missed_alarms.makeVisible()
-    }
+                    val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
+                        when {
+                            dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
+                            dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                            else -> 0
+                        }
+                    })
 
-    private fun showUpcoming() {
-        cl_upcoming_alarms.makeVisible()
-        cl_missed_alarms.makeGone()
-    }
+                    alarmList.clear()
+                    alarmList.addAll(sorted)
 
-    private fun showMissed() {
-        cl_upcoming_alarms.makeGone()
-        cl_missed_alarms.makeVisible()
+                    myAdapter.notifyDataSetChanged()
+
+                    if (alarmList.isEmpty()) {
+                        hideAlarms()
+                    } else {
+                        showAlarms()
+                    }
+                } else {
+                    hideAlarms()
+                }
+            }
+        }
+
+        missedAlarmsRef.addSnapshotListener { querySnapshot, _ ->
+            if (!selected) {
+                if (querySnapshot != null && !querySnapshot.isEmpty) {
+                    missedAlarmList.clear()
+
+                    for (document in querySnapshot.documents) {
+                        val alarm = ChvReminder(
+                            description = document.getString("description")!!,
+                            fromDate = document.getString("dateTime")!!,
+                            docId = document.id,
+                            alarmTone = document.getString("alarmTonePath"),
+                            isDrug = document.getBoolean("isDrug"),
+                            isAppointment = document.getBoolean("isAppointment"),
+                            cancelled = document.getBoolean("cancelled")!!,
+                            medType = document.getDouble("medicationType")?.toInt(),
+                            repeatMode = document.get("repeatMode") as ArrayList<Int>,
+                            id = document.getLong("id")?.toInt()!!,
+                            snoozed = document.getLong("snoozed")?.toInt()!!,
+                            rang = document.getBoolean("rang")!!,
+                            missed = document.getBoolean("missed")!!,
+                            clientPhoneNo = document.getString("clientPhoneNo"),
+                            clientName = document.getString("clientName"),
+                            recent = true
+                        )
+                        missedAlarmList.add(alarm)
+
+                    }
+
+                    val missedSorted = missedAlarmList.sortedWith(Comparator { o1, o2 ->
+                        when {
+                            dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
+                            dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                            else -> 0
+                        }
+                    })
+
+                    missedAlarmList.clear()
+                    missedAlarmList.addAll(missedSorted)
+
+                    missedAlarmAdapter.notifyDataSetChanged()
+
+                    if (missedAlarmList.isEmpty()) {
+                        hideMissedAlarms()
+                    } else {
+                        showMissedAlarms()
+                    }
+                } else {
+                    hideMissedAlarms()
+                }
+            }
+        }
     }
 }

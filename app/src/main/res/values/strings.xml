@@ -192,4 +192,18 @@
     <string name="at_least_one_hr">The difference between to and from date should be at least an hour</string>
     <string name="select_client">Select Client</string>
     <string name="choose_client">Choose Client…</string>
+    <string name="no_appointment">You have no appointment with this client</string>
+    <string name="appointments">Appointments</string>
+    <string name="no_missed_medications">No Missed Medications</string>
+    <string name="no_client_follow_up">No client marked for follow up</string>
+    <string name="no_missed_medication">No client missed medication</string>
+    <string name="missed_medications">Missed Medications</string>
+    <string name="treatment">Treatment</string>
+    <string name="arv">ARV</string>
+    <string name="mark_for_follow_up">Mark for follow up</string>
+    <string name="sample_name_short">Chris</string>
+    <string name="mark_follow_up_success">Client marked for follow up successfully</string>
+    <string name="user_photo">User Photo</string>
+    <string name="browse">Browse</string>
+    <string name="username">Username</string>
 </resources>

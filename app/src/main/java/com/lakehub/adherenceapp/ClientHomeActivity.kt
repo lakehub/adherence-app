@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -18,6 +17,9 @@ import com.kizitonwose.calendarview.model.InDateStyle
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarview.utils.yearMonth
+import com.lakehub.adherenceapp.adapters.AlarmAdapter
+import com.lakehub.adherenceapp.adapters.MissedAlarmAdapter
+import com.lakehub.adherenceapp.data.Alarm
 import kotlinx.android.synthetic.main.activity_client_home.*
 import kotlinx.android.synthetic.main.app_bar_client_home.*
 import kotlinx.android.synthetic.main.app_bar_client_home.view.*
@@ -136,6 +138,7 @@ class ClientHomeActivity : AppCompatActivity() {
             AppPreferences.loggedIn = false
             AppPreferences.phoneNo = null
             AppPreferences.accountType = 0
+            AppPreferences.chvPhoneNo = null
             finish()
         }
 

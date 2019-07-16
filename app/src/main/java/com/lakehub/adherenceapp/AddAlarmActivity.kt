@@ -13,7 +13,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -22,15 +21,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import com.lakehub.adherenceapp.receivers.AlarmReceiver
+import com.lakehub.adherenceapp.receivers.ConfirmAttendPlaceReceiver
 import kotlinx.android.synthetic.main.activity_add_alarm.*
 import kotlinx.android.synthetic.main.content_add_alarm.*
 import org.joda.time.DateTime
@@ -458,7 +457,10 @@ class AddAlarmActivity : AppCompatActivity() {
                         "missed" to false,
                         "reasonToCancel" to "",
                         "rang" to false,
-                        "millis" to fromDate.millis
+                        "millis" to fromDate.millis,
+                        "chvPhoneNumber" to AppPreferences.chvPhoneNo,
+                        "name" to AppPreferences.myName,
+                        "marked" to false
                     )
 
                     alarmsRef.set(alarm)

@@ -4,7 +4,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:background="@android:color/black">
 
     <com.google.android.material.appbar.AppBarLayout
             android:layout_height="wrap_content"
@@ -34,31 +35,31 @@
                         android:layout_height="250dp">
                     <ImageView
                             android:id="@+id/iv_back"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:src="@drawable/arrow_back"
                             android:tint="@android:color/white"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             android:layout_marginStart="20dp"
                             android:layout_marginTop="20dp"
-                            android:padding="5dp"/>
+                            android:padding="5dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackgroundBorderless"/>
 
                     <TextView
                             android:id="@+id/tv_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             app:layout_constraintTop_toTopOf="@+id/iv_back"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/iv_back"
                             app:layout_constraintBottom_toBottomOf="@+id/iv_back"
-                            android:paddingStart="20dp"
-                            android:paddingEnd="20dp"
+                            android:layout_marginStart="20dp"
                             android:textSize="20sp"
-                            android:fontFamily="@font/product_sans_regular"
+                            android:fontFamily="@font/product_sans_bold"
                             android:textColor="@android:color/white"
-                            android:text="@string/good_morning_chv"
-                            android:layout_marginTop="10dp"/>
+                            android:text="@string/follow_up"/>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"

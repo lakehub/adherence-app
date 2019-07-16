@@ -13,6 +13,8 @@ object AppPreferences {
     private val ACCOUNT_TYPE = Pair("account_type", 0)
     private val TONE_PATH = Pair("tone_path", null)
     private val PHONE_NO = Pair("phone_no", null)
+    private val CHV_PHONE_NO = Pair("chv_phone_no", null)
+    private val MY_NAME = Pair("my_name", null)
 
 
     fun init(context: Context) {
@@ -54,4 +56,18 @@ object AppPreferences {
         set(value) = preferences.edit {
             it.putString(PHONE_NO.first, value)
         }
+
+    var chvPhoneNo: String?
+        get() = preferences.getString(CHV_PHONE_NO.first, CHV_PHONE_NO.second)
+        set(value) = preferences.edit {
+            it.putString(CHV_PHONE_NO.first, value)
+        }
+
+    var myName: String?
+        get() = preferences.getString(MY_NAME.first, MY_NAME.second)
+        set(value) = preferences.edit {
+            it.putString(MY_NAME.first, value)
+        }
+
+
 }

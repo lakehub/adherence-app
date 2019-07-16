@@ -12,6 +12,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
+import com.lakehub.adherenceapp.receivers.AlarmReceiver
+import com.lakehub.adherenceapp.receivers.ConfirmAttendPlaceReceiver
 import kotlinx.android.synthetic.main.activity_cancel_alarm.*
 import kotlinx.android.synthetic.main.delete_success_toast.view.*
 

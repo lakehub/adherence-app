@@ -16,8 +16,10 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".FollowUpActivity">
-        </activity>
+        <activity android:name=".ClientAppointmentsActivity"
+                  android:theme="@style/MaterialTheme.NoActionBar"/>
+        <activity android:name=".FollowUpActivity"
+                  android:theme="@style/MaterialTheme.NoActionBar"/>
         <activity
                 android:name=".EditChvReminderActivity"
                 android:theme="@style/MaterialTheme.NoActionBar"/>
@@ -37,7 +39,7 @@
                 android:theme="@style/MaterialTheme.NoActionBar"/>
 
         <receiver
-                android:name=".ChvPlaceReceiver"
+                android:name=".receivers.ChvPlaceReceiver"
                 android:enabled="true"
                 android:exported="false">
         </receiver>
@@ -48,14 +50,14 @@
                 android:theme="@style/Theme.AppCompat.Translucent"/>
 
         <receiver
-                android:name=".ChvReminderReceiver"
+                android:name=".receivers.ChvReminderReceiver"
                 android:enabled="true"
                 android:exported="false">
         </receiver>
 
-        <activity android:name=".SelectClientActivity"
-                  android:theme="@style/MaterialTheme.NoActionBar"/>
-
+        <activity
+                android:name=".SelectClientActivity"
+                android:theme="@style/MaterialTheme.NoActionBar"/>
         <activity
                 android:name=".AddClientActivity"
                 android:theme="@style/MaterialTheme.NoActionBar"/>
@@ -78,7 +80,7 @@
                 android:theme="@style/Theme.AppCompat.Translucent"/>
 
         <receiver
-                android:name=".ConfirmAttendPlaceReceiver"
+                android:name=".receivers.ConfirmAttendPlaceReceiver"
                 android:enabled="true"
                 android:exported="false">
         </receiver>
@@ -87,17 +89,17 @@
                 android:name=".EditAlarmActivity"
                 android:theme="@style/MaterialTheme.NoActionBar"/>
 
-        <receiver android:name=".BootCompletedReceiver">
+        <receiver android:name=".receivers.BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
         <service
-                android:name=".MyService"
+                android:name=".services.MyService"
                 android:permission="android.permission.BIND_JOB_SERVICE"/>
         <service
-                android:name=".BootCompletedService"
+                android:name=".services.BootCompletedService"
                 android:enabled="true"
                 android:exported="true">
         </service>
@@ -149,7 +151,7 @@
         </activity>
 
         <receiver
-                android:name=".AlarmReceiver"
+                android:name=".receivers.AlarmReceiver"
                 android:enabled="true"
                 android:exported="false"/>
     </application>

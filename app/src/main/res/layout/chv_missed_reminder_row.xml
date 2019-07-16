@@ -7,13 +7,14 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraint_layout"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginStart="30dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:paddingEnd="30dp"
             android:paddingStart="0dp"
     >
@@ -64,11 +65,24 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <TextView
+            android:id="@+id/tv_client"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="@string/sample_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/constraint_layout"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/colorWhiteSemitransparent"
+    />
+
     <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@color/colorTranslucent"
             app:layout_constraintTop_toBottomOf="@+id/constraint_layout"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+    android:layout_marginTop="20dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

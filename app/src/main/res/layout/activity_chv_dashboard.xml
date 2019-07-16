@@ -22,29 +22,25 @@
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
             android:background="@android:color/white">
-        <androidx.core.widget.NestedScrollView
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:paddingTop="?attr/actionBarSize">
-            <LinearLayout
+            <ImageView
+                    android:id="@+id/iv_close"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="@string/img_dsc"
+                    android:src="@drawable/close"
+                    android:layout_marginBottom="30dp"
+                    android:layout_marginStart="10dp"/>
+            <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                <ImageView
-                        android:id="@+id/iv_close"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:contentDescription="@string/img_dsc"
-                        android:src="@drawable/close"
-                        android:layout_marginBottom="30dp"
-                        android:layout_marginStart="10dp"/>
-                <View
-                        android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
-                        android:background="@android:color/darker_gray"/>
-                <include layout="@layout/chv_menu"/>
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+                    android:layout_height="0.5dp"
+                    android:background="@android:color/darker_gray"/>
+            <include layout="@layout/chv_menu"/>
+        </LinearLayout>
     </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

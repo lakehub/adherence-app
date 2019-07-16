@@ -1,4 +1,4 @@
-package com.lakehub.adherenceapp
+package com.lakehub.adherenceapp.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.lakehub.adherenceapp.*
+import com.lakehub.adherenceapp.data.ChvReminder
 import org.joda.time.format.DateTimeFormat
 
 
@@ -27,8 +29,21 @@ class ChvMissedReminderAdapter(val context: Context, private val alarms: ArrayLi
         val alarm = alarms[position]
 
         holder.tvDescription.text = limitStringLength(alarm.description, 50)
-        holder.timeTv.text = displayTime(alarm.fromDate)
         holder.tvCount.text = (position + 1).toString()
+
+        if (alarm.isAppointment!!) {
+            holder.clientTv.makeVisible()
+            holder.clientTv.text = limitStringLength(alarm.clientName?.split(" ")?.get(0)!!, 6)
+            holder.tvDescription.text = limitStringLength(alarm.description, 40)
+        } else {
+            holder.clientTv.makeGone()
+        }
+
+        if (alarm.recent) {
+            holder.timeTv.text = displayDateTime(alarm.fromDate)
+        } else {
+            holder.timeTv.text = displayTime(alarm.fromDate)
+        }
 
         if (alarm.snoozed > 0) {
             val format = "yyyy MM dd HH:mm"
@@ -45,6 +60,7 @@ class ChvMissedReminderAdapter(val context: Context, private val alarms: ArrayLi
         var tvCount: TextView = view.findViewById(R.id.tv_count)
         var tvDescription: TextView = view.findViewById(R.id.tv_dsc)
         var timeTv: TextView = view.findViewById(R.id.tv_time)
+        var clientTv: TextView = view.findViewById(R.id.tv_client)
     }
 
 }

@@ -1,8 +1,10 @@
-package com.lakehub.adherenceapp
+package com.lakehub.adherenceapp.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.lakehub.adherenceapp.AlarmActivity
+import com.lakehub.adherenceapp.MainApplication
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

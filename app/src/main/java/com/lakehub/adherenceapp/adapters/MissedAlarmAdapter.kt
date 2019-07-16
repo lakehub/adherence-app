@@ -1,4 +1,4 @@
-package com.lakehub.adherenceapp
+package com.lakehub.adherenceapp.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,6 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.lakehub.adherenceapp.R
+import com.lakehub.adherenceapp.data.Alarm
+import com.lakehub.adherenceapp.displayDateTime
+import com.lakehub.adherenceapp.displayTime
+import com.lakehub.adherenceapp.limitStringLength
 import org.joda.time.format.DateTimeFormat
 
 

@@ -9,7 +9,6 @@ import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,6 +17,7 @@ import org.joda.time.format.DateTimeFormat
 import java.io.File
 import java.io.FileNotFoundException
 import android.view.WindowManager
+import com.lakehub.adherenceapp.receivers.AlarmReceiver
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import java.util.*

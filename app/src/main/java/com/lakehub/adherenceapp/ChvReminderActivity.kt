@@ -13,6 +13,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.lakehub.adherenceapp.receivers.ChvReminderReceiver
 import kotlinx.android.synthetic.main.activity_chv_reminder.*
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone

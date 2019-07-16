@@ -1,4 +1,4 @@
-package com.lakehub.adherenceapp
+package com.lakehub.adherenceapp.adapters
 
 import android.content.Context
 import android.content.Intent
@@ -9,7 +9,8 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.google.firebase.firestore.FirebaseFirestore
+import com.lakehub.adherenceapp.*
+import com.lakehub.adherenceapp.data.Client
 
 
 class ClientAdapter(val context: Context, private val clients: ArrayList<Client>) :
@@ -35,6 +36,13 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
 
         holder.menu.setOnClickListener {
             openOptionMenu(holder.menu, holder.adapterPosition)
+        }
+
+        holder.itemView.setOnClickListener {
+            val myIntent = Intent(context, ClientAppointmentsActivity::class.java)
+            myIntent.putExtra("clientName", client.name)
+            myIntent.putExtra("clientPhoneNo", client.phoneNumber)
+            context.startActivity(myIntent)
         }
     }
 

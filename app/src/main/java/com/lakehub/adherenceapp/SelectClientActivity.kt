@@ -6,6 +6,8 @@ import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
+import com.lakehub.adherenceapp.adapters.ClientAltAdapter
+import com.lakehub.adherenceapp.data.Client
 import kotlinx.android.synthetic.main.app_bar_chv_dashboard.*
 import kotlinx.android.synthetic.main.content_select_client.*
 

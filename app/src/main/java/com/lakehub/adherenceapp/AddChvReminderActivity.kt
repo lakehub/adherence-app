@@ -8,11 +8,12 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.media.MediaPlayer
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
+import android.os.Parcelable
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +21,6 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.karumi.dexter.Dexter
@@ -29,6 +29,7 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import com.lakehub.adherenceapp.receivers.ChvReminderReceiver
 import kotlinx.android.synthetic.main.activity_add_chv_reminder.*
 import kotlinx.android.synthetic.main.content_add_chv_reminder.*
 import org.joda.time.DateTime
@@ -63,6 +64,8 @@ class AddChvReminderActivity : AppCompatActivity() {
     private lateinit var clSat: ConstraintLayout
     private lateinit var clSun: ConstraintLayout
     private var permissionGranted = false
+    private var clientName: String? = null
+    private var clientPhoneNo: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -406,7 +409,7 @@ class AddChvReminderActivity : AppCompatActivity() {
             val myFinalDateStr = myFinalDateFormatter.print(fromDate)
 
             if (!inProgress) {
-                if (description.isBlank()) {
+                if (description.isBlank() || (isAppointment && clientPhoneNo == null)) {
                     val toast = Toast(this)
                     val view: View = layoutInflater.inflate(R.layout.warning, null)
                     val textView: TextView = view.findViewById(R.id.message)
@@ -431,24 +434,51 @@ class AddChvReminderActivity : AppCompatActivity() {
                     val db = FirebaseFirestore.getInstance()
                     val alarmsRef = db.collection("chv_reminders").document()
 
-                    val alarm = hashMapOf(
-                        "id" to id,
-                        "phoneNumber" to phoneNumber,
-                        "description" to description,
-                        "alarmTonePath" to tonePath,
-                        "repeatMode" to repeatModeList,
-                        "dateTime" to dateFormatter.print(fromDate),
-                        "isDrug" to isDrug,
-                        "isAppointment" to isAppointment,
-                        "date" to myFinalDateStr,
-                        "cancelled" to false,
-                        "snoozed" to 0,
-                        "confirmed" to false,
-                        "missed" to false,
-                        "reasonToCancel" to "",
-                        "rang" to false,
-                        "medicationType" to medType
-                    )
+                    val alarm = if (isAppointment) {
+                        hashMapOf(
+                            "id" to id,
+                            "phoneNumber" to phoneNumber,
+                            "description" to description,
+                            "alarmTonePath" to tonePath,
+                            "repeatMode" to repeatModeList,
+                            "dateTime" to dateFormatter.print(fromDate),
+                            "isDrug" to isDrug,
+                            "isAppointment" to isAppointment,
+                            "date" to myFinalDateStr,
+                            "cancelled" to false,
+                            "snoozed" to 0,
+                            "confirmed" to false,
+                            "missed" to false,
+                            "reasonToCancel" to "",
+                            "rang" to false,
+                            "medicationType" to medType,
+                            "clientPhoneNo" to clientPhoneNo,
+                            "clientName" to clientName,
+                            "millis" to fromDate.millis
+                        )
+                    } else {
+                        hashMapOf(
+                            "id" to id,
+                            "phoneNumber" to phoneNumber,
+                            "description" to description,
+                            "alarmTonePath" to tonePath,
+                            "repeatMode" to repeatModeList,
+                            "dateTime" to dateFormatter.print(fromDate),
+                            "isDrug" to isDrug,
+                            "isAppointment" to isAppointment,
+                            "date" to myFinalDateStr,
+                            "cancelled" to false,
+                            "snoozed" to 0,
+                            "confirmed" to false,
+                            "missed" to false,
+                            "reasonToCancel" to "",
+                            "rang" to false,
+                            "medicationType" to medType,
+                            "clientPhoneNo" to null,
+                            "clientName" to null,
+                            "millis" to fromDate.millis
+                        )
+                    }
 
                     alarmsRef.set(alarm, SetOptions.merge())
                         .addOnCompleteListener {
@@ -488,6 +518,28 @@ class AddChvReminderActivity : AppCompatActivity() {
 
                 }
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
+            val uri: Uri = data!!.getParcelableExtra<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) as Uri
+            tonePath = uri.path
+
+            val arr = tonePath?.split("/")
+            val filename = arr!![arr.size - 1]
+            val finalFilename = filename.split(".")[0]
+            tv_tone.text = limitStringLength(finalFilename, 20)
+            /*RingtoneManager.setActualDefaultRingtoneUri(
+                this,
+                RingtoneManager.TYPE_RINGTONE,
+                uri
+            )*/
+        } else if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
+            clientName = data!!.extras!!.getString("name")
+            clientPhoneNo = data.extras!!.getString("phoneNo")
+            tv_client.text = titleCase(limitStringLength(clientName!!, 20))
         }
     }
 

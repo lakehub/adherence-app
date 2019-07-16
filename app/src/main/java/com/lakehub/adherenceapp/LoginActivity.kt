@@ -67,6 +67,8 @@ class LoginActivity : AppCompatActivity() {
                                     AppPreferences.loggedIn = true
                                     AppPreferences.phoneNo = phoneNumber
                                     if (category == 1) {
+                                        AppPreferences.chvPhoneNo = it.result?.getString("chvPhoneNumber")
+                                        AppPreferences.myName = it.result?.getString("name")
                                         startActivity(Intent(this, ClientHomeActivity::class.java))
                                         finish()
                                     } else {

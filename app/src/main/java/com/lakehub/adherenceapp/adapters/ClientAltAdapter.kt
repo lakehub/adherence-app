@@ -1,11 +1,16 @@
-package com.lakehub.adherenceapp
+package com.lakehub.adherenceapp.adapters
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.lakehub.adherenceapp.data.Client
+import com.lakehub.adherenceapp.R
+import com.lakehub.adherenceapp.titleCase
 
 
 class ClientAltAdapter(val context: Context, private val clients: ArrayList<Client>) :
@@ -28,6 +33,12 @@ class ClientAltAdapter(val context: Context, private val clients: ArrayList<Clie
         holder.phoneTv.text = context.getString(R.string.phone_no, client.phoneNumber.substring(4))
 
         holder.itemView.setOnClickListener {
+            val returnIntent = Intent()
+            returnIntent.putExtra("name", client.name)
+            returnIntent.putExtra("phoneNo", client.phoneNumber)
+            val activity = context as Activity
+            activity.setResult(Activity.RESULT_OK, returnIntent)
+            activity.finish()
 
         }
     }

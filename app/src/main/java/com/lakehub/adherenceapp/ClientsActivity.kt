@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
+import com.lakehub.adherenceapp.adapters.ClientAdapter
+import com.lakehub.adherenceapp.data.Client
 import kotlinx.android.synthetic.main.activity_clients.*
 import kotlinx.android.synthetic.main.content_clients.*
 

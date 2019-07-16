@@ -1,4 +1,4 @@
-package com.lakehub.adherenceapp
+package com.lakehub.adherenceapp.services
 
 import android.content.Context
 import android.content.Intent
@@ -17,7 +17,8 @@ class MyService : JobIntentService() {
         val JOB_ID = 0x01
 
         fun enqueueWork(context: Context, work: Intent) {
-            enqueueWork(context, MyService::class.java, JOB_ID, work)
+            enqueueWork(context, MyService::class.java,
+                JOB_ID, work)
         }
     }
 

@@ -24,7 +24,6 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
@@ -32,13 +31,12 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import com.lakehub.adherenceapp.receivers.ChvReminderReceiver
 import kotlinx.android.synthetic.main.activity_edit_chv_reminder.*
 import kotlinx.android.synthetic.main.content_edit_chv_reminder.*
-import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
-import java.io.Serializable
 import java.util.*
 
 class EditChvReminderActivity : AppCompatActivity() {
@@ -96,6 +94,31 @@ class EditChvReminderActivity : AppCompatActivity() {
         val colorList = ColorStateList(states, colors)
         fab.backgroundTintList = colorList
 
+        val switchStatesThumb =
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf(-android.R.attr.state_checked))
+
+
+        val switchColorsThumb = intArrayOf(
+            ContextCompat.getColor(this, R.color.colorRed),
+            ContextCompat.getColor(this, R.color.colorPrimary)
+        )
+        val switchColorListThumb = ColorStateList(switchStatesThumb, switchColorsThumb)
+
+        val switchStatesTrack =
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf(-android.R.attr.state_checked))
+
+
+        val switchColorsTrack = intArrayOf(
+            ContextCompat.getColor(this, R.color.colorGreen),
+            ContextCompat.getColor(this, R.color.colorRed)
+        )
+        val switchColorListTrack = ColorStateList(switchStatesTrack, switchColorsTrack)
+
+        drug_switch.thumbTintList = switchColorListThumb
+        appointment_switch.thumbTintList = switchColorListThumb
+        drug_switch.trackTintList = switchColorListTrack
+        appointment_switch.trackTintList = switchColorListTrack
+
         ArrayAdapter.createFromResource(
             applicationContext, R.array.med_type_array,
             android.R.layout.simple_spinner_item
@@ -111,7 +134,12 @@ class EditChvReminderActivity : AppCompatActivity() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, p2: Int, p3: Long) {
                 (parent?.getChildAt(0) as TextView)
-                    .setTextColor(ContextCompat.getColor(this@EditChvReminderActivity, android.R.color.white))
+                    .setTextColor(
+                        ContextCompat.getColor(
+                            this@EditChvReminderActivity,
+                            R.color.colorWhiteSemitransparent
+                        )
+                    )
             }
 
         }
@@ -125,6 +153,8 @@ class EditChvReminderActivity : AppCompatActivity() {
 
         val docId = intent.getStringExtra("docId")
         val fromDate = intent.getStringExtra("date")
+        val clientPhoneNo = intent.getStringExtra("clientPhoneNo")
+        val clientName = intent.getStringExtra("clientName")
         val description = intent.getStringExtra("description")
         tonePath = intent.getStringExtra("tonePath")
         val isDrug = intent.getBooleanExtra("isDrug", false)
@@ -389,37 +419,24 @@ class EditChvReminderActivity : AppCompatActivity() {
 
         edit_text.setText(description)
         drug_switch.isChecked = isDrug
-        appointment_switch.isChecked = isDrug
+        appointment_switch.isChecked = isAppointment
+
+        cl_client.makeGone()
+        cl_med_type.makeGone()
 
         if (isDrug) {
             cl_med_type.makeVisible()
             appointment_container.makeGone()
             appointment_divider.makeGone()
+            cl_client.makeGone()
+            medication_type_spinner.setSelection(medType.minus(1))
         } else if (isAppointment) {
             drug_container.makeGone()
             drug_divider.makeGone()
-        }
-
-        drug_switch.setOnCheckedChangeListener { _, checked ->
-            if (checked) {
-                cl_med_type.makeVisible()
-                appointment_container.makeGone()
-                appointment_divider.makeGone()
-            } else {
-                cl_med_type.makeGone()
-                appointment_container.makeVisible()
-                appointment_divider.makeVisible()
-            }
-        }
-
-        appointment_switch.setOnCheckedChangeListener { _, checked ->
-            if (checked) {
-                drug_container.makeGone()
-                drug_divider.makeGone()
-            } else {
-                drug_container.makeVisible()
-                drug_divider.makeVisible()
-            }
+            cl_client.makeVisible()
+            appointment_container.makeVisible()
+            appointment_divider.makeVisible()
+            tv_client.text = limitStringLength(clientName!!, 20)
         }
 
         timePickerDialog = TimePickerDialog(
@@ -468,7 +485,6 @@ class EditChvReminderActivity : AppCompatActivity() {
                     toast.show()
                 } else {
                     showProgress()
-                    val phoneNumber = FirebaseAuth.getInstance().currentUser?.phoneNumber
                     val alarmsRef = FirebaseFirestore.getInstance()
                         .collection("chv_reminders")
                         .document(docId!!)
@@ -476,10 +492,7 @@ class EditChvReminderActivity : AppCompatActivity() {
                     val data = mapOf(
                         "alarmTonePath" to tonePath,
                         "dateTime" to dateFormatter.print(myFromDate),
-                        "repeatMode" to repeatModeList,
-                        "medicationType" to medication_type_spinner.selectedItemPosition.plus(1),
-                        "isDrug" to drug_switch.isChecked,
-                        "isAppointment" to appointment_switch.isChecked
+                        "repeatMode" to repeatModeList
                     )
 
                     alarmsRef.update(data)
