@@ -72,6 +72,7 @@ class SelectClientActivity : AppCompatActivity() {
                         val client = Client(
                             location = document.getString("location")!!,
                             name = document.getString("name")!!,
+                            image = document.getString("image"),
                             phoneNumber = document.getString("phoneNumber")!!,
                             active = document.getBoolean("active")!!
                         )

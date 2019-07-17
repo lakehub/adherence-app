@@ -1,16 +1,26 @@
 package com.lakehub.adherenceapp
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.storage.FirebaseStorage
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.model.InDateStyle
@@ -33,6 +43,7 @@ import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.YearMonth
 import org.threeten.bp.format.DateTimeFormatter
+import java.io.File
 import java.util.*
 import kotlin.Comparator
 import kotlin.collections.ArrayList
@@ -77,6 +88,87 @@ class ClientHomeActivity : AppCompatActivity() {
         recycler_view_missed.makeGone()
         tv_no_alarm.makeGone()
         tv_no_missed.makeGone()
+
+        if (AppPreferences.profileImg != null) {
+            val contextWrapper = ContextWrapper(MainApplication.applicationContext())
+            val directory: File = contextWrapper.getDir("user_images", Context.MODE_PRIVATE)
+            var bitmap = loadImgFromInternalStorage(directory.absolutePath, AppPreferences.profileImg!!)
+            if (bitmap == null) {
+                val storageRef = FirebaseStorage.getInstance().reference
+                val filename = AppPreferences.profileImg
+                val imgRef = storageRef.child("client_images/$filename")
+                val mContextWrapper = ContextWrapper(this)
+                val mDirectory: File = mContextWrapper.getDir(
+                    "user_images",
+                    Context.MODE_PRIVATE
+                )
+                val file = File(mDirectory, filename)
+                imgRef.getFile(file).addOnSuccessListener {
+                    var myBitmap = loadImgFromInternalStorage(directory.absolutePath, AppPreferences.profileImg!!)
+                    Glide.with(this)
+                        .load(myBitmap)
+                        .apply(
+                            RequestOptions()
+                                .placeholder(R.drawable.user)
+                                .error(R.drawable.user)
+                        )
+                        .listener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?, model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                return false
+
+                            }
+
+                            override fun onResourceReady(
+                                resource: Drawable?, model: Any?,
+                                target: Target<Drawable>?, dataSource: DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                myBitmap!!.recycle()
+                                myBitmap = null
+                                return false
+                            }
+
+                        })
+                        .into(iv_user)
+                }
+            } else {
+                Glide.with(this)
+                    .load(bitmap)
+                    .apply(
+                        RequestOptions()
+                            .placeholder(R.drawable.user)
+                            .error(R.drawable.user)
+                    )
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?, model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?, model: Any?,
+                            target: Target<Drawable>?, dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            bitmap!!.recycle()
+                            bitmap = null
+                            return false
+                        }
+
+                    })
+                    .into(iv_user)
+            }
+
+
+        }
 
         iv_menu.setOnClickListener {
             if (!drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -139,7 +231,14 @@ class ClientHomeActivity : AppCompatActivity() {
             AppPreferences.phoneNo = null
             AppPreferences.accountType = 0
             AppPreferences.chvPhoneNo = null
+            AppPreferences.profileImg = null
+            AppPreferences.myName = null
+            emptyDirectory("user_images")
             finish()
+        }
+
+        iv_alarm.setOnClickListener {
+            showUpcoming()
         }
 
         cl_home_menu.setOnClickListener {

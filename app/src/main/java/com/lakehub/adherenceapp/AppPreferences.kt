@@ -15,6 +15,7 @@ object AppPreferences {
     private val PHONE_NO = Pair("phone_no", null)
     private val CHV_PHONE_NO = Pair("chv_phone_no", null)
     private val MY_NAME = Pair("my_name", null)
+    private val PROFILE_IMG = Pair("profile_img", null)
 
 
     fun init(context: Context) {
@@ -69,5 +70,9 @@ object AppPreferences {
             it.putString(MY_NAME.first, value)
         }
 
-
+    var profileImg: String?
+        get() = preferences.getString(PROFILE_IMG.first, PROFILE_IMG.second)
+        set(value) = preferences.edit {
+            it.putString(PROFILE_IMG.first, value)
+        }
 }

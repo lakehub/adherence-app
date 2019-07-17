@@ -3,7 +3,8 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent" android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:background="@android:color/black">
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,7 +20,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:fontFamily="@font/product_sans_regular"
                     app:layout_constraintTop_toTopOf="parent"
@@ -44,11 +45,12 @@
                         android:id="@+id/edit_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="@string/user_adher"
+                        android:hint="@string/username"
                         android:inputType="text"
                         android:fontFamily="@font/product_sans_regular"
                         android:textSize="18sp"
-                        android:textColor="@color/colorDark"
+                        android:textColor="@color/colorWhiteSemitransparent"
+                        android:textColorHint="@color/colorWhiteSemitransparent"
                 />
             </com.google.android.material.textfield.TextInputLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -68,7 +70,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:fontFamily="@font/product_sans_regular"
                     app:layout_constraintTop_toTopOf="parent"
@@ -109,7 +111,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:fontFamily="@font/product_sans_regular"
                     app:layout_constraintTop_toTopOf="@+id/iv_arrow"
@@ -123,7 +125,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:src="@drawable/chevron_right"
-                    android:tint="@color/colorDark"
+                    android:tint="@color/colorWhiteSemitransparent"
             />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

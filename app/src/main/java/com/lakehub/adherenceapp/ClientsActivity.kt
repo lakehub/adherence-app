@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
@@ -84,6 +85,7 @@ class ClientsActivity : AppCompatActivity() {
                             location = document.getString("location")!!,
                             name = document.getString("name")!!,
                             phoneNumber = document.getString("phoneNumber")!!,
+                            image = document.getString("image"),
                             active = document.getBoolean("active")!!
                         )
                         clients.add(client)

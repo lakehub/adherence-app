@@ -299,7 +299,7 @@ class FollowUpActivity : AppCompatActivity() {
 
                     followUpAdapter.notifyDataSetChanged()
 
-                    if (alarmList.isEmpty()) {
+                    if (followUps.isEmpty()) {
                         hideFollowUps()
                     } else {
                         showFollowUps()

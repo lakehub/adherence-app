@@ -1,10 +1,18 @@
 package com.lakehub.adherenceapp
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.*
+import android.net.Uri
+import android.provider.MediaStore
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
 import java.util.*
 
 fun limitStringLength(value: String, length: Int): String {
@@ -24,7 +32,7 @@ fun displayTime(dateStr: String): String {
     val date = dateFormatter.parseDateTime(dateStr)
     val format = "hh:mm a"
     val formatter = DateTimeFormat.forPattern(format)
-    return  formatter.print(date)
+    return formatter.print(date)
 }
 
 fun displayDateTime(dateStr: String): String {
@@ -33,13 +41,13 @@ fun displayDateTime(dateStr: String): String {
     val date = dateFormatter.parseDateTime(dateStr)
     val format = "yyyy MMM dd, hh:mm a"
     val formatter = DateTimeFormat.forPattern(format)
-    return  formatter.print(date)
+    return formatter.print(date)
 }
 
 fun displayTime(date: DateTime): String {
     val format = "hh:mm a"
     val formatter = DateTimeFormat.forPattern(format)
-    return  formatter.print(date)
+    return formatter.print(date)
 }
 
 
@@ -57,8 +65,10 @@ fun toUtc(date: DateTime): DateTime {
 }
 
 fun getCircleBitmap(bitmap: Bitmap): Bitmap {
-    val output = Bitmap.createBitmap(bitmap.width,
-        bitmap.height, Bitmap.Config.ARGB_8888)
+    val output = Bitmap.createBitmap(
+        bitmap.width,
+        bitmap.height, Bitmap.Config.ARGB_8888
+    )
     val canvas = Canvas(output)
 
     val color = Color.RED
@@ -85,4 +95,51 @@ fun titleCase(str: String): String {
         strArr[i] = strArr[i].capitalize()
     }
     return strArr.joinToString(" ")
+}
+
+fun getRealPathFromURIPath(contentURI: Uri, activity: Activity): String? {
+    val cursor = activity.contentResolver.query(contentURI, null, null, null, null)
+    val realPath: String?
+    realPath = if (cursor == null) {
+        contentURI.path
+    } else {
+        cursor.moveToFirst()
+        val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+        cursor.getString(idx)
+    }
+    cursor?.close()
+
+    return realPath
+}
+
+fun getRandomString(length: Int): String {
+    val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz"
+    return (1..length)
+        .map { allowedChars.random() }
+        .joinToString("")
+}
+
+fun loadImgFromInternalStorage(path: String, name: String): Bitmap? {
+    try {
+        val file = File(path, name)
+        val options = BitmapFactory.Options()
+        options.inSampleSize = 8
+        return BitmapFactory.decodeStream(FileInputStream(file))
+    } catch (e: FileNotFoundException) {
+        e.printStackTrace()
+    } catch (e: OutOfMemoryError) {
+    }
+
+    return null
+}
+
+fun emptyDirectory(directoryName: String) {
+    val contextWrapper =
+        ContextWrapper(MainApplication.applicationContext())
+    val directory: File = contextWrapper.getDir(directoryName, Context.MODE_PRIVATE)
+    val children: Array<String> = directory.list()
+
+    children.forEach {
+        File(directory, it).delete()
+    }
 }

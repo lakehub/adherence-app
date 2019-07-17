@@ -30,7 +30,7 @@ class MyNotificationManager(context: Context) {
             }
     }
 
-    fun displayAlarmNotification(body: String, context: Context) {
+    fun displayAlarmNotification(title: String, body: String, context: Context) {
         val myCancelIntent = Intent(MainApplication.applicationContext(), ClientHomeActivity::class.java)
 //        myIntent.putExtra("note", description)
         val myCancelPendingIntent =
@@ -47,7 +47,7 @@ class MyNotificationManager(context: Context) {
             .build()
 
         val mBuilder: NotificationCompat.Builder = NotificationCompat.Builder(context, ALARM_NOTIFICATION_CHANNEL_DSC)
-            .setContentTitle(MainApplication.applicationContext().getString(R.string.drug).toUpperCase())
+            .setContentTitle(title)
             .setContentText(body)
             .setVibrate(longArrayOf(300, 400, 500, 400, 300))
             .setLights(Color.GREEN, 500, 500)

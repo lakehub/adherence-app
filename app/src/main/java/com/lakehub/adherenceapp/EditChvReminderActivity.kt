@@ -156,6 +156,7 @@ class EditChvReminderActivity : AppCompatActivity() {
         val clientPhoneNo = intent.getStringExtra("clientPhoneNo")
         val clientName = intent.getStringExtra("clientName")
         val description = intent.getStringExtra("description")
+        val hospital = intent.getStringExtra("hospital")
         tonePath = intent.getStringExtra("tonePath")
         val isDrug = intent.getBooleanExtra("isDrug", false)
         val isAppointment = intent.getBooleanExtra("isAppointment", false)
@@ -423,20 +424,35 @@ class EditChvReminderActivity : AppCompatActivity() {
 
         cl_client.makeGone()
         cl_med_type.makeGone()
+        cl_hospital.makeGone()
+        hos_divider.makeGone()
 
-        if (isDrug) {
-            cl_med_type.makeVisible()
-            appointment_container.makeGone()
-            appointment_divider.makeGone()
-            cl_client.makeGone()
-            medication_type_spinner.setSelection(medType.minus(1))
-        } else if (isAppointment) {
-            drug_container.makeGone()
-            drug_divider.makeGone()
-            cl_client.makeVisible()
-            appointment_container.makeVisible()
-            appointment_divider.makeVisible()
-            tv_client.text = limitStringLength(clientName!!, 20)
+        when {
+            isDrug -> {
+                cl_med_type.makeVisible()
+                appointment_container.makeGone()
+                appointment_divider.makeGone()
+                cl_client.makeGone()
+                medication_type_spinner.setSelection(medType.minus(1))
+            }
+            isAppointment -> {
+                drug_container.makeGone()
+                drug_divider.makeGone()
+                cl_client.makeVisible()
+                appointment_container.makeVisible()
+                appointment_divider.makeVisible()
+                tv_client.text = limitStringLength(clientName!!, 20)
+            }
+            else -> {
+                cl_hospital.makeVisible()
+                hos_divider.makeVisible()
+                drug_container.makeGone()
+                drug_divider.makeGone()
+                cl_client.makeGone()
+                appointment_container.makeGone()
+                appointment_divider.makeGone()
+                tv_hos.text = hospital
+            }
         }
 
         timePickerDialog = TimePickerDialog(

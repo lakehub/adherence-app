@@ -13,6 +13,7 @@ class ChvReminderReceiver : BroadcastReceiver() {
         val date = intent.extras?.getString("date")
         val docId = intent.extras?.getString("docId")
         val tonePath = intent.extras?.getString("tonePath")
+        val hospital = intent.extras?.getString("hospital")
         val snoozed = intent.extras?.getInt("snoozed")
         val isDrug = intent.extras?.getBoolean("isDrug")
         val isAppointment = intent.extras?.getBoolean("isAppointment")
@@ -29,6 +30,7 @@ class ChvReminderReceiver : BroadcastReceiver() {
         alarmIntent.putExtra("tonePath", tonePath)
         alarmIntent.putExtra("repeatMode", repeatMode)
         alarmIntent.putExtra("isAppointment", isAppointment)
+        alarmIntent.putExtra("hospital", hospital)
         MainApplication.applicationContext().startActivity(alarmIntent)
     }
 }

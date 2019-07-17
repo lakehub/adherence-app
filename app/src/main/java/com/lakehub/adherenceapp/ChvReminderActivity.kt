@@ -93,7 +93,7 @@ class ChvReminderActivity : AppCompatActivity() {
         when {
             isDrug!! -> tv_title.text = getString(R.string.drug)
             isAppointment!! -> tv_title.text = getString(R.string.appointment)
-            else -> tv_title.text = getString(R.string.place)
+            else -> tv_title.text = getString(R.string.hos)
         }
 
         tv_dsc.text = note

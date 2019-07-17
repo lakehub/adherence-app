@@ -16,10 +16,21 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ClientAppointmentsActivity"
-                  android:theme="@style/MaterialTheme.NoActionBar"/>
-        <activity android:name=".FollowUpActivity"
-                  android:theme="@style/MaterialTheme.NoActionBar"/>
+        <activity android:name=".ChvReportActivity">
+        </activity>
+        <activity
+                android:name=".ChvProfileActivity"
+                android:theme="@style/MaterialTheme.NoActionBar"/>
+        <activity
+                android:name="com.yalantis.ucrop.UCropActivity"
+                android:screenOrientation="portrait"
+                android:theme="@style/MaterialTheme.NoActionBar"/>
+        <activity
+                android:name=".ClientAppointmentsActivity"
+                android:theme="@style/MaterialTheme.NoActionBar"/>
+        <activity
+                android:name=".FollowUpActivity"
+                android:theme="@style/MaterialTheme.NoActionBar"/>
         <activity
                 android:name=".EditChvReminderActivity"
                 android:theme="@style/MaterialTheme.NoActionBar"/>

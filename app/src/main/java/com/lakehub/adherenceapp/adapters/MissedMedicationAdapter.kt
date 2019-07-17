@@ -86,18 +86,32 @@ class MissedMedicationAdapter(val context: Context, private val alarms: ArrayLis
                     alarmRef.update("marked", true)
                         .addOnCompleteListener {
                             if (it.isComplete) {
-                                ref.set(data)
-                                    .addOnCompleteListener { task ->
-                                        if (task.isComplete) {
-                                            val toast = Toast(context)
-                                            val view = View.inflate(context, R.layout.normal_toast, null)
-                                            view.message.text = context.getString(R.string.mark_follow_up_success)
-                                            toast.view = view
-                                            toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                            toast.duration = Toast.LENGTH_SHORT
-                                            toast.show()
+                                val followUpRef = FirebaseFirestore.getInstance().collection("follow_ups")
+                                followUpRef.whereEqualTo("date", alarm.date)
+                                    .whereEqualTo("clientPhoneNo", alarm.phoneNo)
+                                    .get()
+                                    .addOnCompleteListener {qs ->
+                                        if (qs.isComplete) {
+                                                if (qs.result?.isEmpty!!) {
+                                                    ref.set(data)
+                                                        .addOnCompleteListener { task ->
+                                                            if (task.isComplete) {
+                                                                val toast = Toast(context)
+                                                                val view = View.inflate(context, R.layout.normal_toast, null)
+                                                                view.message.text = context.getString(R.string.mark_follow_up_success)
+                                                                toast.view = view
+                                                                toast.setGravity(Gravity.BOTTOM, 30, 30)
+                                                                toast.duration = Toast.LENGTH_SHORT
+                                                                toast.show()
+                                                            }
+                                                        }
+                                                } else {
+
+                                                }
+
                                         }
                                     }
+
                             }
                         }
                 }

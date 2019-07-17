@@ -228,10 +228,14 @@
                 android:background="@android:color/darker_gray"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_hospital"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="20dp"
-                android:visibility="gone">
+                android:paddingTop="20dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="20dp"
+                android:visibility="visible">
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -240,24 +244,26 @@
                     android:fontFamily="@font/product_sans_regular"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:text="@string/notification"/>
+                    android:text="@string/hos"/>
 
             <Spinner
-                    android:id="@+id/notification_mode_spinner"
+                    android:id="@+id/hos_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:padding="0dp"
                     android:gravity="end"
-                    android:background="@null"/>
+                    android:background="@null"
+                    android:entries="@array/empty_array"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
+                android:id="@+id/hos_divider"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:background="@android:color/darker_gray"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

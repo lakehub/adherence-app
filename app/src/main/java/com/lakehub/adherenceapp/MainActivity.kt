@@ -30,6 +30,8 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
         window.decorView.apply {
             //            systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
+//            val notificationManager = MyNotificationManager(context)
+//        notificationManager.displayAlarmNotification("Missed Alarm","you missed an alarm", context)
         }
 
         val data = Data.Builder()

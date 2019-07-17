@@ -233,6 +233,45 @@
                 android:background="@android:color/darker_gray"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_hospital"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="20dp"
+                android:visibility="visible">
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorRed"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/product_sans_regular"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:text="@string/hos"/>
+
+            <TextView
+                    android:id="@+id/tv_hos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="@string/hos"
+                    android:textColor="@color/colorWhiteSemitransparent"
+                    android:fontFamily="@font/product_sans_regular"
+                    android:textSize="15sp"
+            />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+                android:id="@+id/hos_divider"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@android:color/darker_gray"
+                android:visibility="visible"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="20dp"

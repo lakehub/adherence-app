@@ -10,6 +10,7 @@ import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
@@ -19,7 +20,6 @@ import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -35,25 +35,24 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.yalantis.ucrop.UCrop
-import kotlinx.android.synthetic.main.activity_settings.*
-import kotlinx.android.synthetic.main.app_bar_client_home.toolbar
-import kotlinx.android.synthetic.main.app_bar_settings.view.iv_back
-import kotlinx.android.synthetic.main.content_settings.*
+import kotlinx.android.synthetic.main.activity_chv_profile.*
+import kotlinx.android.synthetic.main.activity_chv_profile.view.*
+import kotlinx.android.synthetic.main.content_chv_profile.*
 import kotlinx.android.synthetic.main.normal_toast.view.*
 import java.io.File
 import java.io.FileInputStream
 
-class SettingsActivity : AppCompatActivity() {
+class ChvProfileActivity : AppCompatActivity() {
+    val userRef = FirebaseFirestore.getInstance().collection("users")
+        .document(AppPreferences.phoneNo!!)
     private val gallery = 1002
     private var filePath: String? = null
     private lateinit var destinationUri: Uri
     private var inProgress = false
-    val userRef = FirebaseFirestore.getInstance().collection("users")
-        .document(AppPreferences.phoneNo!!)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        setContentView(R.layout.activity_chv_profile)
 
         supportActionBar?.hide()
 
@@ -77,9 +76,8 @@ class SettingsActivity : AppCompatActivity() {
             AppPreferences.profileImg = null
             AppPreferences.myName = null
             emptyDirectory("user_images")
-
-
-                this.finishAndRemoveTask()
+            emptyDirectory("client_images")
+            this.finishAffinity()
         }
 
         if (AppPreferences.profileImg != null) {
@@ -118,8 +116,10 @@ class SettingsActivity : AppCompatActivity() {
 
         }
 
-        toolbar_username.text = titleCase(AppPreferences.myName!!)
-        edit_text.setText(titleCase(AppPreferences.myName!!))
+        if (AppPreferences.myName != null) {
+            toolbar_username.text = titleCase(AppPreferences.myName!!)
+            edit_text.setText(titleCase(AppPreferences.myName!!))
+        }
 
         val mContextWrapper = ContextWrapper(this)
         val mDirectory: File = mContextWrapper.getDir(
@@ -236,7 +236,7 @@ class SettingsActivity : AppCompatActivity() {
             .setContentType("image/jpeg")
             .build()
         val filename = "${getRandomString(26)}.jpeg"
-        val imgRef = storageRef.child("client_images/$filename")
+        val imgRef = storageRef.child("chv_images/$filename")
         val stream = FileInputStream(File(filePath!!))
         val uploadTask = imgRef.putStream(stream, metadata)
 

@@ -42,15 +42,17 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val alarm = alarms[position]
 
-        holder.tvDescription.text = limitStringLength(alarm.description, 50)
+        holder.tvDescription.text = limitStringLength(alarm.description, 40)
         holder.tvCount.text = (position + 1).toString()
 
-        if (alarm.isAppointment!!) {
-            holder.clientTv.makeVisible()
-            holder.clientTv.text = limitStringLength(alarm.clientName?.split(" ")?.get(0)!!, 6)
-            holder.tvDescription.text = limitStringLength(alarm.description, 40)
-        } else {
-            holder.clientTv.makeGone()
+        when {
+            alarm.isAppointment!! -> holder.clientTv.text = limitStringLength(alarm.clientName?.split(" ")?.get(0)!!, 8)
+            alarm.isDrug!! -> holder.clientTv.text = if (alarm.medType == 1) {
+                context.getString(R.string.treatment)
+            } else {
+                context.getString(R.string.arv)
+            }
+            else -> holder.clientTv.text = titleCase(limitStringLength(alarm.hospital!!, 8))
         }
 
         if (alarm.recent) {
@@ -120,6 +122,7 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
                     myIntent.putExtra("repeatMode", alarm.repeatMode)
                     myIntent.putExtra("clientName", alarm.clientName)
                     myIntent.putExtra("clientPhoneNo", alarm.clientPhoneNo)
+                    myIntent.putExtra("hospital", alarm.hospital)
                     context.startActivity(myIntent)
                 }
                 R.id.cancel -> {

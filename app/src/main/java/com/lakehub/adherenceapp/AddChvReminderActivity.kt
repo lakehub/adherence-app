@@ -66,6 +66,7 @@ class AddChvReminderActivity : AppCompatActivity() {
     private var permissionGranted = false
     private var clientName: String? = null
     private var clientPhoneNo: String? = null
+    private val hospitals = arrayListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +79,7 @@ class AddChvReminderActivity : AppCompatActivity() {
         mediaPlayer = MediaPlayer()
 
         fab.setColorFilter(Color.WHITE)
+        hospitals.add(getString(R.string.choose_hos))
 
         val states = arrayOf(
             intArrayOf(-android.R.attr.state_enabled),
@@ -132,10 +134,16 @@ class AddChvReminderActivity : AppCompatActivity() {
                 cl_med_type.makeVisible()
                 appointment_container.makeGone()
                 appointment_divider.makeGone()
+                cl_hospital.makeGone()
+                hos_divider.makeGone()
             } else {
                 cl_med_type.makeGone()
                 appointment_container.makeVisible()
                 appointment_divider.makeVisible()
+                if (!appointment_switch.isChecked) {
+                    cl_hospital.makeVisible()
+                    hos_divider.makeVisible()
+                }
             }
         }
 
@@ -144,14 +152,55 @@ class AddChvReminderActivity : AppCompatActivity() {
                 drug_container.makeGone()
                 drug_divider.makeGone()
                 cl_client.makeVisible()
+                cl_hospital.makeGone()
+                hos_divider.makeGone()
             } else {
                 drug_container.makeVisible()
                 drug_divider.makeVisible()
                 cl_client.makeGone()
+                if (!drug_switch.isChecked) {
+                    cl_hospital.makeVisible()
+                    hos_divider.makeVisible()
+                }
             }
         }
 
+        val hospitalRef = FirebaseFirestore.getInstance().collection("hospitals")
+
+        hospitalRef.get()
+            .addOnCompleteListener {
+                if (it.isComplete) {
+                    if (!it.result?.isEmpty!!) {
+
+                        for (document in it.result?.documents!!) {
+                            hospitals.add(document.getString("name")!!)
+                        }
+
+                        val hospitalSpinnerArrayAdapter =
+                            ArrayAdapter(this, android.R.layout.simple_spinner_item, hospitals)
+
+                        hos_spinner.adapter = hospitalSpinnerArrayAdapter
+
+                        hospitalSpinnerArrayAdapter.setDropDownViewResource(
+                            android.R.layout.simple_spinner_dropdown_item
+                        )
+                    }
+                }
+            }
+
         medication_type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, p2: Int, p3: Long) {
+                (parent?.getChildAt(0) as TextView)
+                    .setTextColor(ContextCompat.getColor(this@AddChvReminderActivity, android.R.color.white))
+            }
+
+        }
+
+        hos_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(p0: AdapterView<*>?) {
 
             }
@@ -409,7 +458,9 @@ class AddChvReminderActivity : AppCompatActivity() {
             val myFinalDateStr = myFinalDateFormatter.print(fromDate)
 
             if (!inProgress) {
-                if (description.isBlank() || (isAppointment && clientPhoneNo == null)) {
+                if (description.isBlank() || (isAppointment && clientPhoneNo == null) ||
+                    (!isAppointment && !isDrug && hos_spinner.selectedItemPosition == 0)
+                ) {
                     val toast = Toast(this)
                     val view: View = layoutInflater.inflate(R.layout.warning, null)
                     val textView: TextView = view.findViewById(R.id.message)
@@ -433,6 +484,12 @@ class AddChvReminderActivity : AppCompatActivity() {
                     val phoneNumber = AppPreferences.phoneNo
                     val db = FirebaseFirestore.getInstance()
                     val alarmsRef = db.collection("chv_reminders").document()
+                    val hospital = when (hos_spinner.selectedItemPosition) {
+                        0 -> null
+                        else -> {
+                            hospitals[hos_spinner.selectedItemPosition]
+                        }
+                    }
 
                     val alarm = if (isAppointment) {
                         hashMapOf(
@@ -454,7 +511,8 @@ class AddChvReminderActivity : AppCompatActivity() {
                             "medicationType" to medType,
                             "clientPhoneNo" to clientPhoneNo,
                             "clientName" to clientName,
-                            "millis" to fromDate.millis
+                            "millis" to fromDate.millis,
+                            "hospital" to hospital
                         )
                     } else {
                         hashMapOf(
@@ -476,7 +534,8 @@ class AddChvReminderActivity : AppCompatActivity() {
                             "medicationType" to medType,
                             "clientPhoneNo" to null,
                             "clientName" to null,
-                            "millis" to fromDate.millis
+                            "millis" to fromDate.millis,
+                            "hospital" to hospital
                         )
                     }
 
@@ -508,6 +567,7 @@ class AddChvReminderActivity : AppCompatActivity() {
                                 myIntent.putExtra("repeatMode", repeatModeList)
                                 myIntent.putExtra("isDrug", isDrug)
                                 myIntent.putExtra("isAppointment", isAppointment)
+                                myIntent.putExtra("hospital", hospital)
                                 val pendingIntent =
                                     PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)

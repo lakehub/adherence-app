@@ -1,5 +1,7 @@
 package com.lakehub.adherenceapp
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,7 +12,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageMetadata
 import kotlinx.android.synthetic.main.activity_login.*
+import java.io.File
 
 class LoginActivity : AppCompatActivity() {
 
@@ -66,12 +71,37 @@ class LoginActivity : AppCompatActivity() {
                                     AppPreferences.accountType = category!!
                                     AppPreferences.loggedIn = true
                                     AppPreferences.phoneNo = phoneNumber
+                                    AppPreferences.myName = it.result?.getString("name")
+                                    AppPreferences.profileImg = it.result?.getString("image")
                                     if (category == 1) {
                                         AppPreferences.chvPhoneNo = it.result?.getString("chvPhoneNumber")
-                                        AppPreferences.myName = it.result?.getString("name")
+                                        if (it.result?.getString("image") != null) {
+                                            val storageRef = FirebaseStorage.getInstance().reference
+                                            val filename = it.result?.getString("image")
+                                            val imgRef = storageRef.child("client_images/$filename")
+                                            val mContextWrapper = ContextWrapper(this)
+                                            val mDirectory: File = mContextWrapper.getDir(
+                                                "user_images",
+                                                Context.MODE_PRIVATE
+                                            )
+                                            val file = File(mDirectory, filename)
+                                            imgRef.getFile(file)
+                                        }
                                         startActivity(Intent(this, ClientHomeActivity::class.java))
                                         finish()
                                     } else {
+                                        if (it.result?.getString("image") != null) {
+                                            val storageRef = FirebaseStorage.getInstance().reference
+                                            val filename = it.result?.getString("image")
+                                            val imgRef = storageRef.child("chv_images/$filename")
+                                            val mContextWrapper = ContextWrapper(this)
+                                            val mDirectory: File = mContextWrapper.getDir(
+                                                "user_images",
+                                                Context.MODE_PRIVATE
+                                            )
+                                            val file = File(mDirectory, filename!!)
+                                            imgRef.getFile(file)
+                                        }
                                         startActivity(Intent(this, ChvDashboardActivity::class.java))
                                         finish()
                                     }

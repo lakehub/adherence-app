@@ -6,7 +6,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".SettingsActivity"
-        android:padding="0dp">
+        android:padding="0dp"
+        android:background="@android:color/black">
 
     <com.google.android.material.appbar.AppBarLayout
             android:layout_height="wrap_content"
@@ -18,7 +19,7 @@
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="enterAlways|scroll"
                 android:fitsSystemWindows="true"
-                app:contentScrim="@color/colorPrimary"
+                app:contentScrim="@color/colorRed"
                 android:padding="0dp">
             <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
@@ -29,12 +30,14 @@
                     android:padding="0dp"
                     app:contentInsetStart="0dp"
                     app:contentInsetEnd="0dp"
+                    android:background="@color/colorRed"
             >
                 <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/cl_toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="0dp">
+                        android:padding="0dp"
+                        android:background="@color/colorRed">
                     <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -123,7 +126,7 @@
                                 android:textSize="30sp"
                                 android:fontFamily="@font/product_sans_bold"
                                 android:textColor="@android:color/white"
-                                android:text="@string/user_adher"
+                                android:text="@string/username"
                                 android:layout_marginTop="10dp"/>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -133,6 +136,6 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_settings"/>
+    <include layout="@layout/content_chv_profile"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

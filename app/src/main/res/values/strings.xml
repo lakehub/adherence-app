@@ -206,4 +206,10 @@
     <string name="user_photo">User Photo</string>
     <string name="browse">Browse</string>
     <string name="username">Username</string>
+    <string name="img_update_success">Profile image updated successfully</string>
+    <string name="upload_failure_message">Could not upload image.Please retry.</string>
+    <string-array name="empty_array">
+        <item>Choose Hospital…</item>
+    </string-array>
+    <string name="choose_hos">Choose Hospital…</string>
 </resources>

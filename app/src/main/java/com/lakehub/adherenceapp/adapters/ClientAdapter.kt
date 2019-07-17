@@ -1,7 +1,10 @@
 package com.lakehub.adherenceapp.adapters
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +12,17 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.google.firebase.storage.FirebaseStorage
 import com.lakehub.adherenceapp.*
 import com.lakehub.adherenceapp.data.Client
+import de.hdodenhof.circleimageview.CircleImageView
+import java.io.File
 
 
 class ClientAdapter(val context: Context, private val clients: ArrayList<Client>) :
@@ -44,6 +56,87 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
             myIntent.putExtra("clientPhoneNo", client.phoneNumber)
             context.startActivity(myIntent)
         }
+
+        if (client.image != null) {
+            val contextWrapper = ContextWrapper(MainApplication.applicationContext())
+            val directory: File = contextWrapper.getDir("client_images", Context.MODE_PRIVATE)
+            var bitmap = loadImgFromInternalStorage(directory.absolutePath, client.image)
+            if (bitmap == null) {
+                val storageRef = FirebaseStorage.getInstance().reference
+                val filename = client.image
+                val imgRef = storageRef.child("client_images/$filename")
+                val mContextWrapper = ContextWrapper(context)
+                val mDirectory: File = mContextWrapper.getDir(
+                    "client_images",
+                    Context.MODE_PRIVATE
+                )
+                val file = File(mDirectory, filename)
+                imgRef.getFile(file).addOnSuccessListener {
+                    var myBitmap = loadImgFromInternalStorage(directory.absolutePath, client.image)
+                    Glide.with(context)
+                        .load(myBitmap)
+                        .apply(
+                            RequestOptions()
+                                .placeholder(R.drawable.user)
+                                .error(R.drawable.user)
+                        )
+                        .listener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?, model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                return false
+
+                            }
+
+                            override fun onResourceReady(
+                                resource: Drawable?, model: Any?,
+                                target: Target<Drawable>?, dataSource: DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                myBitmap!!.recycle()
+                                myBitmap = null
+                                return false
+                            }
+
+                        })
+                        .into(holder.userIv)
+                }
+            } else {
+                Glide.with(context)
+                    .load(bitmap)
+                    .apply(
+                        RequestOptions()
+                            .placeholder(R.drawable.user)
+                            .error(R.drawable.user)
+                    )
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?, model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?, model: Any?,
+                            target: Target<Drawable>?, dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            bitmap!!.recycle()
+                            bitmap = null
+                            return false
+                        }
+
+                    })
+                    .into(holder.userIv)
+            }
+
+
+        }
     }
 
     inner class MyViewHolder(view: View) : ViewHolder(view) {
@@ -51,6 +144,7 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
         var phoneTv: TextView = view.findViewById(R.id.tv_phone_no)
         var locationTv: TextView = view.findViewById(R.id.tv_location)
         var menu: ImageView = view.findViewById(R.id.iv_options)
+        var userIv: CircleImageView = view.findViewById(R.id.iv_user)
     }
 
     private fun openOptionMenu(v: View, position: Int) {

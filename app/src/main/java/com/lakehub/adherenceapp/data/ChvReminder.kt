@@ -19,5 +19,6 @@ data class ChvReminder (
     val snoozed: Int = 0,
     val clientPhoneNo: String? = null,
     val clientName: String? = null,
-    val recent: Boolean = false
+    val recent: Boolean = false,
+    val hospital: String? = null
 )
