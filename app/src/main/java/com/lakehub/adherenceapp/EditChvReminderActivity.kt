@@ -88,8 +88,8 @@ class EditChvReminderActivity : AppCompatActivity() {
 
         val colors = intArrayOf(
             ContextCompat.getColor(this, R.color.materialColorGray),
-            ContextCompat.getColor(this, R.color.colorGreen),
-            ContextCompat.getColor(this, R.color.colorPrimaryLight)
+            ContextCompat.getColor(this, R.color.colorRedDark),
+            ContextCompat.getColor(this, R.color.colorMaroon)
         )
         val colorList = ColorStateList(states, colors)
         fab.backgroundTintList = colorList

@@ -187,6 +187,11 @@ class ChvDashboardActivity : AppCompatActivity() {
             drawer_layout.closeDrawer(GravityCompat.START)
         }
 
+        cl_reports_menu.setOnClickListener {
+            startActivity(Intent(this, ChvReportActivity::class.java))
+            drawer_layout.closeDrawer(GravityCompat.START)
+        }
+
         add_fab.setOnClickListener {
             startActivityForResult(Intent(this, AddChvReminderActivity::class.java), 900)
         }

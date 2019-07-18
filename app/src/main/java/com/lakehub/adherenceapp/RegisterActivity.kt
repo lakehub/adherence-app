@@ -45,7 +45,8 @@ class RegisterActivity : AppCompatActivity() {
                                     val myUser = hashMapOf(
                                         "phoneNumber" to phoneNumber,
                                         "category" to 2,
-                                        "points" to 0
+                                        "points" to 0,
+                                        "clients" to 0
                                     )
                                     userRef.document(phoneNumber)
                                         .set(myUser)

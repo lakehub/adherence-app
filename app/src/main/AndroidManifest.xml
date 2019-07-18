@@ -16,24 +16,28 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ChvReportActivity">
-        </activity>
+        <activity android:name=".ChvReportActivity"
+                  android:theme="@style/MaterialTheme.NoActionBar"/>
         <activity
                 android:name=".ChvProfileActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+        android:screenOrientation="portrait"/>
         <activity
                 android:name="com.yalantis.ucrop.UCropActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/MaterialTheme.NoActionBar"/>
         <activity
                 android:name=".ClientAppointmentsActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".FollowUpActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".EditChvReminderActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
 
         <meta-data
                 android:name="google_analytics_adid_collection_enabled"
@@ -44,10 +48,12 @@
 
         <activity
                 android:name=".DeactivateClientActivity"
-                android:theme="@style/Theme.AppCompat.Translucent"/>
+                android:theme="@style/Theme.AppCompat.Translucent"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".EditClientActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
 
         <receiver
                 android:name=".receivers.ChvPlaceReceiver"
@@ -58,7 +64,8 @@
         <activity
                 android:name=".ChvReminderActivity"
                 android:showOnLockScreen="true"
-                android:theme="@style/Theme.AppCompat.Translucent"/>
+                android:theme="@style/Theme.AppCompat.Translucent"
+                android:screenOrientation="portrait"/>
 
         <receiver
                 android:name=".receivers.ChvReminderReceiver"
@@ -68,27 +75,34 @@
 
         <activity
                 android:name=".SelectClientActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".AddClientActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".ClientsActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".AddChvReminderActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".AlarmActivity"
                 android:showOnLockScreen="true"
-                android:theme="@style/Theme.AppCompat.Translucent"/>
+                android:theme="@style/Theme.AppCompat.Translucent"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".CongratulationsActivity"
                 android:showOnLockScreen="true"
-                android:theme="@style/Theme.AppCompat.Translucent"/>
+                android:theme="@style/Theme.AppCompat.Translucent"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".CancelAlarmActivity"
-                android:theme="@style/Theme.AppCompat.Translucent"/>
+                android:theme="@style/Theme.AppCompat.Translucent"
+                android:screenOrientation="portrait"/>
 
         <receiver
                 android:name=".receivers.ConfirmAttendPlaceReceiver"
@@ -98,7 +112,8 @@
 
         <activity
                 android:name=".EditAlarmActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
 
         <receiver android:name=".receivers.BootCompletedReceiver">
             <intent-filter>
@@ -118,14 +133,17 @@
         <activity
                 android:name=".ConfirmPopUpActivity"
                 android:showOnLockScreen="true"
-                android:theme="@style/Theme.AppCompat.Translucent"/>
+                android:theme="@style/Theme.AppCompat.Translucent"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".SettingsActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".AddAlarmActivity"
                 android:launchMode="singleTask"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".ChvDashboardActivity"
                 android:screenOrientation="portrait"
@@ -137,23 +155,28 @@
                 android:theme="@style/MaterialTheme.NoActionBar"/>
         <activity
                 android:name=".SelectAccountTypeActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".LoginActivity"
                 android:launchMode="singleTop"
-                android:theme="@style/MaterialTheme"/>
+                android:theme="@style/MaterialTheme"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".TutorialActivity"
                 android:label="@string/title_activity_tutorial"
-                android:theme="@style/MaterialTheme.NoActionBar">
-        </activity>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".VerifyActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
         <activity
                 android:name=".RegisterActivity"
-                android:theme="@style/MaterialTheme.NoActionBar"/>
-        <activity android:name=".MainActivity">
+                android:theme="@style/MaterialTheme.NoActionBar"
+                android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

@@ -17,6 +17,7 @@ import org.joda.time.format.DateTimeFormat
 import java.io.File
 import java.io.FileNotFoundException
 import android.view.WindowManager
+import com.google.firebase.firestore.Query
 import com.lakehub.adherenceapp.receivers.AlarmReceiver
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -25,9 +26,11 @@ import java.util.*
 
 class AlarmActivity : AppCompatActivity() {
     private lateinit var alarmDoc: DocumentReference
+    private lateinit var reportDoc: Query
     private var snoozed: Int = 0
     private var mediaPlayer = MediaPlayer()
     private var haveSnoozed = false
+    var dateStr: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +44,18 @@ class AlarmActivity : AppCompatActivity() {
         val isPlace = intent.extras?.getBoolean("isPlace")
         val id = intent.extras?.getInt("id")
 
+        val offset = TimeZone.getDefault().rawOffset
+        val tz = DateTimeZone.forOffsetMillis(offset)
+        val currentDate = DateTime.now(tz)
+        val reportDateFormat = "yyyy-MM"
+        val reportDateFormatter = DateTimeFormat.forPattern(reportDateFormat)
+        dateStr = reportDateFormatter.print(currentDate)
+
         val db = FirebaseFirestore.getInstance()
         alarmDoc = db.collection("alarms").document(docId!!)
+        reportDoc = db.collection("reports")
+            .whereEqualTo("chvPhoneNo", AppPreferences.chvPhoneNo)
+            .whereEqualTo("date", dateStr)
         val handler = Handler()
 
         alarmDoc.update("rang", true)
@@ -136,11 +149,39 @@ class AlarmActivity : AppCompatActivity() {
                 alarmDoc.update(data)
                     .addOnCompleteListener {
                         progress_bar.makeGone()
+
+                        reportDoc.get()
+                            .addOnCompleteListener { qSnap ->
+                                if (qSnap.isComplete) {
+                                    if (qSnap.result!!.documents.isEmpty()) {
+                                        val myData = mutableMapOf(
+                                            "chvPhoneNo" to AppPreferences.chvPhoneNo,
+                                            "date" to dateStr,
+                                            "taken" to 0,
+                                            "snoozed" to 1,
+                                            "missed" to 0
+                                        )
+
+                                        FirebaseFirestore.getInstance().collection("reports")
+                                            .add(myData)
+                                    } else {
+                                        val myDocId = qSnap.result!!.documents[0].id
+                                        FirebaseFirestore.getInstance().collection("reports")
+                                            .document(myDocId)
+                                            .update(
+                                                "snoozed",
+                                                qSnap.result!!.documents[0].getLong("snoozed")!!.plus(1)
+                                            )
+                                            .addOnCompleteListener {
+                                                finish()
+                                            }
+                                    }
+                                }
+                            }
+
                         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
                         val format = "yyyy MM dd HH:mm"
                         val myFormatter = DateTimeFormat.forPattern(format)
-                        val offset = TimeZone.getDefault().rawOffset
-                        val tz = DateTimeZone.forOffsetMillis(offset)
                         val newDate = DateTime.now(tz).plusMinutes(1)
                         val millis = newDate.millis
 
@@ -155,7 +196,7 @@ class AlarmActivity : AppCompatActivity() {
                         val newPendingIntent =
                             PendingIntent.getBroadcast(this, id!!, newIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, newPendingIntent)
-                        finish()
+
                     }
                     .addOnFailureListener {
 
@@ -175,7 +216,34 @@ class AlarmActivity : AppCompatActivity() {
                     alarmDoc.update(data)
                         .addOnCompleteListener {
                             progress_bar.makeGone()
-                            finish()
+                            reportDoc.get()
+                                .addOnCompleteListener { qSnap ->
+                                    if (qSnap.isComplete) {
+                                        if (qSnap.result!!.documents.isEmpty()) {
+                                            val myData = mutableMapOf(
+                                                "chvPhoneNo" to AppPreferences.chvPhoneNo,
+                                                "date" to dateStr,
+                                                "taken" to 0,
+                                                "snoozed" to 0,
+                                                "missed" to 1
+                                            )
+
+                                            FirebaseFirestore.getInstance().collection("reports")
+                                                .add(myData)
+                                        } else {
+                                            val myDocId = qSnap.result!!.documents[0].id
+                                            FirebaseFirestore.getInstance().collection("reports")
+                                                .document(myDocId)
+                                                .update(
+                                                    "missed",
+                                                    qSnap.result!!.documents[0].getLong("missed")!!.plus(1)
+                                                )
+                                                .addOnCompleteListener {
+                                                    finish()
+                                                }
+                                        }
+                                    }
+                                }
                         }
                         .addOnFailureListener {
 
@@ -194,7 +262,34 @@ class AlarmActivity : AppCompatActivity() {
         alarmDoc.update(data)
             .addOnCompleteListener {
                 progress_bar.makeGone()
-                finish()
+                reportDoc.get()
+                    .addOnCompleteListener { qSnap ->
+                        if (qSnap.isComplete) {
+                            if (qSnap.result!!.documents.isEmpty()) {
+                                val myData = mutableMapOf(
+                                    "chvPhoneNo" to AppPreferences.chvPhoneNo,
+                                    "date" to dateStr,
+                                    "taken" to 0,
+                                    "snoozed" to 0,
+                                    "missed" to 1
+                                )
+
+                                FirebaseFirestore.getInstance().collection("reports")
+                                    .add(myData)
+                            } else {
+                                val myDocId = qSnap.result!!.documents[0].id
+                                FirebaseFirestore.getInstance().collection("reports")
+                                    .document(myDocId)
+                                    .update(
+                                        "missed",
+                                        qSnap.result!!.documents[0].getLong("missed")!!.plus(1)
+                                    )
+                                    .addOnCompleteListener {
+                                        finish()
+                                    }
+                            }
+                        }
+                    }
             }
             .addOnFailureListener {
 

@@ -9,11 +9,17 @@ import android.os.Bundle
 import android.view.WindowManager
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_confirm_pop_up.*
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
+import java.util.*
 
 class ConfirmPopUpActivity : AppCompatActivity() {
     private lateinit var alarmDoc: DocumentReference
+    private lateinit var reportDoc: Query
+    var dateStr: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +32,18 @@ class ConfirmPopUpActivity : AppCompatActivity() {
         val isPlace = intent.extras?.getBoolean("isPlace")
         val docId = intent.extras?.getString("docId")
 
+        val offset = TimeZone.getDefault().rawOffset
+        val tz = DateTimeZone.forOffsetMillis(offset)
+        val currentDate = DateTime.now(tz)
+        val reportDateFormat = "yyyy-MM"
+        val reportDateFormatter = DateTimeFormat.forPattern(reportDateFormat)
+        dateStr = reportDateFormatter.print(currentDate)
+
         val db = FirebaseFirestore.getInstance()
         alarmDoc = db.collection("alarms").document(docId!!)
+        reportDoc = db.collection("reports")
+            .whereEqualTo("chvPhoneNo", AppPreferences.chvPhoneNo)
+            .whereEqualTo("date", dateStr)
 
         if (isPlace!!) {
             tv_time.text = displayTime(date!!)
@@ -51,8 +67,35 @@ class ConfirmPopUpActivity : AppCompatActivity() {
                 .addOnCompleteListener {
                     if (it.isComplete) {
                         progress_bar.makeVisible()
-                        startActivity(Intent(this, CongratulationsActivity::class.java))
-                        finish()
+                        reportDoc.get()
+                            .addOnCompleteListener { qSnap ->
+                                if (qSnap.isComplete) {
+                                    if (qSnap.result!!.documents.isEmpty()) {
+                                        val myData = mutableMapOf(
+                                            "chvPhoneNo" to AppPreferences.chvPhoneNo,
+                                            "date" to dateStr,
+                                            "taken" to 1,
+                                            "snoozed" to 0,
+                                            "missed" to 0
+                                        )
+
+                                        FirebaseFirestore.getInstance().collection("reports")
+                                            .add(myData)
+                                    } else {
+                                        val myDocId = qSnap.result!!.documents[0].id
+                                        FirebaseFirestore.getInstance().collection("reports")
+                                            .document(myDocId)
+                                            .update(
+                                                "taken",
+                                                qSnap.result!!.documents[0].getLong("taken")!!.plus(1)
+                                            )
+                                            .addOnCompleteListener {
+                                                startActivity(Intent(this, CongratulationsActivity::class.java))
+                                                finish()
+                                            }
+                                    }
+                                }
+                            }
                     }
                 }
         }

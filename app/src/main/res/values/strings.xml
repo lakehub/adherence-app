@@ -212,4 +212,11 @@
         <item>Choose Hospital…</item>
     </string-array>
     <string name="choose_hos">Choose Hospital…</string>
+    <string name="chv_report">CHV Report!</string>
+    <string name="percentage">%1$d</string>
+    <string name="sample_count">100</string>
+    <string name="taken_doses_visits">taken doses/visits</string>
+    <string name="snoozed">snoozed</string>
+    <string name="missed">missed</string>
+    <string name="no_report_for_this_month">No Report for this month</string>
 </resources>

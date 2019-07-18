@@ -81,7 +81,7 @@
                 android:background="@android:color/darker_gray"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_missed_reports"
+                android:id="@+id/cl_reports_menu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="20dp"

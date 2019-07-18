@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <color name="colorPrimary">#005E20</color>
     <color name="colorPrimaryLight">#AA005E20</color>
-    <color name="colorRedLight">#AAC62132</color>
+    <!--<color name="colorRedLight">#AAC62132</color>-->
     <color name="colorBlueLight">#01709B</color>
     <color name="colorPrimaryTranslucent">#2C5F20</color>
     <color name="colorPrimaryDark">#004116</color>
@@ -32,6 +32,7 @@
     <color name="colorRedDark">#76131E</color>
     <color name="colorRedAlt">#B21D2D</color>
     <color name="colorMaroon">#3B090F</color>
+    <color name="colorRedLight">#FF6961</color>
 
     <!--uCrop Activity-->
     <color name="ucrop_color_toolbar" tools:override="true">@color/colorPrimary</color>

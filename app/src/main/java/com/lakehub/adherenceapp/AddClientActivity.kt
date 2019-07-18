@@ -87,9 +87,22 @@ class AddClientActivity : AppCompatActivity() {
                                         )
 
                                         userRef.set(data)
-                                            .addOnCompleteListener {task ->
+                                            .addOnCompleteListener { task ->
                                                 if (task.isComplete) {
                                                     hideProgress()
+                                                    val chvDoc = db.collection("users")
+                                                        .document(AppPreferences.chvPhoneNo!!)
+
+                                                    chvDoc.get()
+                                                        .addOnCompleteListener { docSnap ->
+                                                            if (docSnap.isComplete) {
+                                                                chvDoc.update(
+                                                                    "clients",
+                                                                    docSnap.result?.getLong("clients")!!
+                                                                        .toInt().plus(1)
+                                                                )
+                                                            }
+                                                        }
                                                     val toast = Toast(this)
                                                     val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
                                                     val textView: TextView = view.findViewById(R.id.message)
