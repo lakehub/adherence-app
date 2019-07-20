@@ -502,6 +502,7 @@ class AddAlarmActivity : AppCompatActivity() {
                                 myIntent.putExtra("tonePath", tonePath)
                                 myIntent.putExtra("docId", alarmsRef.id)
                                 myIntent.putExtra("repeatMode", repeatModeList)
+                                myIntent.putExtra("medType", medType)
                                 val pendingIntent =
                                     PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
@@ -513,6 +514,7 @@ class AddAlarmActivity : AppCompatActivity() {
                                         ConfirmAttendPlaceReceiver::class.java
                                     )
                                     placeIntent.putExtra("id", id)
+                                    placeIntent.putExtra("note", description)
                                     placeIntent.putExtra("snoozed", 0)
                                     placeIntent.putExtra("date", dateFormatter.print(toDate))
                                     placeIntent.putExtra("docId", alarmsRef.id)

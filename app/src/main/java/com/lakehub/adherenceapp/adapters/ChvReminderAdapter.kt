@@ -123,6 +123,7 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
                     myIntent.putExtra("clientName", alarm.clientName)
                     myIntent.putExtra("clientPhoneNo", alarm.clientPhoneNo)
                     myIntent.putExtra("hospital", alarm.hospital)
+                    myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     context.startActivity(myIntent)
                 }
                 R.id.cancel -> {

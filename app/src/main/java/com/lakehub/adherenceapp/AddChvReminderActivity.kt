@@ -568,6 +568,9 @@ class AddChvReminderActivity : AppCompatActivity() {
                                 myIntent.putExtra("isDrug", isDrug)
                                 myIntent.putExtra("isAppointment", isAppointment)
                                 myIntent.putExtra("hospital", hospital)
+                                myIntent.putExtra("medType", medType)
+                                myIntent.putExtra("clientPhoneNo", clientPhoneNo)
+                                myIntent.putExtra("clientName", clientName)
                                 val pendingIntent =
                                     PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)

@@ -91,7 +91,7 @@ class AddClientActivity : AppCompatActivity() {
                                                 if (task.isComplete) {
                                                     hideProgress()
                                                     val chvDoc = db.collection("users")
-                                                        .document(AppPreferences.chvPhoneNo!!)
+                                                        .document(AppPreferences.phoneNo!!)
 
                                                     chvDoc.get()
                                                         .addOnCompleteListener { docSnap ->

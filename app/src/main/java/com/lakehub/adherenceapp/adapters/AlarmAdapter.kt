@@ -104,6 +104,7 @@ class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
                     myIntent.putExtra("medType", alarm.medType)
                     myIntent.putExtra("repeatMode", alarm.repeatMode)
 //                    (context as Activity).startActivityForResult(myIntent, 900)
+                    myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     context.startActivity(myIntent)
                 }
                 R.id.cancel -> {

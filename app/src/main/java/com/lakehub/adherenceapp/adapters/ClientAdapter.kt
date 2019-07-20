@@ -158,11 +158,13 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
                     myIntent.putExtra("phoneNo", client.phoneNumber)
                     myIntent.putExtra("location", client.location)
                     myIntent.putExtra("name", client.name)
+                    myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     context.startActivity(myIntent)
                 }
                 R.id.delete -> {
                     val myIntent = Intent(context, DeactivateClientActivity::class.java)
                     myIntent.putExtra("phoneNo", client.phoneNumber)
+                    myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     context.startActivity(myIntent)
                 }
             }

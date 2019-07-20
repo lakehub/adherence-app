@@ -3,6 +3,7 @@ package com.lakehub.adherenceapp
 import android.R.attr.data
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -18,6 +19,10 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import java.util.*
 import java.util.concurrent.TimeUnit
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -71,6 +76,18 @@ class MainActivity : AppCompatActivity() {
                             finish()
                         } else {
                             startActivity(Intent(this@MainActivity, ChvDashboardActivity::class.java))
+                            val xiaomiManufacturer = "xiaomi"
+                            val huaweiManufacturer = "huawei"
+                            val myIntent = Intent()
+                            if (android.os.Build.MANUFACTURER.equals(xiaomiManufacturer, true)) {
+                                myIntent.component = ComponentName("com.miui.securitycenter",
+                                    "com.miui.permcenter.autostart.AutoStartManagementActivity")
+//                                startActivity(myIntent)
+                            } else if (android.os.Build.MANUFACTURER.equals(huaweiManufacturer, true)) {
+                                myIntent.component = ComponentName("com.huawei.systemmanager",
+                                    "com.huawei.systemmanager.optimize.process.ProtectActivity")
+//                                startActivity(myIntent)
+                            }
                             finish()
                         }
                     } else {
@@ -107,5 +124,13 @@ class MainActivity : AppCompatActivity() {
         }, 1000L)
 
 
+    }
+
+    private fun isCallable(intent: Intent): Boolean {
+        val list = packageManager.queryIntentActivities(
+            intent,
+            PackageManager.MATCH_DEFAULT_ONLY
+        )
+        return list.size > 0
     }
 }
