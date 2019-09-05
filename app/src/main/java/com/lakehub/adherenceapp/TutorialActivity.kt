@@ -2,7 +2,6 @@ package com.lakehub.adherenceapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
@@ -52,7 +51,7 @@ class TutorialActivity : AppCompatActivity() {
                 view_pager.currentItem = view_pager.currentItem + 1
             } else {
                 AppPreferences.firstRun = false
-                startActivity(Intent(this, RegisterActivity::class.java))
+                startActivity(Intent(this, LoginActivity::class.java))
                 finish()
             }
         }

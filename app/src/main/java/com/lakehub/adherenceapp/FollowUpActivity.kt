@@ -2,7 +2,6 @@ package com.lakehub.adherenceapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,7 +14,6 @@ import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarview.utils.yearMonth
 import com.lakehub.adherenceapp.adapters.*
 import com.lakehub.adherenceapp.data.Alarm
-import com.lakehub.adherenceapp.data.ChvReminder
 import com.lakehub.adherenceapp.data.FollowUp
 import kotlinx.android.synthetic.main.activity_follow_up.*
 import kotlinx.android.synthetic.main.activity_follow_up.view.*
@@ -213,10 +211,10 @@ class FollowUpActivity : AppCompatActivity() {
         val alarmRef = FirebaseFirestore.getInstance().collection("alarms")
         val followUpRef = FirebaseFirestore.getInstance().collection("follow_ups")
 
-        alarmRef.whereEqualTo("chvPhoneNumber", AppPreferences.phoneNo)
+        alarmRef.whereEqualTo("chvAccessKey", AppPreferences.accessKey)
             .whereEqualTo("date", selectedDateStr)
             .whereEqualTo("missed", true)
-            .whereEqualTo("isPlace", false)
+            .whereEqualTo("place", false)
             .whereEqualTo("marked", false)
             .addSnapshotListener { querySnapshot, _ ->
                 hideProgress()
@@ -224,26 +222,9 @@ class FollowUpActivity : AppCompatActivity() {
                     alarmList.clear()
 
                     for (document in querySnapshot.documents) {
-                        val alarm = Alarm(
-                            description = document.getString("description")!!,
-                            fromDate = document.getString("fromDate")!!,
-                            toDate = document.getString("toDate"),
-                            name = document.getString("name"),
-                            date = document.getString("date"),
-                            phoneNo = document.getString("phoneNumber"),
-                            docId = document.id,
-                            alarmTone = document.getString("alarmTonePath"),
-                            isPlace = document.getBoolean("isPlace"),
-                            cancelled = document.getBoolean("cancelled")!!,
-                            medType = document.getDouble("medicationType")?.toInt(),
-                            repeatMode = document.get("repeatMode") as ArrayList<Int>,
-                            id = document.getLong("id")?.toInt()!!,
-                            snoozed = document.getLong("snoozed")?.toInt()!!,
-                            rang = document.getBoolean("rang")!!,
-                            missed = document.getBoolean("missed")!!
-                        )
+                        val alarm = document.toObject(Alarm::class.java)
 
-                        alarmList.add(alarm)
+                        alarmList.add(alarm!!)
                     }
 
                     val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
@@ -270,20 +251,16 @@ class FollowUpActivity : AppCompatActivity() {
             }
 
         followUpRef.whereEqualTo("date", selectedDateStr)
+            .whereEqualTo("marked", false)
             .addSnapshotListener { querySnapshot, _ ->
                 hideProgress()
                 if (querySnapshot != null && querySnapshot.documents.isNotEmpty()) {
                     followUps.clear()
 
                     for (document in querySnapshot.documents) {
-                        val followUp = FollowUp(
-                            clientName = document.getString("clientName")!!,
-                            clientPhoneNo = document.getString("clientPhoneNo")!!,
-                            date = document.getString("date")!!,
-                            dateTime = document.getString("dateTime")!!
-                        )
+                        val followUp = document.toObject(FollowUp::class.java)
 
-                        followUps.add(followUp)
+                        followUps.add(followUp!!)
                     }
 
                     val sorted = followUps.sortedWith(Comparator { o1, o2 ->

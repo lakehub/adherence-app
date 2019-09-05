@@ -26,8 +26,8 @@
                 android:padding="30dp">
             <ImageView
                     android:id="@+id/iv_logo"
-                    android:layout_width="110dp"
-                    android:layout_height="110dp"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
                     android:contentDescription="@string/app_name"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -47,7 +47,8 @@
                 android:fontFamily="@font/product_sans_bold"
                 android:textStyle="bold"
                 android:textAllCaps="true"
-                android:textColor="@color/colorYellow"/>
+                android:textColor="@color/colorYellow"
+                android:visibility="gone"/>
 
         <TextView
                 android:id="@+id/tv_logo_dsc_sm"
@@ -61,7 +62,8 @@
                 android:fontFamily="@font/product_sans_bold"
                 android:textStyle="bold"
                 android:textAllCaps="true"
-                android:textColor="@color/colorYellow"/>
+                android:textColor="@color/colorYellow"
+                android:visibility="gone"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

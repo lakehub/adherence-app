@@ -14,13 +14,6 @@ import org.joda.time.format.DateTimeFormat
 
 class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
     androidx.recyclerview.widget.RecyclerView.Adapter<AlarmAdapter.MyViewHolder>() {
-    private var position: Int = 0
-
-    var currentPosition: Int
-        get() = position
-        set(value) {
-            position = value
-        }
 
     override fun getItemCount(): Int {
         return alarms.size
@@ -36,7 +29,7 @@ class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val alarm = alarms[position]
 
-        holder.tvDescription.text = limitStringLength(alarm.description, 50)
+        holder.tvDescription.text = limitStringLength(alarm.description, 30)
         holder.tvCount.text = (position + 1).toString()
 
         if (alarm.recent) {
@@ -97,11 +90,11 @@ class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
                     myIntent.putExtra("docId", alarm.docId)
                     myIntent.putExtra("id", alarm.id)
                     myIntent.putExtra("description", alarm.description)
-                    myIntent.putExtra("tonePath", alarm.alarmTone)
+                    myIntent.putExtra("tonePath", alarm.alarmTonePath)
                     myIntent.putExtra("fromDate", alarm.fromDate)
                     myIntent.putExtra("toDate", alarm.toDate)
-                    myIntent.putExtra("isPlace", alarm.isPlace)
-                    myIntent.putExtra("medType", alarm.medType)
+                    myIntent.putExtra("place", alarm.place)
+                    myIntent.putExtra("medType", alarm.medicationType)
                     myIntent.putExtra("repeatMode", alarm.repeatMode)
 //                    (context as Activity).startActivityForResult(myIntent, 900)
                     myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -111,7 +104,7 @@ class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
                     val myIntent = Intent(context, CancelAlarmActivity::class.java)
                     myIntent.putExtra("docId", alarm.docId)
                     myIntent.putExtra("alarmId", alarm.id)
-                    myIntent.putExtra("isPlace", alarm.isPlace)
+                    myIntent.putExtra("place", alarm.place)
                     context.startActivity(myIntent)
                 }
             }

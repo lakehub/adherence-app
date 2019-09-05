@@ -12,10 +12,13 @@ object AppPreferences {
     private val LOGGED_IN = Pair("logged_in", false)
     private val ACCOUNT_TYPE = Pair("account_type", 0)
     private val TONE_PATH = Pair("tone_path", null)
-    private val PHONE_NO = Pair("phone_no", null)
-    private val CHV_PHONE_NO = Pair("chv_phone_no", null)
-    private val MY_NAME = Pair("my_name", null)
+    private val ACCESS_KEY = Pair("access_key", null)
+    private val CHV_ACCESS_KEY = Pair("chv_access_Key", null)
     private val PROFILE_IMG = Pair("profile_img", null)
+    private val APP_IN_FOREGROUND = Pair("app_in_foreground", false)
+    private val EXIT = Pair("exit", false)
+    private val SURFED = Pair("surfed", false)
+    private val AUTO_START_ENABLED = Pair("auto_start_enabled", false)
 
 
     fun init(context: Context) {
@@ -52,27 +55,45 @@ object AppPreferences {
             it.putString(TONE_PATH.first, value)
         }
 
-    var phoneNo: String?
-        get() = preferences.getString(PHONE_NO.first, PHONE_NO.second)
+    var accessKey: String?
+        get() = preferences.getString(ACCESS_KEY.first, ACCESS_KEY.second)
         set(value) = preferences.edit {
-            it.putString(PHONE_NO.first, value)
+            it.putString(ACCESS_KEY.first, value)
         }
 
-    var chvPhoneNo: String?
-        get() = preferences.getString(CHV_PHONE_NO.first, CHV_PHONE_NO.second)
+    var chvAccessKey: String?
+        get() = preferences.getString(CHV_ACCESS_KEY.first, CHV_ACCESS_KEY.second)
         set(value) = preferences.edit {
-            it.putString(CHV_PHONE_NO.first, value)
-        }
-
-    var myName: String?
-        get() = preferences.getString(MY_NAME.first, MY_NAME.second)
-        set(value) = preferences.edit {
-            it.putString(MY_NAME.first, value)
+            it.putString(CHV_ACCESS_KEY.first, value)
         }
 
     var profileImg: String?
         get() = preferences.getString(PROFILE_IMG.first, PROFILE_IMG.second)
         set(value) = preferences.edit {
             it.putString(PROFILE_IMG.first, value)
+        }
+
+    var appInForeground: Boolean
+        get() = preferences.getBoolean(APP_IN_FOREGROUND.first, APP_IN_FOREGROUND.second)
+        set(value) = preferences.edit {
+            it.putBoolean(APP_IN_FOREGROUND.first, value)
+        }
+
+    var exit: Boolean
+        get() = preferences.getBoolean(EXIT.first, EXIT.second)
+        set(value) = preferences.edit {
+            it.putBoolean(EXIT.first, value)
+        }
+
+    var surfed: Boolean
+        get() = preferences.getBoolean(SURFED.first, SURFED.second)
+        set(value) = preferences.edit {
+            it.putBoolean(SURFED.first, value)
+        }
+
+    var autoStartEnabled: Boolean
+        get() = preferences.getBoolean(AUTO_START_ENABLED.first, AUTO_START_ENABLED.second)
+        set(value) = preferences.edit {
+            it.putBoolean(AUTO_START_ENABLED.first, value)
         }
 }

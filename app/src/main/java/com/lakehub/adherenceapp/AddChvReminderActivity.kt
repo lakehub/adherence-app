@@ -22,13 +22,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import com.lakehub.adherenceapp.data.ChvReminder
 import com.lakehub.adherenceapp.receivers.ChvReminderReceiver
 import kotlinx.android.synthetic.main.activity_add_chv_reminder.*
 import kotlinx.android.synthetic.main.content_add_chv_reminder.*
@@ -64,8 +64,7 @@ class AddChvReminderActivity : AppCompatActivity() {
     private lateinit var clSat: ConstraintLayout
     private lateinit var clSun: ConstraintLayout
     private var permissionGranted = false
-    private var clientName: String? = null
-    private var clientPhoneNo: String? = null
+    private var clientAccessKey: String? = null
     private val hospitals = arrayListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,7 +100,7 @@ class AddChvReminderActivity : AppCompatActivity() {
 
         val switchColorsThumb = intArrayOf(
             ContextCompat.getColor(this, R.color.colorRed),
-            ContextCompat.getColor(this, R.color.colorPrimary)
+            ContextCompat.getColor(this, R.color.colorGreen)
         )
         val switchColorListThumb = ColorStateList(switchStatesThumb, switchColorsThumb)
 
@@ -128,6 +127,8 @@ class AddChvReminderActivity : AppCompatActivity() {
 
         cl_med_type.makeGone()
         cl_client.makeGone()
+
+        edit_text.error = null
 
         drug_switch.setOnCheckedChangeListener { _, checked ->
             if (checked) {
@@ -370,7 +371,7 @@ class AddChvReminderActivity : AppCompatActivity() {
             startActivityForResult(Intent(this, SelectClientActivity::class.java), 1001)
         }
 
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Dexter.withActivity(this)
                 .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 .withListener(object : PermissionListener {
@@ -458,7 +459,7 @@ class AddChvReminderActivity : AppCompatActivity() {
             val myFinalDateStr = myFinalDateFormatter.print(fromDate)
 
             if (!inProgress) {
-                if (description.isBlank() || (isAppointment && clientPhoneNo == null) ||
+                if (description.isBlank() || (isAppointment && clientAccessKey == null) ||
                     (!isAppointment && !isDrug && hos_spinner.selectedItemPosition == 0)
                 ) {
                     val toast = Toast(this)
@@ -479,9 +480,8 @@ class AddChvReminderActivity : AppCompatActivity() {
                     toast.duration = Toast.LENGTH_SHORT
                     toast.show()
                 } else {
-                    showProgress()
+//                    showProgress()
                     val id = ThreadLocalRandom.current().nextInt()
-                    val phoneNumber = AppPreferences.phoneNo
                     val db = FirebaseFirestore.getInstance()
                     val alarmsRef = db.collection("chv_reminders").document()
                     val hospital = when (hos_spinner.selectedItemPosition) {
@@ -492,92 +492,74 @@ class AddChvReminderActivity : AppCompatActivity() {
                     }
 
                     val alarm = if (isAppointment) {
-                        hashMapOf(
-                            "id" to id,
-                            "phoneNumber" to phoneNumber,
-                            "description" to description,
-                            "alarmTonePath" to tonePath,
-                            "repeatMode" to repeatModeList,
-                            "dateTime" to dateFormatter.print(fromDate),
-                            "isDrug" to isDrug,
-                            "isAppointment" to isAppointment,
-                            "date" to myFinalDateStr,
-                            "cancelled" to false,
-                            "snoozed" to 0,
-                            "confirmed" to false,
-                            "missed" to false,
-                            "reasonToCancel" to "",
-                            "rang" to false,
-                            "medicationType" to medType,
-                            "clientPhoneNo" to clientPhoneNo,
-                            "clientName" to clientName,
-                            "millis" to fromDate.millis,
-                            "hospital" to hospital
+                        ChvReminder(
+                            id = id,
+                            accessKey = AppPreferences.accessKey!!,
+                            description = description,
+                            alarmTonePath = tonePath,
+                            repeatMode = repeatModeList,
+                            dateTime = dateFormatter.print(fromDate),
+                            drug = isDrug,
+                            appointment = isAppointment,
+                            date = myFinalDateStr,
+                            medicationType = medType,
+                            clientAccessKey = clientAccessKey,
+                            millis = fromDate.millis,
+                            hospital = hospital,
+                            docId = alarmsRef.id
                         )
                     } else {
-                        hashMapOf(
-                            "id" to id,
-                            "phoneNumber" to phoneNumber,
-                            "description" to description,
-                            "alarmTonePath" to tonePath,
-                            "repeatMode" to repeatModeList,
-                            "dateTime" to dateFormatter.print(fromDate),
-                            "isDrug" to isDrug,
-                            "isAppointment" to isAppointment,
-                            "date" to myFinalDateStr,
-                            "cancelled" to false,
-                            "snoozed" to 0,
-                            "confirmed" to false,
-                            "missed" to false,
-                            "reasonToCancel" to "",
-                            "rang" to false,
-                            "medicationType" to medType,
-                            "clientPhoneNo" to null,
-                            "clientName" to null,
-                            "millis" to fromDate.millis,
-                            "hospital" to hospital
+                        ChvReminder(
+                            id = id,
+                            accessKey = AppPreferences.accessKey!!,
+                            description = description,
+                            alarmTonePath = tonePath,
+                            repeatMode = repeatModeList,
+                            dateTime = dateFormatter.print(fromDate),
+                            drug = isDrug,
+                            appointment = isAppointment,
+                            date = myFinalDateStr,
+                            medicationType = medType,
+                            clientAccessKey = null,
+                            millis = fromDate.millis,
+                            hospital = hospital,
+                            docId = alarmsRef.id
                         )
                     }
 
-                    alarmsRef.set(alarm, SetOptions.merge())
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                hideProgress()
-                                val toast = Toast(this)
-                                val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
-                                val textView: TextView = view.findViewById(R.id.message)
-                                textView.text = getString(R.string.alarm_add_success)
-                                toast.view = view
-                                toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                toast.duration = Toast.LENGTH_SHORT
-                                toast.show()
+                    alarmsRef.set(alarm)
+                    val toast = Toast(this)
+                    val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
+                    val textView: TextView = view.findViewById(R.id.message)
+                    textView.text = getString(R.string.alarm_add_success)
+                    toast.view = view
+                    toast.setGravity(Gravity.BOTTOM, 30, 30)
+                    toast.duration = Toast.LENGTH_SHORT
+                    toast.show()
 
-                                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-                                val millis = toUtc(fromDate).millis
+                    val millis = toUtc(fromDate).millis
 
-                                val myIntent =
-                                    Intent(MainApplication.applicationContext(), ChvReminderReceiver::class.java)
-                                myIntent.putExtra("note", description)
-                                myIntent.putExtra("id", id)
-                                myIntent.putExtra("snoozed", 0)
-                                myIntent.putExtra("date", dateFormatter.print(fromDate))
-                                myIntent.putExtra("tonePath", tonePath)
-                                myIntent.putExtra("docId", alarmsRef.id)
-                                myIntent.putExtra("repeatMode", repeatModeList)
-                                myIntent.putExtra("isDrug", isDrug)
-                                myIntent.putExtra("isAppointment", isAppointment)
-                                myIntent.putExtra("hospital", hospital)
-                                myIntent.putExtra("medType", medType)
-                                myIntent.putExtra("clientPhoneNo", clientPhoneNo)
-                                myIntent.putExtra("clientName", clientName)
-                                val pendingIntent =
-                                    PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
+                    val myIntent =
+                        Intent(MainApplication.applicationContext(), ChvReminderReceiver::class.java)
+                    myIntent.putExtra("note", description)
+                    myIntent.putExtra("id", id)
+                    myIntent.putExtra("snoozed", 0)
+                    myIntent.putExtra("date", dateFormatter.print(fromDate))
+                    myIntent.putExtra("tonePath", tonePath)
+                    myIntent.putExtra("docId", alarmsRef.id)
+                    myIntent.putExtra("repeatMode", repeatModeList)
+                    myIntent.putExtra("drug", isDrug)
+                    myIntent.putExtra("appointment", isAppointment)
+                    myIntent.putExtra("hospital", hospital)
+                    myIntent.putExtra("medType", medType)
+                    myIntent.putExtra("clientAccessKey", clientAccessKey)
+                    val pendingIntent =
+                        PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
 
-                                finish()
-                            }
-                        }
+                    finish()
 
                 }
             }
@@ -594,15 +576,9 @@ class AddChvReminderActivity : AppCompatActivity() {
             val filename = arr!![arr.size - 1]
             val finalFilename = filename.split(".")[0]
             tv_tone.text = limitStringLength(finalFilename, 20)
-            /*RingtoneManager.setActualDefaultRingtoneUri(
-                this,
-                RingtoneManager.TYPE_RINGTONE,
-                uri
-            )*/
         } else if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
-            clientName = data!!.extras!!.getString("name")
-            clientPhoneNo = data.extras!!.getString("phoneNo")
-            tv_client.text = titleCase(limitStringLength(clientName!!, 20))
+            clientAccessKey = data?.extras!!.getString("accessKey")
+            tv_client.text = clientAccessKey
         }
     }
 

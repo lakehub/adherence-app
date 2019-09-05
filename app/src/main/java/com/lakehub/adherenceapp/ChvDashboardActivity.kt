@@ -76,87 +76,6 @@ class ChvDashboardActivity : AppCompatActivity() {
         val colorList = ColorStateList(states, colors)
         add_fab.backgroundTintList = colorList
 
-        if (AppPreferences.profileImg != null) {
-            val contextWrapper = ContextWrapper(MainApplication.applicationContext())
-            val directory: File = contextWrapper.getDir("user_images", Context.MODE_PRIVATE)
-            var bitmap = loadImgFromInternalStorage(directory.absolutePath, AppPreferences.profileImg!!)
-            if (bitmap == null) {
-                val storageRef = FirebaseStorage.getInstance().reference
-                val filename = AppPreferences.profileImg
-                val imgRef = storageRef.child("chv_images/$filename")
-                val mContextWrapper = ContextWrapper(this)
-                val mDirectory: File = mContextWrapper.getDir(
-                    "user_images",
-                    Context.MODE_PRIVATE
-                )
-                val file = File(mDirectory, filename!!)
-                imgRef.getFile(file).addOnSuccessListener {
-                    var myBitmap = loadImgFromInternalStorage(directory.absolutePath, AppPreferences.profileImg!!)
-                    Glide.with(this)
-                        .load(myBitmap)
-                        .apply(
-                            RequestOptions()
-                                .placeholder(R.drawable.user)
-                                .error(R.drawable.user)
-                        )
-                        .listener(object : RequestListener<Drawable> {
-                            override fun onLoadFailed(
-                                e: GlideException?, model: Any?,
-                                target: Target<Drawable>?,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                return false
-
-                            }
-
-                            override fun onResourceReady(
-                                resource: Drawable?, model: Any?,
-                                target: Target<Drawable>?, dataSource: DataSource?,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                myBitmap!!.recycle()
-                                myBitmap = null
-                                return false
-                            }
-
-                        })
-                        .into(iv_user)
-                }
-            } else {
-                Glide.with(this)
-                    .load(bitmap)
-                    .apply(
-                        RequestOptions()
-                            .placeholder(R.drawable.user)
-                            .error(R.drawable.user)
-                    )
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?, model: Any?,
-                            target: Target<Drawable>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            return false
-
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?, model: Any?,
-                            target: Target<Drawable>?, dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            bitmap!!.recycle()
-                            bitmap = null
-                            return false
-                        }
-
-                    })
-                    .into(iv_user)
-            }
-
-
-        }
-
         iv_menu.setOnClickListener {
             if (!drawer_layout.isDrawerOpen(GravityCompat.START)) {
                 drawer_layout.openDrawer(GravityCompat.START, true)
@@ -188,21 +107,27 @@ class ChvDashboardActivity : AppCompatActivity() {
         }
 
         cl_reports_menu.setOnClickListener {
+            AppPreferences.surfed = true
             startActivity(Intent(this, ChvReportActivity::class.java))
             drawer_layout.closeDrawer(GravityCompat.START)
         }
 
         add_fab.setOnClickListener {
+            AppPreferences.surfed = true
             startActivityForResult(Intent(this, AddChvReminderActivity::class.java), 900)
+            drawer_layout.closeDrawer(GravityCompat.START, true)
         }
 
         cl_profile_menu.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START, true)
             startActivity(Intent(this, ChvProfileActivity::class.java))
+            AppPreferences.surfed = true
         }
 
         iv_user.setOnClickListener {
+            AppPreferences.surfed = true
             startActivity(Intent(this, ChvProfileActivity::class.java))
+            drawer_layout.closeDrawer(GravityCompat.START, true)
         }
 
         cl_logout_menu.setOnClickListener {
@@ -210,11 +135,10 @@ class ChvDashboardActivity : AppCompatActivity() {
 //            auth.signOut()
 //            FirebaseFirestore.getInstance().clearPersistence()
             AppPreferences.loggedIn = false
-            AppPreferences.phoneNo = null
+            AppPreferences.accessKey = null
             AppPreferences.accountType = 0
-            AppPreferences.chvPhoneNo = null
+            AppPreferences.chvAccessKey = null
             AppPreferences.profileImg = null
-            AppPreferences.myName = null
             emptyDirectory("user_images")
             emptyDirectory("client_images")
             finish()
@@ -382,6 +306,90 @@ class ChvDashboardActivity : AppCompatActivity() {
         fetchRecent()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (AppPreferences.profileImg != null) {
+            val contextWrapper = ContextWrapper(MainApplication.applicationContext())
+            val directory: File = contextWrapper.getDir("user_images", Context.MODE_PRIVATE)
+            var bitmap = loadImgFromInternalStorage(directory.absolutePath, AppPreferences.profileImg!!)
+            if (bitmap == null) {
+                val storageRef = FirebaseStorage.getInstance().reference
+                val filename = AppPreferences.profileImg
+                val imgRef = storageRef.child("chv_images/$filename")
+                val mContextWrapper = ContextWrapper(this)
+                val mDirectory: File = mContextWrapper.getDir(
+                    "user_images",
+                    Context.MODE_PRIVATE
+                )
+                val file = File(mDirectory, filename!!)
+                imgRef.getFile(file).addOnSuccessListener {
+                    var myBitmap = loadImgFromInternalStorage(directory.absolutePath, AppPreferences.profileImg!!)
+                    Glide.with(this)
+                        .load(myBitmap)
+                        .apply(
+                            RequestOptions()
+                                .placeholder(R.drawable.user)
+                                .error(R.drawable.user)
+                        )
+                        .listener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?, model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                return false
+
+                            }
+
+                            override fun onResourceReady(
+                                resource: Drawable?, model: Any?,
+                                target: Target<Drawable>?, dataSource: DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                myBitmap!!.recycle()
+                                myBitmap = null
+                                return false
+                            }
+
+                        })
+                        .into(iv_user)
+                }
+            } else {
+                Glide.with(this)
+                    .load(bitmap)
+                    .apply(
+                        RequestOptions()
+                            .placeholder(R.drawable.user)
+                            .error(R.drawable.user)
+                    )
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?, model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?, model: Any?,
+                            target: Target<Drawable>?, dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            bitmap!!.recycle()
+                            bitmap = null
+                            return false
+                        }
+
+                    })
+                    .into(iv_user)
+            }
+
+
+        }
+    }
+
     private fun showProgress() {
         progress_bar.visibility = View.VISIBLE
     }
@@ -443,10 +451,10 @@ class ChvDashboardActivity : AppCompatActivity() {
     private fun fetchByDate() {
         if (selectedDateStr != null) {
             showProgress()
-            val phoneNumber = AppPreferences.phoneNo
+            val accessKey = AppPreferences.accessKey
 
             val alarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
-                .whereEqualTo("phoneNumber", phoneNumber!!)
+                .whereEqualTo("accessKey", accessKey!!)
                 .whereEqualTo("date", selectedDateStr)
                 .whereEqualTo("cancelled", false)
 
@@ -464,26 +472,9 @@ class ChvDashboardActivity : AppCompatActivity() {
                         missedAlarmList.clear()
 
                         for (document in querySnapshot.documents) {
-                            val alarm = ChvReminder(
-                                description = document.getString("description")!!,
-                                fromDate = document.getString("dateTime")!!,
-                                docId = document.id,
-                                alarmTone = document.getString("alarmTonePath"),
-                                clientPhoneNo = document.getString("clientPhoneNo"),
-                                clientName = document.getString("clientName"),
-                                hospital = document.getString("hospital"),
-                                isDrug = document.getBoolean("isDrug"),
-                                isAppointment = document.getBoolean("isAppointment"),
-                                cancelled = document.getBoolean("cancelled")!!,
-                                medType = document.getDouble("medicationType")?.toInt(),
-                                repeatMode = document.get("repeatMode") as ArrayList<Int>,
-                                id = document.getLong("id")?.toInt()!!,
-                                snoozed = document.getLong("snoozed")?.toInt()!!,
-                                rang = document.getBoolean("rang")!!,
-                                missed = document.getBoolean("missed")!!
-                            )
+                            val alarm = document.toObject(ChvReminder::class.java)
 
-                            if (!alarm.rang && document.getString("date") == selectedDateStr) {
+                            if (!alarm?.rang!! && alarm.date == selectedDateStr) {
                                 alarmList.add(alarm)
                             } else if (alarm.missed) {
                                 missedAlarmList.add(alarm)
@@ -492,16 +483,16 @@ class ChvDashboardActivity : AppCompatActivity() {
 
                         val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
                             when {
-                                dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
-                                dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                                dateMillis(o1.dateTime) > dateMillis(o2.dateTime) -> 1
+                                dateMillis(o1.dateTime) < dateMillis(o2.dateTime) -> -1
                                 else -> 0
                             }
                         })
 
                         val missedSorted = missedAlarmList.sortedWith(Comparator { o1, o2 ->
                             when {
-                                dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
-                                dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                                dateMillis(o1.dateTime) > dateMillis(o2.dateTime) -> 1
+                                dateMillis(o1.dateTime) < dateMillis(o2.dateTime) -> -1
                                 else -> 0
                             }
                         })
@@ -541,10 +532,10 @@ class ChvDashboardActivity : AppCompatActivity() {
         val tz = DateTimeZone.forOffsetMillis(offset)
         val millis = DateTime.now(tz).millis
         showProgress()
-        val phoneNumber = AppPreferences.phoneNo
+        val accessKey = AppPreferences.accessKey
 
         val alarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
-            .whereEqualTo("phoneNumber", phoneNumber!!)
+            .whereEqualTo("accessKey", accessKey!!)
             .whereEqualTo("cancelled", false)
             .whereEqualTo("rang", false)
             .whereGreaterThanOrEqualTo("millis", millis)
@@ -552,7 +543,7 @@ class ChvDashboardActivity : AppCompatActivity() {
             .limit(5)
 
         val missedAlarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
-            .whereEqualTo("phoneNumber", phoneNumber)
+            .whereEqualTo("accessKey", accessKey)
             .whereEqualTo("missed", true)
             .orderBy("millis", Query.Direction.ASCENDING)
             .limit(5)
@@ -570,33 +561,15 @@ class ChvDashboardActivity : AppCompatActivity() {
                     alarmList.clear()
 
                     for (document in querySnapshot.documents) {
-                        val alarm = ChvReminder(
-                            description = document.getString("description")!!,
-                            fromDate = document.getString("dateTime")!!,
-                            docId = document.id,
-                            alarmTone = document.getString("alarmTonePath"),
-                            isDrug = document.getBoolean("isDrug"),
-                            isAppointment = document.getBoolean("isAppointment"),
-                            cancelled = document.getBoolean("cancelled")!!,
-                            medType = document.getDouble("medicationType")?.toInt(),
-                            repeatMode = document.get("repeatMode") as ArrayList<Int>,
-                            id = document.getLong("id")?.toInt()!!,
-                            snoozed = document.getLong("snoozed")?.toInt()!!,
-                            rang = document.getBoolean("rang")!!,
-                            missed = document.getBoolean("missed")!!,
-                            clientPhoneNo = document.getString("clientPhoneNo"),
-                            clientName = document.getString("clientName"),
-                            recent = true,
-                            hospital = document.getString("hospital")
-                        )
-                        alarmList.add(alarm)
+                        val alarm = document.toObject(ChvReminder::class.java)
+                        alarmList.add(alarm!!)
 
                     }
 
                     val sorted = alarmList.sortedWith(Comparator { o1, o2 ->
                         when {
-                            dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
-                            dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                            dateMillis(o1.dateTime) > dateMillis(o2.dateTime) -> 1
+                            dateMillis(o1.dateTime) < dateMillis(o2.dateTime) -> -1
                             else -> 0
                         }
                     })
@@ -623,33 +596,15 @@ class ChvDashboardActivity : AppCompatActivity() {
                     missedAlarmList.clear()
 
                     for (document in querySnapshot.documents) {
-                        val alarm = ChvReminder(
-                            description = document.getString("description")!!,
-                            fromDate = document.getString("dateTime")!!,
-                            docId = document.id,
-                            alarmTone = document.getString("alarmTonePath"),
-                            hospital = document.getString("hospital"),
-                            isDrug = document.getBoolean("isDrug"),
-                            isAppointment = document.getBoolean("isAppointment"),
-                            cancelled = document.getBoolean("cancelled")!!,
-                            medType = document.getDouble("medicationType")?.toInt(),
-                            repeatMode = document.get("repeatMode") as ArrayList<Int>,
-                            id = document.getLong("id")?.toInt()!!,
-                            snoozed = document.getLong("snoozed")?.toInt()!!,
-                            rang = document.getBoolean("rang")!!,
-                            missed = document.getBoolean("missed")!!,
-                            clientPhoneNo = document.getString("clientPhoneNo"),
-                            clientName = document.getString("clientName"),
-                            recent = true
-                        )
-                        missedAlarmList.add(alarm)
+                        val alarm = document.toObject(ChvReminder::class.java)
+                        missedAlarmList.add(alarm!!)
 
                     }
 
                     val missedSorted = missedAlarmList.sortedWith(Comparator { o1, o2 ->
                         when {
-                            dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
-                            dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                            dateMillis(o1.dateTime) > dateMillis(o2.dateTime) -> 1
+                            dateMillis(o1.dateTime) < dateMillis(o2.dateTime) -> -1
                             else -> 0
                         }
                     })

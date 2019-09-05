@@ -44,7 +44,7 @@ import java.io.FileInputStream
 
 class ChvProfileActivity : AppCompatActivity() {
     val userRef = FirebaseFirestore.getInstance().collection("users")
-        .document(AppPreferences.phoneNo!!)
+        .document(AppPreferences.accessKey!!)
     private val gallery = 1002
     private var filePath: String? = null
     private lateinit var destinationUri: Uri
@@ -70,11 +70,10 @@ class ChvProfileActivity : AppCompatActivity() {
 
         cl_logout.setOnClickListener {
             AppPreferences.loggedIn = false
-            AppPreferences.phoneNo = null
+            AppPreferences.accessKey = null
             AppPreferences.accountType = 0
-            AppPreferences.chvPhoneNo = null
+            AppPreferences.chvAccessKey = null
             AppPreferences.profileImg = null
-            AppPreferences.myName = null
             emptyDirectory("user_images")
             emptyDirectory("client_images")
             this.finishAffinity()
@@ -116,10 +115,7 @@ class ChvProfileActivity : AppCompatActivity() {
 
         }
 
-        if (AppPreferences.myName != null) {
-            toolbar_username.text = titleCase(AppPreferences.myName!!)
-            edit_text.setText(titleCase(AppPreferences.myName!!))
-        }
+        toolbar_username.text = titleCase(AppPreferences.accessKey!!)
 
         val mContextWrapper = ContextWrapper(this)
         val mDirectory: File = mContextWrapper.getDir(
@@ -169,7 +165,7 @@ class ChvProfileActivity : AppCompatActivity() {
                 toolbar_username.text = titleCase(username)
                 userRef.update("name", username)
                     .addOnCompleteListener {
-                        AppPreferences.myName = username
+//                        AppPreferences.myName = username
                     }
             }
 

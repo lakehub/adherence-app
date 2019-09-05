@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        android:background="@android:color/black">
+        android:background="@color/colorPrimary">
 
     <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
@@ -65,6 +65,7 @@
             android:tint="@android:color/white"
             android:layout_marginBottom="20dp"
             android:layout_gravity="center_horizontal|bottom"
+
     />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

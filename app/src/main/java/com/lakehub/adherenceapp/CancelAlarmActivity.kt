@@ -25,7 +25,7 @@ class CancelAlarmActivity : AppCompatActivity() {
 
         val docId = intent.getStringExtra("docId")
         val alarmId = intent.getIntExtra("alarmId", 0)
-        val isPlace = intent.getBooleanExtra("isPlace", false)
+        val isPlace = intent.getBooleanExtra("place", false)
 
         hideProgress()
 
@@ -33,7 +33,6 @@ class CancelAlarmActivity : AppCompatActivity() {
             val reason = edit_text.text.toString()
 
             if (reason.isNotBlank()) {
-                showProgress()
                 val data = mapOf(
                     "cancelled" to true,
                     "reasonToCancel" to reason.trim()
@@ -43,65 +42,35 @@ class CancelAlarmActivity : AppCompatActivity() {
                     .document(docId!!)
 
                 alarmsRef.update(data)
-                    .addOnCompleteListener {
-                        if (it.isComplete) {
-                            hideProgress()
-                            val toast = Toast(MainApplication.applicationContext())
-                            val view: View = View.inflate(
-                                MainApplication.applicationContext(),
-                                R.layout.delete_success_toast, null
-                            )
-                            val textView: TextView = view.findViewById(R.id.message)
-                            textView.text = this.getString(R.string.alarm_cancel_success)
-                            toast.view = view
-                            toast.setGravity(Gravity.BOTTOM, 30, 30)
-                            toast.duration = Toast.LENGTH_LONG
-                            toast.show()
-                            view.tv_undo.setOnClickListener {
+                showSuccess(getString(R.string.alarm_cancel_success))
+                val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-                            }
+                val myIntent = Intent(MainApplication.applicationContext(), AlarmReceiver::class.java)
+                val pendingIntent =
+                    PendingIntent.getBroadcast(
+                        this,
+                        alarmId,
+                        myIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                alarmManager.cancel(pendingIntent)
 
+                if (isPlace) {
+                    val placeIntent =
+                        Intent(MainApplication.applicationContext(), ConfirmAttendPlaceReceiver::class.java)
+                    val placePendingIntent =
+                        PendingIntent.getBroadcast(
+                            this,
+                            alarmId,
+                            placeIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                        )
+                    alarmManager.cancel(placePendingIntent)
+                }
 
-                            val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-                            val myIntent = Intent(MainApplication.applicationContext(), AlarmReceiver::class.java)
-                            val pendingIntent =
-                                PendingIntent.getBroadcast(
-                                    this,
-                                    alarmId,
-                                    myIntent,
-                                    PendingIntent.FLAG_UPDATE_CURRENT
-                                )
-                            alarmManager.cancel(pendingIntent)
-
-                            if (isPlace) {
-                                val placeIntent =
-                                    Intent(MainApplication.applicationContext(), ConfirmAttendPlaceReceiver::class.java)
-                                val placePendingIntent =
-                                    PendingIntent.getBroadcast(
-                                        this,
-                                        alarmId,
-                                        placeIntent,
-                                        PendingIntent.FLAG_UPDATE_CURRENT
-                                    )
-                                alarmManager.cancel(placePendingIntent)
-                            }
-
-                            finish()
-                        }
-                    }
+                finish()
             } else {
-                val toast = Toast(MainApplication.applicationContext())
-                val view: View = View.inflate(
-                    MainApplication.applicationContext(),
-                    R.layout.warning, null
-                )
-                val textView: TextView = view.findViewById(R.id.message)
-                textView.text = getString(R.string.fill_fields)
-                toast.view = view
-                toast.setGravity(Gravity.BOTTOM, 30, 30)
-                toast.duration = Toast.LENGTH_SHORT
-                toast.show()
+                showWarning(getString(R.string.fill_fields))
             }
         }
     }

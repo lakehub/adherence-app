@@ -31,7 +31,7 @@ class MissedAlarmAdapter(val context: Context, private val alarms: ArrayList<Ala
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val alarm = alarms[position]
 
-        holder.tvDescription.text = limitStringLength(alarm.description, 50)
+        holder.tvDescription.text = limitStringLength(alarm.description, 40)
         holder.tvCount.text = (position + 1).toString()
 
         if (alarm.recent) {

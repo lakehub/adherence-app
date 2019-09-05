@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,10 +40,8 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val client = clients[position]
-        holder.locationTv.text = client.location
-        holder.nameTv.text = titleCase(client.name)
-        holder.locationTv.text = titleCase(client.location)
-        holder.phoneTv.text = context.getString(R.string.phone_no, client.phoneNumber.substring(4))
+        holder.tvLocation.text = client.location
+        holder.tvAccessKey.text = titleCase(client.accessKey)
 
         holder.menu.setOnClickListener {
             openOptionMenu(holder.menu, holder.adapterPosition)
@@ -52,8 +49,7 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
 
         holder.itemView.setOnClickListener {
             val myIntent = Intent(context, ClientAppointmentsActivity::class.java)
-            myIntent.putExtra("clientName", client.name)
-            myIntent.putExtra("clientPhoneNo", client.phoneNumber)
+            myIntent.putExtra("clientAccessKey", client.accessKey)
             context.startActivity(myIntent)
         }
 
@@ -140,9 +136,8 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
     }
 
     inner class MyViewHolder(view: View) : ViewHolder(view) {
-        var nameTv: TextView = view.findViewById(R.id.tv_name)
-        var phoneTv: TextView = view.findViewById(R.id.tv_phone_no)
-        var locationTv: TextView = view.findViewById(R.id.tv_location)
+        var tvAccessKey: TextView = view.findViewById(R.id.tvAccessKey)
+        var tvLocation: TextView = view.findViewById(R.id.tvLocation)
         var menu: ImageView = view.findViewById(R.id.iv_options)
         var userIv: CircleImageView = view.findViewById(R.id.iv_user)
     }
@@ -155,7 +150,7 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
             when (item.itemId) {
                 R.id.edit -> {
                     val myIntent = Intent(context, EditClientActivity::class.java)
-                    myIntent.putExtra("phoneNo", client.phoneNumber)
+                    myIntent.putExtra("accessKey", client.accessKey)
                     myIntent.putExtra("location", client.location)
                     myIntent.putExtra("name", client.name)
                     myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -163,7 +158,7 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
                 }
                 R.id.delete -> {
                     val myIntent = Intent(context, DeactivateClientActivity::class.java)
-                    myIntent.putExtra("phoneNo", client.phoneNumber)
+                    myIntent.putExtra("accessKey", client.accessKey)
                     myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     context.startActivity(myIntent)
                 }

@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         tools:context=".SettingsActivity"
         android:padding="0dp"
-        android:background="@android:color/black">
+        android:background="@color/colorPrimary">
 
     <com.google.android.material.appbar.AppBarLayout
             android:layout_height="wrap_content"

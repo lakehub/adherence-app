@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.firebase.firestore.FirebaseFirestore
 import com.lakehub.adherenceapp.*
 import com.lakehub.adherenceapp.data.Alarm
+import com.lakehub.adherenceapp.data.FollowUp
 import kotlinx.android.synthetic.main.normal_toast.view.*
 import org.joda.time.format.DateTimeFormat
 
@@ -31,10 +32,10 @@ class MissedMedicationAdapter(val context: Context, private val alarms: ArrayLis
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val alarm = alarms[position]
 
-        holder.tvDescription.text = limitStringLength(alarm.description, 50)
+        holder.tvDescription.text = limitStringLength(alarm.description, 25)
         holder.tvCount.text = (position + 1).toString()
         holder.timeTv.text = displayTime(alarm.fromDate)
-        val medType = if (alarm.medType == 1) {
+        val medType = if (alarm.medicationType == 1) {
             context.getString(R.string.treatment)
         } else {
             context.getString(R.string.arv)
@@ -44,7 +45,7 @@ class MissedMedicationAdapter(val context: Context, private val alarms: ArrayLis
         holder.menu.setOnClickListener {
             openOptionMenu(holder.menu, holder.adapterPosition)
         }
-        holder.nameTv.text = titleCase(alarm.name!!)
+        holder.accessKeyTv.text = alarm.accessKey
 
         if (alarm.snoozed > 0) {
             val format = "yyyy MM dd HH:mm"
@@ -63,7 +64,7 @@ class MissedMedicationAdapter(val context: Context, private val alarms: ArrayLis
         var tvDescription: TextView = view.findViewById(R.id.tv_dsc)
         var timeTv: TextView = view.findViewById(R.id.tv_time)
         var medTv: TextView = view.findViewById(R.id.tv_medication)
-        var nameTv: TextView = view.findViewById(R.id.tv_client_name)
+        var accessKeyTv: TextView = view.findViewById(R.id.tvAccessKey)
         var menu: ImageView = view.findViewById(R.id.iv_menu)
     }
 
@@ -77,18 +78,18 @@ class MissedMedicationAdapter(val context: Context, private val alarms: ArrayLis
                     val ref = FirebaseFirestore.getInstance().collection("follow_ups").document()
                     val alarmRef = FirebaseFirestore.getInstance().collection("alarms")
                         .document(alarm.docId!!)
-                    val data = hashMapOf(
-                        "clientName" to alarm.name,
-                        "clientPhoneNo" to alarm.phoneNo,
-                        "date" to alarm.date,
-                        "dateTime" to alarm.fromDate
+                    val data = FollowUp(
+                        clientAccessKey = alarm.accessKey!!,
+                        date = alarm.date!!,
+                        dateTime = alarm.fromDate
                     )
                     alarmRef.update("marked", true)
                         .addOnCompleteListener {
                             if (it.isComplete) {
                                 val followUpRef = FirebaseFirestore.getInstance().collection("follow_ups")
                                 followUpRef.whereEqualTo("date", alarm.date)
-                                    .whereEqualTo("clientPhoneNo", alarm.phoneNo)
+                                    .whereEqualTo("clientAccessKey", alarm.accessKey)
+                                    .whereEqualTo("marked", false)
                                     .get()
                                     .addOnCompleteListener {qs ->
                                         if (qs.isComplete) {

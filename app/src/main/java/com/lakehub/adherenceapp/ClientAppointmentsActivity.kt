@@ -19,7 +19,7 @@ class ClientAppointmentsActivity : AppCompatActivity() {
     private val appointments = arrayListOf<ChvReminder>()
     private lateinit var myAdapter: AppointmentsAdapter
     private lateinit var db: FirebaseFirestore
-    private var clientPhoneNo: String? = null
+    private var clientAccessKey: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +29,7 @@ class ClientAppointmentsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         window.statusBarColor = ContextCompat.getColor(this, R.color.colorRedDark)
 
-        clientPhoneNo = intent.extras?.getString("clientPhoneNo")
-        val clientName = intent.extras?.getString("clientName")
+        clientAccessKey = intent.extras?.getString("clientAccessKey")
         db = FirebaseFirestore.getInstance()
 
         myAdapter = AppointmentsAdapter(this, appointments)
@@ -48,7 +47,7 @@ class ClientAppointmentsActivity : AppCompatActivity() {
             finish()
         }
 
-        tv_client_name.text = titleCase(clientName!!)
+        tv_client_name.text = titleCase(clientAccessKey!!)
         fetchAppointments()
     }
 
@@ -57,12 +56,12 @@ class ClientAppointmentsActivity : AppCompatActivity() {
         val offset = TimeZone.getDefault().rawOffset
         val tz = DateTimeZone.forOffsetMillis(offset)
         val millis = DateTime.now(tz).millis
-        val phoneNumber = AppPreferences.phoneNo
+        val accessKey = AppPreferences.accessKey
 
         val alarmsRef = db.collection("chv_reminders")
-            .whereEqualTo("isAppointment", true)
-            .whereEqualTo("clientPhoneNo", clientPhoneNo)
-            .whereEqualTo("phoneNumber", phoneNumber)
+            .whereEqualTo("appointment", true)
+            .whereEqualTo("clientAccessKey", clientAccessKey)
+            .whereEqualTo("accessKey", accessKey)
             .whereEqualTo("cancelled", false)
             .whereEqualTo("rang", false)
             .whereEqualTo("missed", false)
@@ -76,31 +75,15 @@ class ClientAppointmentsActivity : AppCompatActivity() {
                     if (!it.result?.isEmpty!!) {
                         if (it.result!!.documents.isNotEmpty()) {
                             for (document in it.result!!.documents) {
-                                val alarm = ChvReminder(
-                                    description = document.getString("description")!!,
-                                    fromDate = document.getString("dateTime")!!,
-                                    docId = document.id,
-                                    alarmTone = document.getString("alarmTonePath"),
-                                    isDrug = document.getBoolean("isDrug"),
-                                    isAppointment = document.getBoolean("isAppointment"),
-                                    cancelled = document.getBoolean("cancelled")!!,
-                                    medType = document.getDouble("medicationType")?.toInt(),
-                                    repeatMode = document.get("repeatMode") as ArrayList<Int>,
-                                    id = document.getLong("id")?.toInt()!!,
-                                    snoozed = document.getLong("snoozed")?.toInt()!!,
-                                    rang = document.getBoolean("rang")!!,
-                                    missed = document.getBoolean("missed")!!,
-                                    clientPhoneNo = document.getString("clientPhoneNo"),
-                                    clientName = document.getString("clientName")
-                                )
-                                appointments.add(alarm)
+                                val alarm = document.toObject(ChvReminder::class.java)
+                                appointments.add(alarm!!)
 
                             }
 
                             val sorted = appointments.sortedWith(Comparator { o1, o2 ->
                                 when {
-                                    dateMillis(o1.fromDate) > dateMillis(o2.fromDate) -> 1
-                                    dateMillis(o1.fromDate) < dateMillis(o2.fromDate) -> -1
+                                    dateMillis(o1.dateTime) > dateMillis(o2.dateTime) -> 1
+                                    dateMillis(o1.dateTime) < dateMillis(o2.dateTime) -> -1
                                     else -> 0
                                 }
                             })

@@ -47,10 +47,10 @@ class SelectClientActivity : AppCompatActivity() {
 
     private fun fetchData() {
         showProgress()
-        val phoneNo = AppPreferences.phoneNo
+        val phoneNo = AppPreferences.accessKey
 
         val userRef = FirebaseFirestore.getInstance().collection("users")
-        userRef.whereEqualTo("chvPhoneNumber", phoneNo!!)
+        userRef.whereEqualTo("chvAccessKey", phoneNo!!)
             .get()
             .addOnCompleteListener {
                 hideProgress()
@@ -60,7 +60,7 @@ class SelectClientActivity : AppCompatActivity() {
                 hideProgress()
             }
 
-        userRef.whereEqualTo("chvPhoneNumber", phoneNo)
+        userRef.whereEqualTo("chvAccessKey", phoneNo)
             .whereEqualTo("active", true)
             .addSnapshotListener { querySnapshot, _ ->
                 hideProgress()
@@ -69,14 +69,8 @@ class SelectClientActivity : AppCompatActivity() {
                     clients.clear()
 
                     for (document in querySnapshot.documents) {
-                        val client = Client(
-                            location = document.getString("location")!!,
-                            name = document.getString("name")!!,
-                            image = document.getString("image"),
-                            phoneNumber = document.getString("phoneNumber")!!,
-                            active = document.getBoolean("active")!!
-                        )
-                        clients.add(client)
+                        val client = document.toObject(Client::class.java)
+                        clients.add(client!!)
                     }
 
                     myAdapter.notifyDataSetChanged()

@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
@@ -43,7 +42,7 @@ class ClientsActivity : AppCompatActivity() {
         }
 
         add_fab.setOnClickListener {
-            startActivity(Intent(this, AddClientActivity::class.java))
+//            startActivity(Intent(this, AddClientActivity::class.java))
         }
 
         myAdapter = ClientAdapter(this, clients)
@@ -59,10 +58,10 @@ class ClientsActivity : AppCompatActivity() {
 
     private fun fetchData() {
         showProgress()
-        val phoneNo = AppPreferences.phoneNo
+        val phoneNo = AppPreferences.accessKey
 
         val userRef = FirebaseFirestore.getInstance().collection("users")
-        userRef.whereEqualTo("chvPhoneNumber", phoneNo!!)
+        userRef.whereEqualTo("chvAccessKey", phoneNo!!)
             .get()
             .addOnCompleteListener {
                 hideProgress()
@@ -72,7 +71,7 @@ class ClientsActivity : AppCompatActivity() {
                 hideProgress()
             }
 
-        userRef.whereEqualTo("chvPhoneNumber", phoneNo)
+        userRef.whereEqualTo("chvAccessKey", phoneNo)
             .whereEqualTo("active", true)
             .addSnapshotListener { querySnapshot, _ ->
                 hideProgress()
@@ -81,14 +80,8 @@ class ClientsActivity : AppCompatActivity() {
                     clients.clear()
 
                     for (document in querySnapshot.documents) {
-                        val client = Client(
-                            location = document.getString("location")!!,
-                            name = document.getString("name")!!,
-                            phoneNumber = document.getString("phoneNumber")!!,
-                            image = document.getString("image"),
-                            active = document.getBoolean("active")!!
-                        )
-                        clients.add(client)
+                        val client = document.toObject(Client::class.java)
+                        clients.add(client!!)
                     }
 
                     myAdapter.notifyDataSetChanged()

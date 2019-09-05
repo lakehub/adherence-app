@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_edit_client.*
 import kotlinx.android.synthetic.main.content_edit_client.*
@@ -42,55 +41,30 @@ class EditClientActivity : AppCompatActivity() {
         val colorList = ColorStateList(states, colors)
         fab.backgroundTintList = colorList
 
-        val phoneNo = intent.getStringExtra("phoneNo")
+        val accessKey = intent.getStringExtra("accessKey")
         val location = intent.getStringExtra("location")
-        val name = intent.getStringExtra("name")
 
-        et_phone_no.setText(getString(R.string.phone_no, phoneNo?.substring(4)))
+        et_phone_no.setText(getString(R.string.phone_no, accessKey?.substring(4)))
         et_location.setText(titleCase(location!!))
-        et_name.setText(titleCase(name!!))
 
         iv_cancel.setOnClickListener {
             finish()
         }
 
         fab.setOnClickListener {
-            val clientName = et_name.text.toString()
             val clientLocation = et_location.text.toString()
-            if (clientName.isNotEmpty() && clientLocation.isNotEmpty()) {
-                showProgress()
+            if (clientLocation.isNotEmpty()) {
                 val db = FirebaseFirestore.getInstance()
-                val userRef = db.collection("users").document(phoneNo!!)
+                val userRef = db.collection("users").document(accessKey!!)
                 val data = mapOf(
-                    "location" to clientLocation,
-                    "name" to clientName
+                    "location" to clientLocation
                 )
 
                 userRef.update(data)
-                    .addOnCompleteListener {
-                        if (it.isComplete) {
-                            hideProgress()
-                            val toast = Toast(this)
-                            val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
-                            val textView: TextView = view.findViewById(R.id.message)
-                            textView.text = getString(R.string.client_edit_success)
-                            toast.view = view
-                            toast.setGravity(Gravity.BOTTOM, 30, 30)
-                            toast.duration = Toast.LENGTH_SHORT
-                            toast.show()
-                            finish()
-                        }
-                    }
-
+                showSuccess(getString(R.string.client_edit_success))
+                finish()
             } else {
-                val toast = Toast(this)
-                val view: View = layoutInflater.inflate(R.layout.warning, null)
-                val textView: TextView = view.findViewById(R.id.message)
-                textView.text = getString(R.string.fill_fields)
-                toast.view = view
-                toast.setGravity(Gravity.BOTTOM, 30, 30)
-                toast.duration = Toast.LENGTH_SHORT
-                toast.show()
+                showWarning(getString(R.string.fill_fields))
             }
         }
     }

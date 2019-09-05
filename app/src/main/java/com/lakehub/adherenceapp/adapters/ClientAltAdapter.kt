@@ -42,13 +42,12 @@ class ClientAltAdapter(val context: Context, private val clients: ArrayList<Clie
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val client = clients[position]
-        holder.nameTv.text = titleCase(client.name)
-        holder.phoneTv.text = context.getString(R.string.phone_no, client.phoneNumber.substring(4))
+        holder.tvAccessKey.text = titleCase(client.accessKey)
+        holder.tvLocation.text = titleCase(client.location)
 
         holder.itemView.setOnClickListener {
             val returnIntent = Intent()
-            returnIntent.putExtra("name", client.name)
-            returnIntent.putExtra("phoneNo", client.phoneNumber)
+            returnIntent.putExtra("accessKey", client.accessKey)
             val activity = context as Activity
             activity.setResult(Activity.RESULT_OK, returnIntent)
             activity.finish()
@@ -138,8 +137,8 @@ class ClientAltAdapter(val context: Context, private val clients: ArrayList<Clie
     }
 
     inner class MyViewHolder(view: View) : ViewHolder(view) {
-        var nameTv: TextView = view.findViewById(R.id.tv_name)
-        var phoneTv: TextView = view.findViewById(R.id.tv_phone_no)
+        var tvAccessKey: TextView = view.findViewById(R.id.tvAccessKey)
+        var tvLocation: TextView = view.findViewById(R.id.tvLocation)
         var userIv: CircleImageView = view.findViewById(R.id.iv_user)
     }
 }

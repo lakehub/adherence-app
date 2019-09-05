@@ -7,6 +7,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -89,87 +90,6 @@ class ClientHomeActivity : AppCompatActivity() {
         tv_no_alarm.makeGone()
         tv_no_missed.makeGone()
 
-        if (AppPreferences.profileImg != null) {
-            val contextWrapper = ContextWrapper(MainApplication.applicationContext())
-            val directory: File = contextWrapper.getDir("user_images", Context.MODE_PRIVATE)
-            var bitmap = loadImgFromInternalStorage(directory.absolutePath, AppPreferences.profileImg!!)
-            if (bitmap == null) {
-                val storageRef = FirebaseStorage.getInstance().reference
-                val filename = AppPreferences.profileImg
-                val imgRef = storageRef.child("client_images/$filename")
-                val mContextWrapper = ContextWrapper(this)
-                val mDirectory: File = mContextWrapper.getDir(
-                    "user_images",
-                    Context.MODE_PRIVATE
-                )
-                val file = File(mDirectory, filename)
-                imgRef.getFile(file).addOnSuccessListener {
-                    var myBitmap = loadImgFromInternalStorage(directory.absolutePath, AppPreferences.profileImg!!)
-                    Glide.with(this)
-                        .load(myBitmap)
-                        .apply(
-                            RequestOptions()
-                                .placeholder(R.drawable.user)
-                                .error(R.drawable.user)
-                        )
-                        .listener(object : RequestListener<Drawable> {
-                            override fun onLoadFailed(
-                                e: GlideException?, model: Any?,
-                                target: Target<Drawable>?,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                return false
-
-                            }
-
-                            override fun onResourceReady(
-                                resource: Drawable?, model: Any?,
-                                target: Target<Drawable>?, dataSource: DataSource?,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                myBitmap!!.recycle()
-                                myBitmap = null
-                                return false
-                            }
-
-                        })
-                        .into(iv_user)
-                }
-            } else {
-                Glide.with(this)
-                    .load(bitmap)
-                    .apply(
-                        RequestOptions()
-                            .placeholder(R.drawable.user)
-                            .error(R.drawable.user)
-                    )
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?, model: Any?,
-                            target: Target<Drawable>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            return false
-
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?, model: Any?,
-                            target: Target<Drawable>?, dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            bitmap!!.recycle()
-                            bitmap = null
-                            return false
-                        }
-
-                    })
-                    .into(iv_user)
-            }
-
-
-        }
-
         iv_menu.setOnClickListener {
             if (!drawer_layout.isDrawerOpen(GravityCompat.START)) {
                 drawer_layout.openDrawer(GravityCompat.START, true)
@@ -181,11 +101,14 @@ class ClientHomeActivity : AppCompatActivity() {
         }
 
         add_fab.setOnClickListener {
+            drawer_layout.closeDrawer(GravityCompat.START, true)
+            AppPreferences.surfed = true
             startActivityForResult(Intent(this, AddAlarmActivity::class.java), 900)
         }
 
         cl_settings_menu.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START, true)
+            AppPreferences.surfed = true
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
@@ -228,11 +151,10 @@ class ClientHomeActivity : AppCompatActivity() {
 //            auth.signOut()
 //            FirebaseFirestore.getInstance().clearPersistence()
             AppPreferences.loggedIn = false
-            AppPreferences.phoneNo = null
+            AppPreferences.accessKey = null
             AppPreferences.accountType = 0
-            AppPreferences.chvPhoneNo = null
+            AppPreferences.chvAccessKey = null
             AppPreferences.profileImg = null
-            AppPreferences.myName = null
             emptyDirectory("user_images")
             finish()
         }
@@ -434,10 +356,10 @@ class ClientHomeActivity : AppCompatActivity() {
     private fun fetchByDate() {
         if (selectedDateStr != null) {
             showProgress()
-            val phoneNumber = AppPreferences.phoneNo
+            val accessKey = AppPreferences.accessKey
 
             val alarmsRef = FirebaseFirestore.getInstance().collection("alarms")
-                .whereEqualTo("phoneNumber", phoneNumber!!)
+                .whereEqualTo("accessKey", accessKey!!)
                 .whereEqualTo("date", selectedDateStr)
                 .whereEqualTo("cancelled", false)
 
@@ -458,7 +380,7 @@ class ClientHomeActivity : AppCompatActivity() {
                                 docId = document.id,
                                 alarmTone = document.getString("alarmTonePath"),
                                 location = document.getString("location"),
-                                isPlace = document.getBoolean("isPlace"),
+                                place = document.getBoolean("place"),
                                 medType = document.getDouble("medicationType")?.toInt(),
                                 repeatMode = document.get("repeatMode") as ArrayList<Int>,
                                 id = document.getLong("id")?.toInt()!!,
@@ -496,23 +418,9 @@ class ClientHomeActivity : AppCompatActivity() {
                         missedAlarmList.clear()
 
                         for (document in querySnapshot.documents) {
-                            val alarm = Alarm(
-                                description = document.getString("description")!!,
-                                fromDate = document.getString("fromDate")!!,
-                                toDate = document.getString("toDate"),
-                                docId = document.id,
-                                alarmTone = document.getString("alarmTonePath"),
-                                isPlace = document.getBoolean("isPlace"),
-                                cancelled = document.getBoolean("cancelled")!!,
-                                medType = document.getDouble("medicationType")?.toInt(),
-                                repeatMode = document.get("repeatMode") as ArrayList<Int>,
-                                id = document.getLong("id")?.toInt()!!,
-                                snoozed = document.getLong("snoozed")?.toInt()!!,
-                                rang = document.getBoolean("rang")!!,
-                                missed = document.getBoolean("missed")!!
-                            )
+                            val alarm = document.toObject(Alarm::class.java)
 
-                            if (!alarm.cancelled && !alarm.rang && document.getString("date") == selectedDateStr) {
+                            if (!alarm?.cancelled!! && !alarm.rang && alarm.date == selectedDateStr) {
                                 alarmList.add(alarm)
                             } else if (alarm.missed) {
                                 missedAlarmList.add(alarm)
@@ -589,6 +497,90 @@ class ClientHomeActivity : AppCompatActivity() {
         popup.show()
     }*/
 
+    override fun onResume() {
+        super.onResume()
+        if (AppPreferences.profileImg != null) {
+            val contextWrapper = ContextWrapper(MainApplication.applicationContext())
+            val directory: File = contextWrapper.getDir("user_images", Context.MODE_PRIVATE)
+            var bitmap = loadImgFromInternalStorage(directory.absolutePath, AppPreferences.profileImg!!)
+            if (bitmap == null) {
+                val storageRef = FirebaseStorage.getInstance().reference
+                val filename = AppPreferences.profileImg
+                val imgRef = storageRef.child("client_images/$filename")
+                val mContextWrapper = ContextWrapper(this)
+                val mDirectory: File = mContextWrapper.getDir(
+                    "user_images",
+                    Context.MODE_PRIVATE
+                )
+                val file = File(mDirectory, filename!!)
+                imgRef.getFile(file).addOnSuccessListener {
+                    var myBitmap = loadImgFromInternalStorage(directory.absolutePath, AppPreferences.profileImg!!)
+                    Glide.with(this)
+                        .load(myBitmap)
+                        .apply(
+                            RequestOptions()
+                                .placeholder(R.drawable.user)
+                                .error(R.drawable.user)
+                        )
+                        .listener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?, model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                return false
+
+                            }
+
+                            override fun onResourceReady(
+                                resource: Drawable?, model: Any?,
+                                target: Target<Drawable>?, dataSource: DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                myBitmap!!.recycle()
+                                myBitmap = null
+                                return false
+                            }
+
+                        })
+                        .into(iv_user)
+                }
+            } else {
+                Glide.with(this)
+                    .load(bitmap)
+                    .apply(
+                        RequestOptions()
+                            .placeholder(R.drawable.user)
+                            .error(R.drawable.user)
+                    )
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?, model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?, model: Any?,
+                            target: Target<Drawable>?, dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            bitmap!!.recycle()
+                            bitmap = null
+                            return false
+                        }
+
+                    })
+                    .into(iv_user)
+            }
+
+
+        }
+    }
+
     private fun fetchRecent() {
         selected = false
         selectDate(LocalDate.now())
@@ -596,10 +588,10 @@ class ClientHomeActivity : AppCompatActivity() {
         val tz = DateTimeZone.forOffsetMillis(offset)
         val millis = DateTime.now(tz).millis
         showProgress()
-        val phoneNumber = AppPreferences.phoneNo
+        val accessKey = AppPreferences.accessKey
 
         val alarmsRef = FirebaseFirestore.getInstance().collection("alarms")
-            .whereEqualTo("phoneNumber", phoneNumber!!)
+            .whereEqualTo("accessKey", accessKey!!)
             .whereEqualTo("cancelled", false)
             .whereEqualTo("rang", false)
             .whereGreaterThanOrEqualTo("millis", millis)
@@ -607,16 +599,10 @@ class ClientHomeActivity : AppCompatActivity() {
             .limit(5)
 
         val missedAlarmsRef = FirebaseFirestore.getInstance().collection("alarms")
-            .whereEqualTo("phoneNumber", phoneNumber)
+            .whereEqualTo("accessKey", accessKey)
             .whereEqualTo("missed", true)
             .orderBy("millis", Query.Direction.ASCENDING)
             .limit(5)
-        /*alarmsRef.get()
-            .addOnCompleteListener {
-                if (it.isComplete) {
-                    hideProgress()
-                }
-            }*/
 
         alarmsRef.addSnapshotListener { querySnapshot, _ ->
             hideProgress()
@@ -625,23 +611,8 @@ class ClientHomeActivity : AppCompatActivity() {
                     alarmList.clear()
 
                     for (document in querySnapshot.documents) {
-                        val alarm = Alarm(
-                            description = document.getString("description")!!,
-                            fromDate = document.getString("fromDate")!!,
-                            toDate = document.getString("toDate"),
-                            docId = document.id,
-                            alarmTone = document.getString("alarmTonePath"),
-                            isPlace = document.getBoolean("isPlace"),
-                            cancelled = document.getBoolean("cancelled")!!,
-                            medType = document.getDouble("medicationType")?.toInt(),
-                            repeatMode = document.get("repeatMode") as ArrayList<Int>,
-                            id = document.getLong("id")?.toInt()!!,
-                            snoozed = document.getLong("snoozed")?.toInt()!!,
-                            rang = document.getBoolean("rang")!!,
-                            missed = document.getBoolean("missed")!!,
-                            recent = true
-                        )
-                        alarmList.add(alarm)
+                        val alarm = document.toObject(Alarm::class.java)
+                        alarmList.add(alarm!!)
 
                     }
 
@@ -675,23 +646,8 @@ class ClientHomeActivity : AppCompatActivity() {
                     missedAlarmList.clear()
 
                     for (document in querySnapshot.documents) {
-                        val alarm = Alarm(
-                            description = document.getString("description")!!,
-                            fromDate = document.getString("fromDate")!!,
-                            toDate = document.getString("toDate"),
-                            docId = document.id,
-                            alarmTone = document.getString("alarmTonePath"),
-                            isPlace = document.getBoolean("isPlace"),
-                            cancelled = document.getBoolean("cancelled")!!,
-                            medType = document.getDouble("medicationType")?.toInt(),
-                            repeatMode = document.get("repeatMode") as ArrayList<Int>,
-                            id = document.getLong("id")?.toInt()!!,
-                            snoozed = document.getLong("snoozed")?.toInt()!!,
-                            rang = document.getBoolean("rang")!!,
-                            missed = document.getBoolean("missed")!!,
-                            recent = true
-                        )
-                        missedAlarmList.add(alarm)
+                        val alarm = document.toObject(Alarm::class.java)
+                        missedAlarmList.add(alarm!!)
 
                     }
 
@@ -775,5 +731,9 @@ class ClientHomeActivity : AppCompatActivity() {
             calendar_view.notifyDateChanged(date)
 
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
     }
 }

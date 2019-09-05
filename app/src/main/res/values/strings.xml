@@ -20,16 +20,21 @@
     <string name="network_error">Network Error. Please try again.</string>
     <string name="invalid_phone">Invalid phone number</string>
     <string name="enter_phone">Please enter your phone number</string>
+    <string name="empty_access_key">Please enter access key</string>
     <string name="enter_code">Please enter your Verification Code</string>
     <string name="title_activity_tutorial">TutorialActivity</string>
     <string name="next">next</string>
     <string name="tutorial_1_text">Keep your hospital appointments organized and quickly check your drug reminders
         with the Adherence App
     </string>
+    <string name="tutorial_2_text">Get notified when it\'s time to take medicine or when it is time to visit the
+        hospital for an appointment
+    </string>
+    <string name="tutorial_3_text">You can decide to snooze the alarm or cancel it if need there be</string>
     <string name="done">done</string>
     <string name="adherence">Adherence</string>
     <string name="sch_app">scheduling app</string>
-    <string name="login_dsc">enter your phone number below to login</string>
+    <string name="login_dsc">enter your access key below to login</string>
     <string name="sign_in">Sign In</string>
     <string name="dnt_account">Don\'t have an account?</string>
     <string name="req_one">Request One</string>
@@ -71,7 +76,7 @@
     <string name="upcoming_alarm">Upcoming Alarms</string>
     <string name="sample_date">July 4, 2019</string>
     <string name="home">Home</string>
-    <string name="missed_alarm">Missed Alarms</string>
+    <string name="missed_alarms">Missed Alarms</string>
     <string name="settings">Settings</string>
     <string name="my_profile">My Profile</string>
     <string name="logout">Logout</string>
@@ -151,6 +156,7 @@
         <item>ARV</item>
     </string-array>
     <string name="grant_perm">Please grant this app permission to read files in order to use custom alarm tones</string>
+    <string name="grant_perm_file">Please grant this app permission to read files in order to upload photo.</string>
     <string name="edit_alarm">Edit Alarm</string>
     <string name="alarm_cancel_success">Alarm Cancelled successfully.</string>
     <string name="undo">Undo</string>
@@ -219,4 +225,16 @@
     <string name="snoozed">snoozed</string>
     <string name="missed">missed</string>
     <string name="no_report_for_this_month">No Report for this month</string>
+    <string name="enter_access_key">Enter Access Key Here</string>
+    <string name="invalid_access_key">Invalid Access Key</string>
+    <string name="access_key">Access Key</string>
+    <string name="missed_alarm">Missed Alarm</string>
+    <string name="missed_alarm_notification_body">You missed an alarm at %1$s</string>
+    <string name="allow_auto_start_description">Please Allow this App to auto start, else the app won\'t function
+        well.
+    </string>
+    <string name="allow">Allow</string>
+    <string name="skip">Skip</string>
+    <string name="proceed">Proceed</string>
+    <string name="make_appointment">Make an Appointment</string>
 </resources>

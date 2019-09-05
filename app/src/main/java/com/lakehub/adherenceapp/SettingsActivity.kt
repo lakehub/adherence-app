@@ -49,7 +49,8 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var destinationUri: Uri
     private var inProgress = false
     val userRef = FirebaseFirestore.getInstance().collection("users")
-        .document(AppPreferences.phoneNo!!)
+        .document(AppPreferences.accessKey!!)
+    private var myForResult = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,15 +72,14 @@ class SettingsActivity : AppCompatActivity() {
 
         cl_logout.setOnClickListener {
             AppPreferences.loggedIn = false
-            AppPreferences.phoneNo = null
+            AppPreferences.accessKey = null
             AppPreferences.accountType = 0
-            AppPreferences.chvPhoneNo = null
+            AppPreferences.chvAccessKey = null
             AppPreferences.profileImg = null
-            AppPreferences.myName = null
             emptyDirectory("user_images")
 
 
-                this.finishAndRemoveTask()
+            this.finishAndRemoveTask()
         }
 
         if (AppPreferences.profileImg != null) {
@@ -118,8 +118,8 @@ class SettingsActivity : AppCompatActivity() {
 
         }
 
-        toolbar_username.text = titleCase(AppPreferences.myName!!)
-        edit_text.setText(titleCase(AppPreferences.myName!!))
+        toolbar_username.text = titleCase(AppPreferences.accessKey!!)
+//        edit_text.setText(titleCase(AppPreferences.myName!!))
 
         val mContextWrapper = ContextWrapper(this)
         val mDirectory: File = mContextWrapper.getDir(
@@ -132,6 +132,7 @@ class SettingsActivity : AppCompatActivity() {
         tv_browse.setOnClickListener {
             if (!inProgress) {
                 if (Build.VERSION.SDK_INT >= 23) {
+                    forResult = true
                     Dexter.withActivity(this)
                         .withPermissions(
                             Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission
@@ -139,7 +140,12 @@ class SettingsActivity : AppCompatActivity() {
                         )
                         .withListener(object : MultiplePermissionsListener {
                             override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                                choosePhotoFromGallery()
+                                forResult = false
+                                if (report?.areAllPermissionsGranted() == true) {
+                                    choosePhotoFromGallery()
+                                } else {
+                                    showWarning(getString(R.string.grant_perm_file))
+                                }
                             }
 
                             override fun onPermissionRationaleShouldBeShown(
@@ -167,10 +173,10 @@ class SettingsActivity : AppCompatActivity() {
             override fun onTextChanged(str: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 val username = str.toString().trim()
                 toolbar_username.text = titleCase(username)
-                userRef.update("name", username)
-                    .addOnCompleteListener {
-                        AppPreferences.myName = username
-                    }
+                /* userRef.update("name", username)
+                     .addOnCompleteListener {
+                         AppPreferences.myName = username
+                     }*/
             }
 
         })
@@ -178,10 +184,12 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        forResult = false
 
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 gallery -> {
+                    forResult = true
                     cl_refresh.makeGone()
                     val uri: Uri = data?.data!!
                     filePath = getRealPathFromURIPath(uri, this)
@@ -219,6 +227,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun choosePhotoFromGallery() {
+        forResult = true
         val galleryIntent = Intent(
             Intent.ACTION_PICK,
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -278,4 +287,10 @@ class SettingsActivity : AppCompatActivity() {
         }
 
     }
+
+    var forResult: Boolean
+        get() = myForResult
+        set(value) {
+            myForResult = value
+        }
 }

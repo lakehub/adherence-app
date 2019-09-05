@@ -153,13 +153,12 @@ class EditChvReminderActivity : AppCompatActivity() {
 
         val docId = intent.getStringExtra("docId")
         val fromDate = intent.getStringExtra("date")
-        val clientPhoneNo = intent.getStringExtra("clientPhoneNo")
-        val clientName = intent.getStringExtra("clientName")
+        val clientAccessKey = intent.getStringExtra("clientAccessKey")
         val description = intent.getStringExtra("description")
         val hospital = intent.getStringExtra("hospital")
         tonePath = intent.getStringExtra("tonePath")
-        val isDrug = intent.getBooleanExtra("isDrug", false)
-        val isAppointment = intent.getBooleanExtra("isAppointment", false)
+        val isDrug = intent.getBooleanExtra("drug", false)
+        val isAppointment = intent.getBooleanExtra("appointment", false)
         val medType = intent.getIntExtra("medType", 0)
         val repeatMode = intent.getIntegerArrayListExtra("repeatMode")
         val id = intent.getIntExtra("id", 0)
@@ -441,7 +440,7 @@ class EditChvReminderActivity : AppCompatActivity() {
                 cl_client.makeVisible()
                 appointment_container.makeVisible()
                 appointment_divider.makeVisible()
-                tv_client.text = limitStringLength(clientName!!, 20)
+                tv_client.text = clientAccessKey
             }
             else -> {
                 cl_hospital.makeVisible()
@@ -489,7 +488,6 @@ class EditChvReminderActivity : AppCompatActivity() {
             val myFinalDateFormatter = DateTimeFormat.forPattern(myFinalDateFormat)
             val myFinalDateStr = myFinalDateFormatter.print(myFromDate)
 
-            if (!inProgress) {
                 if (toUtc(myFromDate).isBeforeNow || toUtc(myFromDate).isEqualNow) {
                     val toast = Toast(this)
                     val view: View = layoutInflater.inflate(R.layout.warning, null)
@@ -500,7 +498,6 @@ class EditChvReminderActivity : AppCompatActivity() {
                     toast.duration = Toast.LENGTH_SHORT
                     toast.show()
                 } else {
-                    showProgress()
                     val alarmsRef = FirebaseFirestore.getInstance()
                         .collection("chv_reminders")
                         .document(docId!!)
@@ -512,40 +509,30 @@ class EditChvReminderActivity : AppCompatActivity() {
                     )
 
                     alarmsRef.update(data)
-                        .addOnCompleteListener {
-                            if (it.isComplete) {
-                                hideProgress()
-                                val toast = Toast(this)
-                                val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
-                                val textView: TextView = view.findViewById(R.id.message)
-                                textView.text = getString(R.string.alarm_edit_success)
-                                toast.view = view
-                                toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                toast.duration = Toast.LENGTH_SHORT
-                                toast.show()
+                    showSuccess(getString(R.string.alarm_edit_success))
 
-                                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                                val millis = toUtc(myFromDate).millis
+                    val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    val millis = toUtc(myFromDate).millis
 
-                                val myIntent =
-                                    Intent(MainApplication.applicationContext(), ChvReminderReceiver::class.java)
-                                myIntent.putExtra("note", description)
-                                myIntent.putExtra("id", id)
-                                myIntent.putExtra("snoozed", 0)
-                                myIntent.putExtra("date", dateFormatter.print(myFromDate))
-                                myIntent.putExtra("tonePath", tonePath)
-                                myIntent.putExtra("docId", docId)
-                                myIntent.putExtra("repeatMode", repeatModeList)
-                                myIntent.putExtra("isDrug", drug_switch.isChecked)
-                                myIntent.putExtra("isAppointment", appointment_switch.isChecked)
-                                val pendingIntent =
-                                    PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
-                                finish()
-                            }
-                        }
+                    val myIntent =
+                        Intent(MainApplication.applicationContext(), ChvReminderReceiver::class.java)
+                    myIntent.putExtra("note", description)
+                    myIntent.putExtra("id", id)
+                    myIntent.putExtra("snoozed", 0)
+                    myIntent.putExtra("date", dateFormatter.print(myFromDate))
+                    myIntent.putExtra("tonePath", tonePath)
+                    myIntent.putExtra("docId", docId)
+                    myIntent.putExtra("repeatMode", repeatModeList)
+                    myIntent.putExtra("drug", drug_switch.isChecked)
+                    myIntent.putExtra("appointment", appointment_switch.isChecked)
+                    myIntent.putExtra("hospital", hospital)
+                    myIntent.putExtra("medType", medType)
+                    myIntent.putExtra("clientAccessKey", clientAccessKey)
+                    val pendingIntent =
+                        PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
+                    finish()
                 }
-            }
         }
 
         if (Build.VERSION.SDK_INT >= 23) {

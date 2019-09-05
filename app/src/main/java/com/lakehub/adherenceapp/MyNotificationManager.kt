@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.ThreadLocalRandom
 
 
 class MyNotificationManager(context: Context) {
@@ -38,16 +39,18 @@ class MyNotificationManager(context: Context) {
         val takenAction = NotificationCompat.Action.Builder(
             R.drawable.cancel,
             MainApplication.applicationContext().getString(R.string.taken),
-            myCancelPendingIntent)
+            myCancelPendingIntent
+        )
             .build()
         val snoozeAction = NotificationCompat.Action.Builder(
             R.drawable.cancel,
             MainApplication.applicationContext().getString(R.string.snooze),
-            myCancelPendingIntent)
+            myCancelPendingIntent
+        )
             .build()
 
         val mBuilder: NotificationCompat.Builder = NotificationCompat.Builder(context, ALARM_NOTIFICATION_CHANNEL_DSC)
-            .setContentTitle(title)
+            .setContentTitle(titleCase(title))
             .setContentText(body)
             .setVibrate(longArrayOf(300, 400, 500, 400, 300))
             .setLights(Color.GREEN, 500, 500)
@@ -56,7 +59,6 @@ class MyNotificationManager(context: Context) {
             .setChannelId(ALARM_NOTIFICATION_CHANNEL)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .addAction(takenAction)
         val mNotifyMgr = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         var picture: Bitmap
         /*try {
@@ -96,7 +98,12 @@ class MyNotificationManager(context: Context) {
          *  But for your project you can customize it as you want
          * */
 
-        val resultIntent = Intent(context, ClientHomeActivity::class.java)
+        /*val resultIntent = if (AppPreferences.accountType == USER_CLIENT) {
+            Intent(context, ClientHomeActivity::class.java)
+        } else {
+            Intent(context, ChvDashboardActivity::class.java)
+        }*/
+        val resultIntent = Intent(context, LoginActivity::class.java)
 
         /*
          *  Now we will create a pending intent
@@ -123,6 +130,6 @@ class MyNotificationManager(context: Context) {
          * better don't give a literal here (right now we are giving a int literal)
          * because using this id we can modify it later
          * */
-        mNotifyMgr.notify(1, mBuilder.build())
+        mNotifyMgr.notify(ThreadLocalRandom.current().nextInt(), mBuilder.build())
     }
 }

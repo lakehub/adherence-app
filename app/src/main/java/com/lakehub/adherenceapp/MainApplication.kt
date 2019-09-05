@@ -12,6 +12,7 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         AppPreferences.init(this)
+//        registerActivityLifecycleCallbacks(MyLifecycleHandler())
     }
 
     companion object {

@@ -32,15 +32,15 @@ class AppointmentsAdapter(val context: Context, private val alarms: ArrayList<Ch
         holder.tvCount.text = (position + 1).toString()
 
         if (alarm.recent) {
-            holder.timeTv.text = displayDateTime(alarm.fromDate)
+            holder.timeTv.text = displayDateTime(alarm.dateTime)
         } else {
-            holder.timeTv.text = displayTime(alarm.fromDate)
+            holder.timeTv.text = displayTime(alarm.dateTime)
         }
 
         if (alarm.snoozed > 0) {
             val format = "yyyy MM dd HH:mm"
             val myFormatter = DateTimeFormat.forPattern(format)
-            val myDate = myFormatter.parseDateTime(alarm.fromDate)
+            val myDate = myFormatter.parseDateTime(alarm.dateTime)
             val newDate = myDate.plusMinutes(alarm.snoozed)
             holder.timeTv.text = displayTime(newDate)
         }

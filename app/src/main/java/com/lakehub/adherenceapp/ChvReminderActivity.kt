@@ -38,8 +38,8 @@ class ChvReminderActivity : AppCompatActivity() {
         val docId = intent.extras?.getString("docId")
         val tonePath = intent.extras?.getString("tonePath")
         snoozed = intent.extras?.getInt("snoozed")!!
-        val isDrug = intent.extras?.getBoolean("isDrug")
-        val isAppointment = intent.extras?.getBoolean("isAppointment")
+        val isDrug = intent.extras?.getBoolean("drug")
+        val isAppointment = intent.extras?.getBoolean("appointment")
         val id = intent.extras?.getInt("id")
         val repeatMode = intent.extras?.getIntegerArrayList("repeatMode")
 
@@ -99,13 +99,24 @@ class ChvReminderActivity : AppCompatActivity() {
         tv_dsc.text = note
         tv_time.text = displayTime(date!!)
 
+        val offset = TimeZone.getDefault().rawOffset
+        val tz = DateTimeZone.forOffsetMillis(offset)
+        val now = DateTime.now(tz)
+
+        when (now.hourOfDay) {
+            in 5..9 -> constraintLayoutColor.setBackgroundResource(R.drawable.circular_bg_done)
+            in 9..12 -> constraintLayoutColor.setBackgroundResource(R.drawable.circular_bg_morning)
+            in 12..16 -> constraintLayoutColor.setBackgroundResource(R.drawable.circular_bg_afternoon)
+            in 16..21 -> constraintLayoutColor.setBackgroundResource(R.drawable.circular_bg_evening)
+            else -> constraintLayoutColor.setBackgroundResource(R.drawable.circular_bg_night)
+        }
+
         btn_turn_off.setOnClickListener {
             handler.removeCallbacksAndMessages(null)
             mediaPlayer.stop()
             val data = mapOf(
                 "rang" to true
             )
-            progress_bar.makeVisible()
             alarmDoc.update(data)
                 .addOnCompleteListener {
                     if (it.isComplete) {
@@ -125,33 +136,28 @@ class ChvReminderActivity : AppCompatActivity() {
                     "snoozed" to snoozed.plus(1)
                 )
                 alarmDoc.update(data)
-                    .addOnCompleteListener {
-                        if (it.isComplete) {
-                            progress_bar.makeGone()
-                            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                            val format = "yyyy MM dd HH:mm"
-                            val myFormatter = DateTimeFormat.forPattern(format)
-                            val offset = TimeZone.getDefault().rawOffset
-                            val tz = DateTimeZone.forOffsetMillis(offset)
-                            val newDate = DateTime.now(tz).plusMinutes(1)
-                            val millis = newDate.millis
+                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val format = "yyyy MM dd HH:mm"
+                val myFormatter = DateTimeFormat.forPattern(format)
+                val offset = TimeZone.getDefault().rawOffset
+                val tz = DateTimeZone.forOffsetMillis(offset)
+                val newDate = DateTime.now(tz).plusMinutes(1)
+                val millis = newDate.millis
 
-                            val myIntent = Intent(MainApplication.applicationContext(), ChvReminderReceiver::class.java)
-                            myIntent.putExtra("note", note)
-                            myIntent.putExtra("id", id)
-                            myIntent.putExtra("snoozed", snoozed.plus(1))
-                            myIntent.putExtra("date", myFormatter.print(newDate))
-                            myIntent.putExtra("tonePath", tonePath)
-                            myIntent.putExtra("docId", docId)
-                            myIntent.putExtra("repeatMode", repeatMode)
-                            myIntent.putExtra("isDrug", isDrug)
-                            myIntent.putExtra("isAppointment", isAppointment)
-                            val newPendingIntent =
-                                PendingIntent.getBroadcast(this, id!!, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, newPendingIntent)
-                            finish()
-                        }
-                    }
+                val myIntent = Intent(MainApplication.applicationContext(), ChvReminderReceiver::class.java)
+                myIntent.putExtra("note", note)
+                myIntent.putExtra("id", id)
+                myIntent.putExtra("snoozed", snoozed.plus(1))
+                myIntent.putExtra("date", myFormatter.print(newDate))
+                myIntent.putExtra("tonePath", tonePath)
+                myIntent.putExtra("docId", docId)
+                myIntent.putExtra("repeatMode", repeatMode)
+                myIntent.putExtra("drug", isDrug)
+                myIntent.putExtra("appointment", isAppointment)
+                val newPendingIntent =
+                    PendingIntent.getBroadcast(this, id!!, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, newPendingIntent)
+                finish()
             }
         }
 
@@ -163,14 +169,8 @@ class ChvReminderActivity : AppCompatActivity() {
                         "rang" to true,
                         "missed" to true
                     )
-                    progress_bar.makeVisible()
                     alarmDoc.update(data)
-                        .addOnCompleteListener {
-                            if (it.isComplete) {
-                                progress_bar.makeGone()
-                                finish()
-                            }
-                        }
+                    finish()
                 }
             }
         }, 60000L)
@@ -181,14 +181,9 @@ class ChvReminderActivity : AppCompatActivity() {
             "rang" to true,
             "missed" to true
         )
-        progress_bar.makeVisible()
         alarmDoc.update(data)
-            .addOnCompleteListener {
-                if (it.isComplete) {
-                    progress_bar.makeGone()
-                    finish()
-                }
-            }
+        progress_bar.makeGone()
+        finish()
     }
 
     override fun onAttachedToWindow() {

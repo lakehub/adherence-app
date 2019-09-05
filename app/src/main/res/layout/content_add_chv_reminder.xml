@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:background="@android:color/black"
+        android:background="@color/colorPrimary"
 >
     <LinearLayout
             android:layout_width="match_parent"
@@ -59,7 +59,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorRed"
+                    android:textColor="@color/colorWhiteSemitransparent"
                     android:textSize="15sp"
                     android:fontFamily="@font/product_sans_regular"
                     app:layout_constraintStart_toStartOf="parent"
@@ -113,7 +113,7 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/colorRed"
+                        android:textColor="@color/colorWhiteSemitransparent"
                         android:textSize="15sp"
                         android:fontFamily="@font/product_sans_regular"
                         app:layout_constraintTop_toTopOf="parent"
@@ -138,7 +138,7 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/colorRed"
+                        android:textColor="@color/colorWhiteSemitransparent"
                         android:textSize="15sp"
                         android:fontFamily="@font/product_sans_regular"
                         app:layout_constraintTop_toTopOf="parent"
@@ -173,7 +173,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorRed"
+                    android:textColor="@color/colorWhiteSemitransparent"
                     android:textSize="15sp"
                     android:fontFamily="@font/product_sans_regular"
                     app:layout_constraintTop_toTopOf="parent"
@@ -201,7 +201,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorRed"
+                    android:textColor="@color/colorWhiteSemitransparent"
                     android:textSize="15sp"
                     android:fontFamily="@font/product_sans_regular"
                     app:layout_constraintTop_toTopOf="parent"
@@ -239,7 +239,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorRed"
+                    android:textColor="@color/colorWhiteSemitransparent"
                     android:textSize="15sp"
                     android:fontFamily="@font/product_sans_regular"
                     app:layout_constraintTop_toTopOf="parent"
@@ -275,7 +275,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorRed"
+                    android:textColor="@color/colorWhiteSemitransparent"
                     android:textSize="15sp"
                     android:fontFamily="@font/product_sans_regular"
                     app:layout_constraintTop_toTopOf="parent"
@@ -310,7 +310,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorRed"
+                    android:textColor="@color/colorWhiteSemitransparent"
                     android:textSize="15sp"
                     android:fontFamily="@font/product_sans_regular"
                     app:layout_constraintTop_toTopOf="parent"

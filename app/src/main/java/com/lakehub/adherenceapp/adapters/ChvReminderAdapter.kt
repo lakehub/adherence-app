@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.firebase.firestore.FirebaseFirestore
 import com.lakehub.adherenceapp.*
@@ -42,12 +43,12 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val alarm = alarms[position]
 
-        holder.tvDescription.text = limitStringLength(alarm.description, 40)
+        holder.tvDescription.text = limitStringLength(alarm.description, 15)
         holder.tvCount.text = (position + 1).toString()
 
         when {
-            alarm.isAppointment!! -> holder.clientTv.text = limitStringLength(alarm.clientName?.split(" ")?.get(0)!!, 8)
-            alarm.isDrug!! -> holder.clientTv.text = if (alarm.medType == 1) {
+            alarm.appointment!! -> holder.clientTv.text = alarm.clientAccessKey
+            alarm.drug!! -> holder.clientTv.text = if (alarm.medicationType == 1) {
                 context.getString(R.string.treatment)
             } else {
                 context.getString(R.string.arv)
@@ -56,9 +57,9 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
         }
 
         if (alarm.recent) {
-            holder.timeTv.text = displayDateTime(alarm.fromDate)
+            holder.timeTv.text = displayDateTime(alarm.dateTime)
         } else {
-            holder.timeTv.text = displayTime(alarm.fromDate)
+            holder.timeTv.text = displayTime(alarm.dateTime)
         }
 
         if (holder.adapterPosition == 0) {
@@ -74,7 +75,7 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
         if (alarm.snoozed > 0) {
             val format = "yyyy MM dd HH:mm"
             val myFormatter = DateTimeFormat.forPattern(format)
-            val myDate = myFormatter.parseDateTime(alarm.fromDate)
+            val myDate = myFormatter.parseDateTime(alarm.dateTime)
             val newDate = myDate.plusMinutes(alarm.snoozed)
             holder.timeTv.text = displayTime(newDate)
         }
@@ -114,14 +115,13 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
                     myIntent.putExtra("docId", alarm.docId)
                     myIntent.putExtra("id", alarm.id)
                     myIntent.putExtra("description", alarm.description)
-                    myIntent.putExtra("tonePath", alarm.alarmTone)
-                    myIntent.putExtra("date", alarm.fromDate)
-                    myIntent.putExtra("isDrug", alarm.isDrug)
-                    myIntent.putExtra("isAppointment", alarm.isAppointment)
-                    myIntent.putExtra("medType", alarm.medType)
+                    myIntent.putExtra("tonePath", alarm.alarmTonePath)
+                    myIntent.putExtra("date", alarm.dateTime)
+                    myIntent.putExtra("drug", alarm.drug)
+                    myIntent.putExtra("appointment", alarm.appointment)
+                    myIntent.putExtra("medType", alarm.medicationType)
                     myIntent.putExtra("repeatMode", alarm.repeatMode)
-                    myIntent.putExtra("clientName", alarm.clientName)
-                    myIntent.putExtra("clientPhoneNo", alarm.clientPhoneNo)
+                    myIntent.putExtra("clientAccessKey", alarm.clientAccessKey)
                     myIntent.putExtra("hospital", alarm.hospital)
                     myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     context.startActivity(myIntent)
@@ -132,38 +132,20 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
                         .document(alarm.docId!!)
 
                     alarmsRef.update("cancelled", true)
-                        .addOnCompleteListener {
-                            if (it.isComplete) {
-                                val toast = Toast(MainApplication.applicationContext())
-                                val view: View = View.inflate(
-                                    MainApplication.applicationContext(),
-                                    R.layout.delete_success_toast, null
-                                )
-                                val textView: TextView = view.findViewById(R.id.message)
-                                textView.text = context.getString(R.string.alarm_cancel_success)
-                                toast.view = view
-                                toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                toast.duration = Toast.LENGTH_LONG
-                                toast.show()
-                                view.tv_undo.setOnClickListener {
+                    val activity = context as AppCompatActivity?
+                    activity?.showWarning(context.getString(R.string.alarm_cancel_success))
+                    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-                                }
-
-
-                                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-                                val myIntent =
-                                    Intent(MainApplication.applicationContext(), ChvReminderReceiver::class.java)
-                                val pendingIntent =
-                                    PendingIntent.getBroadcast(
-                                        context,
-                                        alarm.id,
-                                        myIntent,
-                                        PendingIntent.FLAG_UPDATE_CURRENT
-                                    )
-                                alarmManager.cancel(pendingIntent)
-                            }
-                        }
+                    val myIntent =
+                        Intent(MainApplication.applicationContext(), ChvReminderReceiver::class.java)
+                    val pendingIntent =
+                        PendingIntent.getBroadcast(
+                            context,
+                            alarm.id,
+                            myIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                        )
+                    alarmManager.cancel(pendingIntent)
                 }
             }
             true

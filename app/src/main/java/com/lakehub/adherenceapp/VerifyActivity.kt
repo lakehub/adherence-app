@@ -1,3 +1,4 @@
+/*
 package com.lakehub.adherenceapp
 
 import android.content.Intent
@@ -40,7 +41,7 @@ class VerifyActivity : AppCompatActivity() {
         userRef = db.collection("users")
 
         val extra = intent.extras
-        phoneNumber = extra?.getString("phoneNumber")
+        phoneNumber = extra?.getString("accessKey")
         newUser = extra?.getBoolean("newUser")
 
 
@@ -110,14 +111,16 @@ class VerifyActivity : AppCompatActivity() {
                     input_layout.requestFocus()
                 }
             } else {
-                /*val toast = Toast(applicationContext)
+                */
+/*val toast = Toast(applicationContext)
                 val view: View = layoutInflater.inflate(R.layout.warning, null)
                 val textView: TextView = view.findViewById(R.id.message)
                 textView.text = getString(R.string.invalid_code)
                 toast.view = view
                 toast.setGravity(Gravity.BOTTOM, 30, 30)
                 toast.duration = Toast.LENGTH_LONG
-                toast.show()*/
+                toast.show()*//*
+
             }
         }
 
@@ -166,13 +169,15 @@ class VerifyActivity : AppCompatActivity() {
                 hideProgress()
                 if (task.isSuccessful) {
                     val user = task.result?.user
-                    /*val myIntent = Intent(this, HomeActivity::class.java)
-                    myIntent.putExtra("phoneNumber", user?.phoneNumber)
+                    */
+/*val myIntent = Intent(this, HomeActivity::class.java)
+                    myIntent.putExtra("accessKey", user?.accessKey)
                     startActivity(myIntent)
-                    finish()*/
+                    finish()*//*
+
                     if (newUser != null && newUser == true) {
                         val myUser = hashMapOf(
-                            "phoneNumber" to user!!.phoneNumber,
+                            "accessKey" to user!!.phoneNumber,
                             "category" to 2,
                             "points" to 0
                         )
@@ -193,7 +198,8 @@ class VerifyActivity : AppCompatActivity() {
                             .addOnCompleteListener {
                                 hideProgress()
                                 Log.d("TAG", "type: ${it.result?.getDouble("category")?.toInt()}")
-                                /*val category = it.result!!.documents[0].get("category").toString().toInt()
+                                */
+/*val category = it.result!!.documents[0].get("category").toString().toInt()
                                 if (category == 1) {
                                     AppPreferences.accountType = 1
                                     startActivity(Intent(this@VerifyActivity, ClientHomeActivity::class.java))
@@ -201,7 +207,8 @@ class VerifyActivity : AppCompatActivity() {
                                     AppPreferences.accountType = 2
                                     startActivity(Intent(this@VerifyActivity, ChvDashboardActivity::class.java))
                                 }
-                                finish()*/
+                                finish()*//*
+
 
                             }
                     }
@@ -250,3 +257,4 @@ class VerifyActivity : AppCompatActivity() {
         )
     }
 }
+*/

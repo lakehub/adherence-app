@@ -3,11 +3,12 @@ package com.lakehub.adherenceapp
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.FirebaseFirestore
+import com.lakehub.adherenceapp.data.Report
+import com.lakehub.adherenceapp.data.User
 import kotlinx.android.synthetic.main.activity_chv_report.*
 import kotlinx.android.synthetic.main.content_chv_report.*
 import kotlinx.android.synthetic.main.month_tab.view.*
@@ -131,14 +132,15 @@ class ChvReportActivity : AppCompatActivity() {
         var clients = 0
 
         val docRef = FirebaseFirestore.getInstance().collection("reports")
-        docRef.whereEqualTo("chvPhoneNo", AppPreferences.phoneNo)
+        docRef.whereEqualTo("chvAccessKey", AppPreferences.accessKey)
             .whereEqualTo("date", selectedDateStr)
             .addSnapshotListener { querySnapshot, _ ->
                 if (querySnapshot!!.documents.isNotEmpty()) {
                     val doc = querySnapshot.documents[0]
-                    val taken = doc.getLong("taken")
-                    val snoozed = doc.getLong("snoozed")
-                    val missed = doc.getLong("missed")
+                    val report = doc.toObject(Report::class.java)
+                    val taken = report?.taken
+                    val snoozed = report?.snoozed
+                    val missed = report?.missed
 
                     tv_taken_count.text = taken.toString()
                     tv_snooze_count.text = snoozed.toString()
@@ -149,13 +151,14 @@ class ChvReportActivity : AppCompatActivity() {
                     tv_snooze_percent.text = "${snoozed.toFloat().div(total).times(100).roundToInt()}%"
                     tv_missed_percent.text = "${missed.toFloat().div(total).times(100).roundToInt()}%"
 
-                    FirebaseFirestore.getInstance().collection("users").document(AppPreferences.phoneNo!!)
+                    FirebaseFirestore.getInstance().collection("users").document(AppPreferences.accessKey!!)
                         .get()
                         .addOnCompleteListener {
                             if (it.isComplete) {
                                 hideProgress()
                                 showReport()
-                                clients = it.result!!.getLong("clients")?.toInt()!!
+                                val user = it.result?.toObject(User::class.java)
+                                clients = user?.clients!!
                                 val dataSet = arrayListOf<SliceValue>()
                                 dataSet.add(
                                     SliceValue(
@@ -172,7 +175,7 @@ class ChvReportActivity : AppCompatActivity() {
                                 dataSet.add(
                                     SliceValue(
                                         taken.toFloat(),
-                                        ContextCompat.getColor(this, R.color.colorPrimary)
+                                        ContextCompat.getColor(this, R.color.colorBlue)
                                     )
                                 )
                                 val pieChatData = PieChartData(dataSet)

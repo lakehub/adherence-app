@@ -1,7 +1,9 @@
 package com.lakehub.adherenceapp.adapters
 
+import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
@@ -39,8 +41,8 @@ class FollowUpAdapter(val context: Context, private val followUps: ArrayList<Fol
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val followUp = followUps[position]
 
-        holder.tv.text = titleCase(limitStringLength(followUp.clientName.split(" ")[0], 10))
-        val clientRef = FirebaseFirestore.getInstance().collection("users").document(followUp.clientPhoneNo)
+        holder.tv.text = followUp.clientAccessKey
+        val clientRef = FirebaseFirestore.getInstance().collection("users").document(followUp.clientAccessKey)
 
         clientRef.get()
             .addOnCompleteListener {
@@ -128,6 +130,14 @@ class FollowUpAdapter(val context: Context, private val followUps: ArrayList<Fol
                     }
                 }
             }
+
+        holder.itemView.setOnClickListener {
+            val activity = context as Activity
+            val intent = Intent(context, MakeAppointmentActivity::class.java)
+            intent.putExtra("clientAccessKey", followUp.clientAccessKey)
+            intent.putExtra("date", followUp.dateTime)
+            activity.startActivity(intent)
+        }
     }
 
     inner class MyViewHolder(view: View) : ViewHolder(view) {

@@ -5,9 +5,10 @@ import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.lakehub.adherenceapp.data.User
 import kotlinx.android.synthetic.main.activity_congratulations.*
 
 class CongratulationsActivity : AppCompatActivity() {
@@ -16,29 +17,23 @@ class CongratulationsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_congratulations)
-        showProgress()
+        hideProgress()
 
-        val user = FirebaseAuth.getInstance().currentUser
-        val phoneNo = AppPreferences.phoneNo
+        val accessKey = AppPreferences.accessKey
         val db = FirebaseFirestore.getInstance()
-        val usersDoc = db.collection("users").document(phoneNo!!)
+        val usersDoc = db.collection("users").document(accessKey!!)
         usersDoc.get()
             .addOnCompleteListener {
                 if (it.isComplete) {
-                    val result = it.result
-                    val points = result?.getLong("points")!!.toInt().plus(1)
+                    val user = it.result?.toObject(User::class.java)
+                    val points = user?.points!!.toInt().plus(1)
                     usersDoc.update("points", points)
-                        .addOnCompleteListener {task ->
-                            if (task.isComplete) {
-                                hideProgress()
-                                tv_points.text = getString(R.string.point, 1)
-                                if (points > 1) {
-                                    tv_total_points.text = getString(R.string.points, points)
-                                } else {
-                                    tv_total_points.text = getString(R.string.point, points)
-                                }
-                            }
-                        }
+                    tv_points.text = getString(R.string.point, 1)
+                    if (points > 1) {
+                        tv_total_points.text = getString(R.string.points, points)
+                    } else {
+                        tv_total_points.text = getString(R.string.point, points)
+                    }
                 }
             }
             .addOnFailureListener {

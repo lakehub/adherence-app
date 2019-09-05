@@ -7,7 +7,9 @@
         android:paddingTop="20dp"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:background="@android:color/black">
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?selectableItemBackground">
     <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_user"
             android:layout_width="50dp"
@@ -24,7 +26,7 @@
             app:layout_constraintTop_toTopOf="@+id/iv_user"
             app:layout_constraintBottom_toBottomOf="@+id/iv_user">
         <TextView
-                android:id="@+id/tv_phone_no"
+                android:id="@+id/tvAccessKey"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sample_phone_no"
@@ -37,31 +39,17 @@
         />
 
         <TextView
-                android:id="@+id/tv_name"
+                android:id="@+id/tvLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sample_name"
                 android:textSize="15sp"
                 android:fontFamily="@font/product_sans_regular"
                 android:textColor="@android:color/white"
-                app:layout_constraintTop_toBottomOf="@+id/tv_phone_no"
-                app:layout_constraintStart_toStartOf="@+id/tv_phone_no"
+                app:layout_constraintTop_toBottomOf="@+id/tvAccessKey"
+                app:layout_constraintStart_toStartOf="@+id/tvAccessKey"
         />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
-            android:id="@+id/tv_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sample_location"
-            android:textSize="15sp"
-            android:fontFamily="@font/product_sans_regular"
-            android:textColor="@color/colorWhiteSemitransparent"
-            app:layout_constraintTop_toTopOf="@+id/constraint_layout"
-            app:layout_constraintEnd_toStartOf="@+id/iv_options"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-    />
 
     <ImageView
             android:id="@+id/iv_options"
@@ -70,5 +58,8 @@
             android:src="@drawable/more_vertical"
             android:tint="@android:color/white"
             app:layout_constraintTop_toTopOf="@+id/constraint_layout"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackgroundBorderless"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

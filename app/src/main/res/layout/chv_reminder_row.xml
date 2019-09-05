@@ -2,8 +2,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/black">
+        android:layout_height="wrap_content">
     <View
             android:id="@+id/active_view"
             android:layout_width="5dp"
@@ -21,7 +20,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="@+id/active_view"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="25dp"
+            android:layout_marginStart="15dp"
             android:paddingTop="20dp"
             android:paddingBottom="20dp"
             android:paddingEnd="20dp"
@@ -53,11 +52,11 @@
                     android:id="@+id/tv_dsc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:text="@string/hospital"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginStart="20dp"
+                    android:layout_marginStart="10dp"
                     android:textColor="@android:color/white"
             />
 
@@ -78,13 +77,13 @@
             android:id="@+id/tv_client"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:text="@string/sample_name"
             app:layout_constraintEnd_toStartOf="@+id/iv_menu"
             app:layout_constraintTop_toTopOf="@+id/constraint_layout"
             android:layout_marginStart="20dp"
             android:textColor="@color/colorWhiteSemitransparent"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="5dp"
             android:layout_marginTop="20dp"
     />
     <ImageView

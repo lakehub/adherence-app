@@ -29,7 +29,7 @@ class ConfirmPopUpActivity : AppCompatActivity() {
 
         val note = intent.extras?.getString("note")
         val date = intent.extras?.getString("date")
-        val isPlace = intent.extras?.getBoolean("isPlace")
+        val isPlace = intent.extras?.getBoolean("place")
         val docId = intent.extras?.getString("docId")
 
         val offset = TimeZone.getDefault().rawOffset
@@ -42,7 +42,7 @@ class ConfirmPopUpActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         alarmDoc = db.collection("alarms").document(docId!!)
         reportDoc = db.collection("reports")
-            .whereEqualTo("chvPhoneNo", AppPreferences.chvPhoneNo)
+            .whereEqualTo("chvAccessKey", AppPreferences.chvAccessKey)
             .whereEqualTo("date", dateStr)
 
         if (isPlace!!) {
@@ -59,43 +59,45 @@ class ConfirmPopUpActivity : AppCompatActivity() {
             tv_time.text = displayTime(newDate)
         }
 
+        val now = DateTime.now(tz)
+
+        when (now.hourOfDay) {
+            in 5..9 -> constraintLayoutColor.setBackgroundResource(R.drawable.circular_bg_done)
+            in 9..12 -> constraintLayoutColor.setBackgroundResource(R.drawable.circular_bg_morning)
+            in 12..16 -> constraintLayoutColor.setBackgroundResource(R.drawable.circular_bg_afternoon)
+            in 16..21 -> constraintLayoutColor.setBackgroundResource(R.drawable.circular_bg_evening)
+            else -> constraintLayoutColor.setBackgroundResource(R.drawable.circular_bg_night)
+        }
+
         tv_dsc.text = note
 
         btn_turn_off.setOnClickListener {
-            progress_bar.makeVisible()
             alarmDoc.update("confirmed", true)
-                .addOnCompleteListener {
-                    if (it.isComplete) {
-                        progress_bar.makeVisible()
-                        reportDoc.get()
-                            .addOnCompleteListener { qSnap ->
-                                if (qSnap.isComplete) {
-                                    if (qSnap.result!!.documents.isEmpty()) {
-                                        val myData = mutableMapOf(
-                                            "chvPhoneNo" to AppPreferences.chvPhoneNo,
-                                            "date" to dateStr,
-                                            "taken" to 1,
-                                            "snoozed" to 0,
-                                            "missed" to 0
-                                        )
+            reportDoc.get()
+                .addOnCompleteListener { qSnap ->
+                    if (qSnap.isComplete) {
+                        if (qSnap.result!!.documents.isEmpty()) {
+                            val myData = mutableMapOf(
+                                "chvAccessKey" to AppPreferences.chvAccessKey,
+                                "date" to dateStr,
+                                "taken" to 1,
+                                "snoozed" to 0,
+                                "missed" to 0
+                            )
 
-                                        FirebaseFirestore.getInstance().collection("reports")
-                                            .add(myData)
-                                    } else {
-                                        val myDocId = qSnap.result!!.documents[0].id
-                                        FirebaseFirestore.getInstance().collection("reports")
-                                            .document(myDocId)
-                                            .update(
-                                                "taken",
-                                                qSnap.result!!.documents[0].getLong("taken")!!.plus(1)
-                                            )
-                                            .addOnCompleteListener {
-                                                startActivity(Intent(this, CongratulationsActivity::class.java))
-                                                finish()
-                                            }
-                                    }
-                                }
-                            }
+                            FirebaseFirestore.getInstance().collection("reports")
+                                .add(myData)
+                        } else {
+                            val myDocId = qSnap.result!!.documents[0].id
+                            FirebaseFirestore.getInstance().collection("reports")
+                                .document(myDocId)
+                                .update(
+                                    "taken",
+                                    qSnap.result!!.documents[0].getLong("taken")!!.plus(1)
+                                )
+                            startActivity(Intent(this, CongratulationsActivity::class.java))
+                            finish()
+                        }
                     }
                 }
         }

@@ -3,17 +3,15 @@ package com.lakehub.adherenceapp
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageMetadata
+import com.lakehub.adherenceapp.data.Report
+import com.lakehub.adherenceapp.data.User
 import kotlinx.android.synthetic.main.activity_login.*
 import java.io.File
 
@@ -27,144 +25,87 @@ class LoginActivity : AppCompatActivity() {
 
         hideProgress()
 
+        val hadLaunched: Boolean = intent.getBooleanExtra("hadLaunched", false)
+
         val db = FirebaseFirestore.getInstance()
 
         val usersRef = db.collection("users")
 
         cl_btn_submit.setOnClickListener {
-            var phoneNumber: String = edit_text.text.toString().trim()
+            val accessKey: String = edit_text.text.toString().trim()
 
-            if (phoneNumber.isNotEmpty()) {
-                var list = phoneNumber.split("")
-                if (list[0] == "")
-                    list = list.subList(1, list.size)
-
-                if (list[0] != "+") {
-                    if (list[0] == "0") {
-                        list = list.subList(1, list.size)
-                        phoneNumber = "+254${list.joinToString("")}"
+            if (accessKey.isNotEmpty()) {
+                if (AppPreferences.loggedIn) {
+                    if (accessKey.equals(AppPreferences.accessKey, true)) {
+                        AppPreferences.appInForeground = true
+                        /*if (AppPreferences.accountType == USER_CLIENT) {
+                           startActivity(Intent(this, ClientHomeActivity::class.java))
+                        } else {
+                            startActivity(Intent(this, ChvDashboardActivity::class.java))
+                        }*/
+                        if (hadLaunched) {
+                            finish()
+                        } else {
+                            finish()
+                            if (AppPreferences.accountType == USER_CLIENT) {
+                                startActivity(Intent(this, ClientHomeActivity::class.java))
+                            } else {
+                                startActivity(Intent(this, ChvDashboardActivity::class.java))
+                            }
+                        }
                     } else {
-                        phoneNumber = "+254${list.joinToString("")}"
+                        showWarning(getString(R.string.invalid_access_key))
                     }
-                }
-
-
-                if (phoneNumber.length < 10 || phoneNumber.length > 13) {
-                    val toast = Toast(this)
-                    val view: View = layoutInflater.inflate(R.layout.warning, null)
-                    val textView: TextView = view.findViewById(R.id.message)
-                    textView.text = getString(R.string.invalid_phone)
-                    toast.view = view
-                    toast.setGravity(Gravity.BOTTOM, 30, 30)
-                    toast.duration = Toast.LENGTH_SHORT
-                    toast.show()
-                    input_layout.requestFocus()
                 } else {
+
                     showProgress()
-                    usersRef.document(phoneNumber)
+                    usersRef.document(accessKey)
                         .get()
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
                                 hideProgress()
                                 if (it.result!!.data != null) {
-                                    val category = it.result!!.getDouble("category")?.toInt()
-                                    AppPreferences.accountType = category!!
+                                    val user = it.result!!.toObject(User::class.java)
+                                    AppPreferences.accountType = user?.category!!
                                     AppPreferences.loggedIn = true
-                                    AppPreferences.phoneNo = phoneNumber
-                                    AppPreferences.myName = it.result?.getString("name")
-                                    AppPreferences.profileImg = it.result?.getString("image")
-                                    if (category == 1) {
-                                        AppPreferences.chvPhoneNo = it.result?.getString("chvPhoneNumber")
-                                        if (it.result?.getString("image") != null) {
-                                            val storageRef = FirebaseStorage.getInstance().reference
-                                            val filename = it.result?.getString("image")
-                                            val imgRef = storageRef.child("client_images/$filename")
-                                            val mContextWrapper = ContextWrapper(this)
-                                            val mDirectory: File = mContextWrapper.getDir(
-                                                "user_images",
-                                                Context.MODE_PRIVATE
-                                            )
-                                            val file = File(mDirectory, filename)
-                                            imgRef.getFile(file)
-                                        }
+                                    AppPreferences.accessKey = user.accessKey
+                                    AppPreferences.profileImg = user.image
+                                    if (user.image != null) {
+                                        val storageRef = FirebaseStorage.getInstance().reference
+                                        val filename = user.image
+                                        val imgRef = storageRef.child("client_images/$filename")
+                                        val mContextWrapper = ContextWrapper(this)
+                                        val mDirectory: File = mContextWrapper.getDir(
+                                            "user_images",
+                                            Context.MODE_PRIVATE
+                                        )
+                                        val file = File(mDirectory, filename!!)
+                                        imgRef.getFile(file)
+                                    }
+                                    if (user.category == USER_CLIENT) {
+                                        finish()
+                                        AppPreferences.chvAccessKey = user.chvAccessKey
                                         startActivity(Intent(this, ClientHomeActivity::class.java))
-                                        finish()
                                     } else {
-                                        if (it.result?.getString("image") != null) {
-                                            val storageRef = FirebaseStorage.getInstance().reference
-                                            val filename = it.result?.getString("image")
-                                            val imgRef = storageRef.child("chv_images/$filename")
-                                            val mContextWrapper = ContextWrapper(this)
-                                            val mDirectory: File = mContextWrapper.getDir(
-                                                "user_images",
-                                                Context.MODE_PRIVATE
-                                            )
-                                            val file = File(mDirectory, filename!!)
-                                            imgRef.getFile(file)
-                                        }
-                                        startActivity(Intent(this, ChvDashboardActivity::class.java))
                                         finish()
+                                        startActivity(Intent(this, ChvDashboardActivity::class.java))
                                     }
                                 } else {
-                                    val toast = Toast(this)
-                                    val view: View = layoutInflater.inflate(R.layout.warning, null)
-                                    val textView: TextView = view.findViewById(R.id.message)
-                                    textView.text = getString(R.string.dnt_register)
-                                    toast.view = view
-                                    toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                    toast.duration = Toast.LENGTH_SHORT
-                                    toast.show()
+                                    showWarning(getString(R.string.invalid_access_key))
                                 }
-                                /*if (it.result?.exists()!!) {
-                                    val myIntent = Intent(this@LoginActivity, VerifyActivity::class.java)
-                                    myIntent.putExtra("phoneNumber", phoneNumber)
-                                    myIntent.putExtra("newUser", false)
-                                    startActivity(myIntent)
-                                    finish()
-                                } else {
-                                    val toast = Toast(this)
-                                    val view: View = layoutInflater.inflate(R.layout.warning, null)
-                                    val textView: TextView = view.findViewById(R.id.message)
-                                    textView.text = getString(R.string.dnt_register)
-                                    toast.view = view
-                                    toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                    toast.duration = Toast.LENGTH_SHORT
-                                    toast.show()
-                                    input_layout.requestFocus()
-                                }*/
                             } else {
                                 hideProgress()
-                                val toast = Toast(this)
-                                val view: View = layoutInflater.inflate(R.layout.network_error, null)
-                                toast.view = view
-                                toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                toast.duration = Toast.LENGTH_SHORT
-                                toast.show()
+                                showNetworkError()
                             }
                         }
-
                 }
+
             } else {
-                val toast = Toast(this)
-                val view: View = layoutInflater.inflate(R.layout.warning, null)
-                val textView: TextView = view.findViewById(R.id.message)
-                textView.text = getString(R.string.enter_phone)
-                toast.view = view
-                toast.setGravity(Gravity.BOTTOM, 30, 30)
-                toast.duration = Toast.LENGTH_SHORT
-                toast.show()
+                showWarning(getString(R.string.empty_access_key))
                 input_layout.requestFocus()
             }
         }
 
-        tv_register.setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
-            finish()
-        }
-    }
-
-    override fun onBackPressed() {
-        this.finishAffinity()
     }
 
     private fun showProgress() {
@@ -176,13 +117,18 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun hideProgress() {
-        tv_btn_submit.text = getString(R.string.verify)
+        tv_btn_submit.text = getString(R.string.sign_in)
         tv_btn_submit.setTextColor(
-            ContextCompat.getColor(applicationContext, android.R.color.white)
+            ContextCompat.getColor(applicationContext, android.R.color.black)
         )
 
         progress_bar_submit.visibility = View.GONE
         cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this, R.color.colorYellow))
 //        edit_text.isEnabled = true
+    }
+
+    override fun onBackPressed() {
+        AppPreferences.exit = true
+        finish()
     }
 }

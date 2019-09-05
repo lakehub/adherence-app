@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        android:background="@android:color/black">
+        android:background="@color/colorPrimary">
 
     <com.google.android.material.appbar.AppBarLayout
             android:layout_height="wrap_content"
@@ -17,7 +17,7 @@
                 android:layout_height="250dp"
                 app:layout_scrollFlags="enterAlways|scroll"
                 android:fitsSystemWindows="true"
-                app:contentScrim="@color/colorPrimary"
+                app:contentScrim="@color/colorRed"
                 android:padding="0dp">
             <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"

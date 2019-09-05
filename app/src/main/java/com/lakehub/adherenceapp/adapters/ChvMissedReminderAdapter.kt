@@ -28,27 +28,27 @@ class ChvMissedReminderAdapter(val context: Context, private val alarms: ArrayLi
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val alarm = alarms[position]
 
-        holder.tvDescription.text = limitStringLength(alarm.description, 50)
+        holder.tvDescription.text = limitStringLength(alarm.description, 40)
         holder.tvCount.text = (position + 1).toString()
 
-        if (alarm.isAppointment!!) {
+        if (alarm.appointment!!) {
             holder.clientTv.makeVisible()
-            holder.clientTv.text = limitStringLength(alarm.clientName?.split(" ")?.get(0)!!, 6)
-            holder.tvDescription.text = limitStringLength(alarm.description, 40)
+            holder.clientTv.text = limitStringLength(alarm.clientAccessKey?.split(" ")?.get(0)!!, 6)
+            holder.tvDescription.text = limitStringLength(alarm.description, 30)
         } else {
             holder.clientTv.makeGone()
         }
 
         if (alarm.recent) {
-            holder.timeTv.text = displayDateTime(alarm.fromDate)
+            holder.timeTv.text = displayDateTime(alarm.dateTime)
         } else {
-            holder.timeTv.text = displayTime(alarm.fromDate)
+            holder.timeTv.text = displayTime(alarm.dateTime)
         }
 
         if (alarm.snoozed > 0) {
             val format = "yyyy MM dd HH:mm"
             val myFormatter = DateTimeFormat.forPattern(format)
-            val myDate = myFormatter.parseDateTime(alarm.fromDate)
+            val myDate = myFormatter.parseDateTime(alarm.dateTime)
             val newDate = myDate.plusMinutes(alarm.snoozed)
             holder.timeTv.text = displayTime(newDate)
         }

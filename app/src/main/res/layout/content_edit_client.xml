@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:background="@android:color/black"
+        android:background="@color/colorPrimary"
 >
     <LinearLayout
             android:layout_width="match_parent"
@@ -51,7 +51,7 @@
         <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@android:color/darker_gray"/>
+                android:background="@android:color/darker_gray"/><!--
 
         <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -74,13 +74,15 @@
                     android:inputType="text"
                     android:textColor="@android:color/white"
                     android:textColorHint="@color/colorWhiteSemitransparent"
+                    android:visibility="gone"
             />
         </com.google.android.material.textfield.TextInputLayout>
 
         <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@android:color/darker_gray"/>
+                android:background="@android:color/darker_gray"
+        android:visibility="gone"/>-->
 
         <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"

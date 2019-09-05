@@ -22,12 +22,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import com.lakehub.adherenceapp.data.Alarm
 import com.lakehub.adherenceapp.receivers.AlarmReceiver
 import com.lakehub.adherenceapp.receivers.ConfirmAttendPlaceReceiver
 import kotlinx.android.synthetic.main.activity_add_alarm.*
@@ -67,6 +69,8 @@ class AddAlarmActivity : AppCompatActivity() {
     private lateinit var clSat: ConstraintLayout
     private lateinit var clSun: ConstraintLayout
     private var permissionGranted = false
+    private lateinit var firebaseFirestore: FirebaseFirestore
+    var forResult = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +79,12 @@ class AddAlarmActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         supportActionBar?.setDisplayShowTitleEnabled(false)
+        firebaseFirestore = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder()
+            .setPersistenceEnabled(true)
+            .build()
+
+        firebaseFirestore.firestoreSettings = settings
 
 //        val imgView: ImageView = toolbar.findViewById(R.id.iv_cancel)
 
@@ -404,136 +414,99 @@ class AddAlarmActivity : AppCompatActivity() {
             val myFinalDateFormatter = DateTimeFormat.forPattern(myFinalDateFormat)
             val myFinalDateStr = myFinalDateFormatter.print(fromDate)
 
-            if (!inProgress) {
-                if (description.isBlank()) {
-                    val toast = Toast(this)
-                    val view: View = layoutInflater.inflate(R.layout.warning, null)
-                    val textView: TextView = view.findViewById(R.id.message)
-                    textView.text = getString(R.string.fill_fields)
-                    toast.view = view
-                    toast.setGravity(Gravity.BOTTOM, 30, 30)
-                    toast.duration = Toast.LENGTH_SHORT
-                    toast.show()
-                } else if (toUtc(fromDate).isBeforeNow || toUtc(fromDate).isEqualNow) {
-                    val toast = Toast(this)
-                    val view: View = layoutInflater.inflate(R.layout.warning, null)
-                    val textView: TextView = view.findViewById(R.id.message)
-                    textView.text = getString(R.string.after_now)
-                    toast.view = view
-                    toast.setGravity(Gravity.BOTTOM, 30, 30)
-                    toast.duration = Toast.LENGTH_SHORT
-                    toast.show()
-                } else if (isPlace && toUtc(toDate).millis.minus(toUtc(fromDate).millis) < 60 * 60 * 1000) {
-                    val toast = Toast(this)
-                    val view: View = layoutInflater.inflate(R.layout.warning, null)
-                    val textView: TextView = view.findViewById(R.id.message)
-                    textView.text = getString(R.string.at_least_one_hr)
-                    toast.view = view
-                    toast.setGravity(Gravity.BOTTOM, 30, 30)
-                    toast.duration = Toast.LENGTH_SHORT
-                    toast.show()
-                } else {
-                    showProgress()
-                    val id = ThreadLocalRandom.current().nextInt()
-                    val phoneNumber = AppPreferences.phoneNo
-                    val alarmsRef = FirebaseFirestore.getInstance()
-                        .collection("alarms")
-                        .document()
+            if (description.isBlank()) {
+                val toast = Toast(this)
+                val view: View = layoutInflater.inflate(R.layout.warning, null)
+                val textView: TextView = view.findViewById(R.id.message)
+                textView.text = getString(R.string.fill_fields)
+                toast.view = view
+                toast.setGravity(Gravity.BOTTOM, 30, 30)
+                toast.duration = Toast.LENGTH_SHORT
+                toast.show()
+            } else if (toUtc(fromDate).isBeforeNow || toUtc(fromDate).isEqualNow) {
+                val toast = Toast(this)
+                val view: View = layoutInflater.inflate(R.layout.warning, null)
+                val textView: TextView = view.findViewById(R.id.message)
+                textView.text = getString(R.string.after_now)
+                toast.view = view
+                toast.setGravity(Gravity.BOTTOM, 30, 30)
+                toast.duration = Toast.LENGTH_SHORT
+                toast.show()
+            } else if (isPlace && toUtc(toDate).millis.minus(toUtc(fromDate).millis) < 60 * 60 * 1000) {
+                val toast = Toast(this)
+                val view: View = layoutInflater.inflate(R.layout.warning, null)
+                val textView: TextView = view.findViewById(R.id.message)
+                textView.text = getString(R.string.at_least_one_hr)
+                toast.view = view
+                toast.setGravity(Gravity.BOTTOM, 30, 30)
+                toast.duration = Toast.LENGTH_SHORT
+                toast.show()
+            } else {
+                val id = ThreadLocalRandom.current().nextInt()
+                val alarmsRef = firebaseFirestore.collection("alarms").document()
 
-                    val alarm = hashMapOf(
-                        "id" to id,
-                        "phoneNumber" to phoneNumber,
-                        "description" to description,
-                        "alarmTonePath" to tonePath,
-                        "repeatMode" to repeatModeList,
-                        "fromDate" to dateFormatter.print(fromDate),
-                        "toDate" to toDateStr,
-                        "isPlace" to isPlace,
-                        "date" to myFinalDateStr,
-                        "medicationType" to medType,
-                        "cancelled" to false,
-                        "snoozed" to 0,
-                        "confirmed" to false,
-                        "missed" to false,
-                        "reasonToCancel" to "",
-                        "rang" to false,
-                        "millis" to fromDate.millis,
-                        "chvPhoneNumber" to AppPreferences.chvPhoneNo,
-                        "name" to AppPreferences.myName,
-                        "marked" to false
+                val alarm = Alarm(
+                    accessKey = AppPreferences.accessKey,
+                    description = description,
+                    fromDate = dateFormatter.print(fromDate),
+                    toDate = toDateStr,
+                    alarmTonePath = tonePath,
+                    repeatMode = repeatModeList,
+                    place = isPlace,
+                    date = myFinalDateStr,
+                    medicationType = medType,
+                    millis = fromDate.millis,
+                    chvAccessKey = AppPreferences.chvAccessKey!!,
+                    id = id,
+                    docId = alarmsRef.id
+                )
+
+                alarmsRef.set(alarm)
+
+                showSuccess(getString(R.string.alarm_add_success))
+
+                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+                val millis = toUtc(fromDate).millis
+
+                val myIntent = Intent(MainApplication.applicationContext(), AlarmReceiver::class.java)
+                myIntent.putExtra("note", description)
+                myIntent.putExtra("id", id)
+                myIntent.putExtra("place", isPlace)
+                myIntent.putExtra("snoozed", 0)
+                myIntent.putExtra("date", dateFormatter.print(fromDate))
+                myIntent.putExtra("toDate", dateFormatter.print(toDate))
+                myIntent.putExtra("tonePath", tonePath)
+                myIntent.putExtra("docId", alarmsRef.id)
+                myIntent.putExtra("repeatMode", repeatModeList)
+                myIntent.putExtra("medType", medType)
+                val pendingIntent =
+                    PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
+
+                if (isPlace) {
+                    val toMillis = toUtc(toDate).millis
+                    val placeIntent = Intent(
+                        MainApplication.applicationContext(),
+                        ConfirmAttendPlaceReceiver::class.java
                     )
-
-                    alarmsRef.set(alarm)
-                        .addOnCompleteListener {
-                            if (it.isComplete) {
-                                hideProgress()
-                                val toast = Toast(this)
-                                val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
-                                val textView: TextView = view.findViewById(R.id.message)
-                                textView.text = getString(R.string.alarm_add_success)
-                                toast.view = view
-                                toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                toast.duration = Toast.LENGTH_SHORT
-                                toast.show()
-                                val returnIntent = Intent()
-                                returnIntent.putExtra("success", true)
-
-
-                                /*val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-                            val myIntent = Intent(this, AlarmReceiver::class.java)
-                            val pendingIntent = PendingIntent.getBroadcast(this, 1, myIntent, 0)
-                            alarmManager.setInexactRepeating(
-                                AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                                fromDate.millis, 60 * 1000, pendingIntent
-                            )*/
-
-                                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-                                val millis = toUtc(fromDate).millis
-
-                                val myIntent = Intent(MainApplication.applicationContext(), AlarmReceiver::class.java)
-                                myIntent.putExtra("note", description)
-                                myIntent.putExtra("id", id)
-                                myIntent.putExtra("isPlace", isPlace)
-                                myIntent.putExtra("snoozed", 0)
-                                myIntent.putExtra("date", dateFormatter.print(fromDate))
-                                myIntent.putExtra("toDate", dateFormatter.print(toDate))
-                                myIntent.putExtra("tonePath", tonePath)
-                                myIntent.putExtra("docId", alarmsRef.id)
-                                myIntent.putExtra("repeatMode", repeatModeList)
-                                myIntent.putExtra("medType", medType)
-                                val pendingIntent =
-                                    PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
-
-                                if (isPlace) {
-                                    val toMillis = toUtc(toDate).millis
-                                    val placeIntent = Intent(
-                                        MainApplication.applicationContext(),
-                                        ConfirmAttendPlaceReceiver::class.java
-                                    )
-                                    placeIntent.putExtra("id", id)
-                                    placeIntent.putExtra("note", description)
-                                    placeIntent.putExtra("snoozed", 0)
-                                    placeIntent.putExtra("date", dateFormatter.print(toDate))
-                                    placeIntent.putExtra("docId", alarmsRef.id)
-                                    placeIntent.putExtra("repeatMode", repeatModeList)
-                                    val placePendingIntent =
-                                        PendingIntent.getBroadcast(
-                                            this,
-                                            id,
-                                            placeIntent,
-                                            PendingIntent.FLAG_UPDATE_CURRENT
-                                        )
-                                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, toMillis, placePendingIntent)
-                                }
-
-//                            setResult(Activity.RESULT_OK, returnIntent)
-                                finish()
-                            }
-                        }
+                    placeIntent.putExtra("id", id)
+                    placeIntent.putExtra("note", description)
+                    placeIntent.putExtra("snoozed", 0)
+                    placeIntent.putExtra("date", dateFormatter.print(toDate))
+                    placeIntent.putExtra("docId", alarmsRef.id)
+                    placeIntent.putExtra("repeatMode", repeatModeList)
+                    val placePendingIntent =
+                        PendingIntent.getBroadcast(
+                            this,
+                            id,
+                            placeIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                        )
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, toMillis, placePendingIntent)
                 }
+
+                finish()
             }
         }
 
@@ -552,7 +525,8 @@ class AddAlarmActivity : AppCompatActivity() {
 
         mediaPlayer = MediaPlayer.create(this, R.raw.best_alarm_ringtone_2019)
 
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= 23 && !permissionGranted) {
+            forResult = true
             Dexter.withActivity(this)
                 .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 .withListener(object : PermissionListener {
@@ -565,9 +539,11 @@ class AddAlarmActivity : AppCompatActivity() {
 
                     override fun onPermissionGranted(response: PermissionGrantedResponse?) {
                         permissionGranted = true
+                        forResult = false
                     }
 
                     override fun onPermissionDenied(response: PermissionDeniedResponse?) {
+                        forResult = false
                         val toast = Toast(this@AddAlarmActivity)
                         val view: View = layoutInflater.inflate(R.layout.warning, null)
                         val textView: TextView = view.findViewById(R.id.message)
@@ -586,6 +562,7 @@ class AddAlarmActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        forResult = false
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
             val uri: Uri = data!!.getParcelableExtra<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) as Uri
             tonePath = uri.path
@@ -664,6 +641,7 @@ class AddAlarmActivity : AppCompatActivity() {
                         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentTone)
                         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
                         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
+                        forResult = true
                         startActivityForResult(intent, 100)
                     } else {
                         val toast = Toast(this)

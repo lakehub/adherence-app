@@ -70,7 +70,7 @@
                     android:id="@+id/tv_missed_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/missed_alarm"
+                    android:text="@string/missed_alarms"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     android:padding="10dp"

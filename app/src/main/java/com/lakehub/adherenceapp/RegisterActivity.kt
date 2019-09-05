@@ -2,7 +2,6 @@ package com.lakehub.adherenceapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
@@ -43,7 +42,7 @@ class RegisterActivity : AppCompatActivity() {
                                 if (it.result!!.data == null) {
                                     val userRef = db.collection("users")
                                     val myUser = hashMapOf(
-                                        "phoneNumber" to phoneNumber,
+                                        "accessKey" to phoneNumber,
                                         "category" to 2,
                                         "points" to 0,
                                         "clients" to 0
@@ -54,7 +53,7 @@ class RegisterActivity : AppCompatActivity() {
                                             if (task.isSuccessful) {
                                                 AppPreferences.accountType = 2
                                                 AppPreferences.loggedIn = true
-                                                AppPreferences.phoneNo = phoneNumber
+                                                AppPreferences.accessKey = phoneNumber
                                                 startActivity(Intent(this, ChvDashboardActivity::class.java))
                                                 finish()
                                             } else {
@@ -79,7 +78,7 @@ class RegisterActivity : AppCompatActivity() {
                                 }
                                 /*if (!it.result?.exists()!!) {
                                     val myIntent = Intent(this@RegisterActivity, VerifyActivity::class.java)
-                                    myIntent.putExtra("phoneNumber", phoneNumber)
+                                    myIntent.putExtra("accessKey", accessKey)
                                     myIntent.putExtra("newUser", true)
                                     startActivity(myIntent)
                                     finish()

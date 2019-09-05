@@ -3,15 +3,12 @@ package com.lakehub.adherenceapp
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_add_client.*
 import kotlinx.android.synthetic.main.content_add_client.*
@@ -70,14 +67,14 @@ class AddClientActivity : AppCompatActivity() {
                         }
                         val db = FirebaseFirestore.getInstance()
                         val userRef = db.collection("users").document(phoneNumber)
-                        val chvPhoneNumber = AppPreferences.phoneNo
+                        val chvPhoneNumber = AppPreferences.accessKey
 
                         userRef.get()
                             .addOnCompleteListener {
                                 if (it.isSuccessful) {
                                     if (it.result?.data == null) {
                                         val data = hashMapOf(
-                                            "phoneNumber" to phoneNumber,
+                                            "accessKey" to phoneNumber,
                                             "location" to location,
                                             "name" to name,
                                             "points" to 0,
@@ -91,7 +88,7 @@ class AddClientActivity : AppCompatActivity() {
                                                 if (task.isComplete) {
                                                     hideProgress()
                                                     val chvDoc = db.collection("users")
-                                                        .document(AppPreferences.phoneNo!!)
+                                                        .document(AppPreferences.accessKey!!)
 
                                                     chvDoc.get()
                                                         .addOnCompleteListener { docSnap ->
