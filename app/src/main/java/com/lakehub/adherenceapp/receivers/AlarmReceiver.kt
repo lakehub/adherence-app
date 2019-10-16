@@ -6,10 +6,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.google.firebase.firestore.FirebaseFirestore
-import com.lakehub.adherenceapp.AlarmActivity
-import com.lakehub.adherenceapp.AppPreferences
-import com.lakehub.adherenceapp.MainApplication
-import com.lakehub.adherenceapp.toUtc
+import com.lakehub.adherenceapp.activities.client.AlarmActivity
+import com.lakehub.adherenceapp.app.AppPreferences
+import com.lakehub.adherenceapp.app.MainApplication
+import com.lakehub.adherenceapp.utils.toUtc
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat

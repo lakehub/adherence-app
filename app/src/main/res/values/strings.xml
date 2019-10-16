@@ -44,7 +44,11 @@
     <string name="cont_chv">Continue as CHV</string>
     <string name="choose_act_type">Choose account type</string>
     <string name="good_morning">Good Morning!</string>
+    <string name="good_afternoon">Good Afternoon!</string>
+    <string name="good_evening">Good Evening!</string>
     <string name="good_morning_chv">Good Morning CHV!</string>
+    <string name="good_afternoon_chv">Good Afternoon CHV!</string>
+    <string name="good_evening_chv">Good Evening CHV!</string>
     <string name="ninety_nine_plus">99+</string>
     <string name="jan">January</string>
     <string name="feb">February</string>
@@ -147,6 +151,7 @@
     <string name="drug_alt">drug %1$s</string>
     <string name="confirm_below">confirm below</string>
     <string name="taken">I\'ve Taken</string>
+    <string name="taken_med">Taken</string>
     <string name="attended">I\'ve Attended</string>
     <string name="snooze">Snooze</string>
     <string name="remaining">(%1$d remaining)</string>
@@ -237,4 +242,12 @@
     <string name="skip">Skip</string>
     <string name="proceed">Proceed</string>
     <string name="make_appointment">Make an Appointment</string>
+    <string name="earned_points">Earned Points:</string>
+    <string name="ten">10</string>
+    <string name="zero">0</string>
+    <string name="alarm">Alarm</string>
+    <string name="short_description_of_the_alarm">Short description of the alarm</string>
+    <string name="clean">Clean</string>
+    <string name="no_taken">No taken</string>
+    <string name="alarm_cleaned">Alarm cleaned</string>
 </resources>

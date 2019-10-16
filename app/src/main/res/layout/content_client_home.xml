@@ -23,7 +23,9 @@
                 layout="@layout/calendar_day_legend"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"/>
         <com.kizitonwose.calendarview.CalendarView
                 android:id="@+id/calendar_view"
                 android:layout_width="match_parent"
@@ -34,7 +36,9 @@
                 app:cv_inDateStyle="allMonths"
                 app:cv_scrollMode="paged"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/day_view"/>
+                app:layout_constraintTop_toBottomOf="@+id/day_view"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"/>
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_upcoming_alarms"
                 android:layout_width="match_parent"
@@ -85,7 +89,6 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/tv_missed_title"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:paddingBottom="100dp"
             />
             <TextView
                     android:id="@+id/tv_no_missed"
@@ -98,6 +101,47 @@
                     android:gravity="center"
                     android:fontFamily="@font/product_sans_regular"
                     android:textSize="20sp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clTakenAlarms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/cl_missed_alarms"
+                app:layout_constraintStart_toStartOf="parent">
+            <TextView
+                    android:id="@+id/tvTakenTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/taken_med"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:fontFamily="@font/product_sans_regular"
+                    android:textSize="20sp"
+                    android:background="@color/materialColorGray"
+                    android:textColor="@color/colorBlue"/>
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewTaken"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTakenTitle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:paddingBottom="100dp"
+                    />
+            <TextView
+                    android:id="@+id/tvNoTaken"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_taken"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTakenTitle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:padding="20dp"
+                    android:gravity="center"
+                    android:fontFamily="@font/product_sans_regular"
+                    android:textSize="20sp"
+                    android:visibility="gone"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

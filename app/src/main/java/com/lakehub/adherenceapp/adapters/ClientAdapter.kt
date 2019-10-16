@@ -19,7 +19,13 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.google.firebase.storage.FirebaseStorage
 import com.lakehub.adherenceapp.*
+import com.lakehub.adherenceapp.activities.chv.ClientAppointmentsActivity
+import com.lakehub.adherenceapp.activities.chv.DeactivateClientActivity
+import com.lakehub.adherenceapp.activities.chv.EditClientActivity
+import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.Client
+import com.lakehub.adherenceapp.utils.loadImgFromInternalStorage
+import com.lakehub.adherenceapp.utils.titleCase
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.File
 
@@ -56,7 +62,10 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
         if (client.image != null) {
             val contextWrapper = ContextWrapper(MainApplication.applicationContext())
             val directory: File = contextWrapper.getDir("client_images", Context.MODE_PRIVATE)
-            var bitmap = loadImgFromInternalStorage(directory.absolutePath, client.image)
+            var bitmap = loadImgFromInternalStorage(
+                directory.absolutePath,
+                client.image
+            )
             if (bitmap == null) {
                 val storageRef = FirebaseStorage.getInstance().reference
                 val filename = client.image
@@ -68,7 +77,10 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
                 )
                 val file = File(mDirectory, filename)
                 imgRef.getFile(file).addOnSuccessListener {
-                    var myBitmap = loadImgFromInternalStorage(directory.absolutePath, client.image)
+                    var myBitmap = loadImgFromInternalStorage(
+                        directory.absolutePath,
+                        client.image
+                    )
                     Glide.with(context)
                         .load(myBitmap)
                         .apply(

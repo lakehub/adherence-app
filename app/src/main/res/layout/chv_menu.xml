@@ -14,7 +14,7 @@
                 android:layout_height="wrap_content"
                 android:padding="20dp"
                 android:clickable="true"
-                style="@style/SelectableItemBackground"
+                android:background="?selectableItemBackground"
                 android:focusable="true">
             <TextView
                     android:layout_width="wrap_content"
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:padding="20dp"
                 android:clickable="true"
-                style="@style/SelectableItemBackground"
+                android:background="?selectableItemBackground"
                 android:focusable="true">
             <TextView
                     android:layout_width="wrap_content"
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:padding="20dp"
                 android:clickable="true"
-                style="@style/SelectableItemBackground"
+                android:background="?selectableItemBackground"
                 android:focusable="true">
             <TextView
                     android:layout_width="wrap_content"
@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:padding="20dp"
                 android:clickable="true"
-                style="@style/SelectableItemBackground"
+                android:background="?selectableItemBackground"
                 android:focusable="true">
             <TextView
                     android:layout_width="wrap_content"
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:padding="20dp"
                 android:clickable="true"
-                style="@style/SelectableItemBackground"
+                android:background="?selectableItemBackground"
                 android:focusable="true">
             <TextView
                     android:layout_width="wrap_content"
@@ -134,7 +134,7 @@
                 android:layout_height="wrap_content"
                 android:padding="20dp"
                 android:clickable="true"
-                style="@style/SelectableItemBackground"
+                android:background="?selectableItemBackground"
                 android:focusable="true">
             <TextView
                     android:layout_width="wrap_content"
@@ -158,7 +158,7 @@
                 android:layout_height="wrap_content"
                 android:padding="20dp"
                 android:clickable="true"
-                style="@style/SelectableItemBackground"
+                android:background="?selectableItemBackground"
                 android:focusable="true">
             <TextView
                     android:layout_width="wrap_content"
@@ -182,7 +182,7 @@
                 android:layout_height="wrap_content"
                 android:padding="20dp"
                 android:clickable="true"
-                style="@style/SelectableItemBackground"
+                android:background="?selectableItemBackground"
                 android:focusable="true">
             <TextView
                     android:layout_width="wrap_content"

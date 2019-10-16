@@ -7,15 +7,20 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 import com.lakehub.adherenceapp.*
+import com.lakehub.adherenceapp.app.AppPreferences
+import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.Alarm
 import com.lakehub.adherenceapp.data.ChvReminder
 import com.lakehub.adherenceapp.data.Report
 import com.lakehub.adherenceapp.receivers.AlarmReceiver
 import com.lakehub.adherenceapp.receivers.ChvReminderReceiver
 import com.lakehub.adherenceapp.receivers.ConfirmAttendPlaceReceiver
+import com.lakehub.adherenceapp.utils.MyNotificationManager
+import com.lakehub.adherenceapp.utils.USER_CHV
+import com.lakehub.adherenceapp.utils.displayTime
+import com.lakehub.adherenceapp.utils.toUtc
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
@@ -48,7 +53,11 @@ class BootCompletedService : Service() {
                 if (querySnapshot != null && !querySnapshot.isEmpty) {
                     for (document in querySnapshot.documents) {
                         val reminder = document.toObject(ChvReminder::class.java)
-                        val myMillis = toUtc(fmt.parseDateTime(reminder!!.dateTime)).millis
+                        val myMillis = toUtc(
+                            fmt.parseDateTime(
+                                reminder!!.dateTime
+                            )
+                        ).millis
 
                         if (myMillis >= millis) {
                             val myIntent = Intent(MainApplication.applicationContext(), ChvReminderReceiver::class.java)
@@ -77,7 +86,9 @@ class BootCompletedService : Service() {
                                 val myDate = fmt.parseDateTime(reminder.dateTime)
                                 MyNotificationManager(this).displayAlarmNotification(
                                     getString(R.string.missed_alarm),
-                                    getString(R.string.missed_alarm_notification_body, displayTime(myDate)), this
+                                    getString(R.string.missed_alarm_notification_body,
+                                        displayTime(myDate)
+                                    ), this
                                 )
                                 val missedAlarmRef = firebaseFirestore.collection("chv_reminders")
                                     .document(reminder.docId!!)
@@ -104,7 +115,11 @@ class BootCompletedService : Service() {
                 if (querySnapshot != null && !querySnapshot.isEmpty) {
                     for (document in querySnapshot.documents) {
                         val reminder = document.toObject(Alarm::class.java)
-                        val myMillis = toUtc(fmt.parseDateTime(reminder!!.fromDate)).millis
+                        val myMillis = toUtc(
+                            fmt.parseDateTime(
+                                reminder!!.fromDate
+                            )
+                        ).millis
 
                         if (myMillis >= millis) {
                             val myIntent = Intent(MainApplication.applicationContext(), AlarmReceiver::class.java)
@@ -128,7 +143,11 @@ class BootCompletedService : Service() {
                             alarmManager.setExact(AlarmManager.RTC_WAKEUP, myMillis, pendingIntent)
 
                             if (reminder.place == true) {
-                                val toMillis = toUtc(fmt.parseDateTime(reminder.toDate)).millis
+                                val toMillis = toUtc(
+                                    fmt.parseDateTime(
+                                        reminder.toDate
+                                    )
+                                ).millis
                                 val placeIntent = Intent(
                                     MainApplication.applicationContext(),
                                     ConfirmAttendPlaceReceiver::class.java
@@ -153,7 +172,9 @@ class BootCompletedService : Service() {
                                 val myDate = fmt.parseDateTime(reminder.fromDate)
                                 MyNotificationManager(this).displayAlarmNotification(
                                     getString(R.string.missed_alarm),
-                                    getString(R.string.missed_alarm_notification_body, displayTime(myDate)), this
+                                    getString(R.string.missed_alarm_notification_body,
+                                        displayTime(myDate)
+                                    ), this
                                 )
                                 val reportDateFormat = "yyyy-MM"
                                 val reportDateFormatter = DateTimeFormat.forPattern(reportDateFormat)

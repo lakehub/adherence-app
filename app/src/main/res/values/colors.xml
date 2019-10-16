@@ -33,6 +33,7 @@
     <color name="colorRedAlt">#B21D2D</color>
     <color name="colorMaroon">#3B090F</color>
     <color name="colorRedLight">#FF6961</color>
+    <color name="colorGrandis">#FFCF79</color>
 
     <!--uCrop Activity-->
     <color name="ucrop_color_toolbar" tools:override="true">@color/colorPrimary</color>

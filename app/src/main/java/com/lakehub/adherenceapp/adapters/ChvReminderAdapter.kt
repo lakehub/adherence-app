@@ -8,14 +8,15 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.firebase.firestore.FirebaseFirestore
 import com.lakehub.adherenceapp.*
+import com.lakehub.adherenceapp.activities.chv.EditChvReminderActivity
+import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.ChvReminder
 import com.lakehub.adherenceapp.receivers.ChvReminderReceiver
-import kotlinx.android.synthetic.main.delete_success_toast.view.*
+import com.lakehub.adherenceapp.utils.*
 import org.joda.time.format.DateTimeFormat
 
 
@@ -43,7 +44,8 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val alarm = alarms[position]
 
-        holder.tvDescription.text = limitStringLength(alarm.description, 15)
+        holder.tvDescription.text =
+            limitStringLength(alarm.description, 15)
         holder.tvCount.text = (position + 1).toString()
 
         when {
@@ -53,7 +55,12 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
             } else {
                 context.getString(R.string.arv)
             }
-            else -> holder.clientTv.text = titleCase(limitStringLength(alarm.hospital!!, 8))
+            else -> holder.clientTv.text = titleCase(
+                limitStringLength(
+                    alarm.hospital!!,
+                    8
+                )
+            )
         }
 
         if (alarm.recent) {

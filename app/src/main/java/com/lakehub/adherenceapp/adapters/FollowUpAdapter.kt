@@ -19,7 +19,10 @@ import com.bumptech.glide.request.target.Target
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.lakehub.adherenceapp.*
+import com.lakehub.adherenceapp.activities.chv.MakeAppointmentActivity
+import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.FollowUp
+import com.lakehub.adherenceapp.utils.loadImgFromInternalStorage
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.File
 
@@ -51,7 +54,10 @@ class FollowUpAdapter(val context: Context, private val followUps: ArrayList<Fol
                     if (image != null) {
                         val contextWrapper = ContextWrapper(MainApplication.applicationContext())
                         val directory: File = contextWrapper.getDir("client_images", Context.MODE_PRIVATE)
-                        var bitmap = loadImgFromInternalStorage(directory.absolutePath, image)
+                        var bitmap = loadImgFromInternalStorage(
+                            directory.absolutePath,
+                            image
+                        )
                         if (bitmap == null) {
                             val storageRef = FirebaseStorage.getInstance().reference
                             val filename = image
@@ -63,7 +69,11 @@ class FollowUpAdapter(val context: Context, private val followUps: ArrayList<Fol
                             )
                             val file = File(mDirectory, filename)
                             imgRef.getFile(file).addOnSuccessListener {
-                                var myBitmap = loadImgFromInternalStorage(directory.absolutePath, image)
+                                var myBitmap =
+                                    loadImgFromInternalStorage(
+                                        directory.absolutePath,
+                                        image
+                                    )
                                 Glide.with(context)
                                     .load(myBitmap)
                                     .apply(

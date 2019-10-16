@@ -5,7 +5,10 @@
         android:layout_height="wrap_content"
         android:paddingStart="0dp"
         android:paddingEnd="30dp"
-        android:id="@+id/container">
+        android:id="@+id/container"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?selectableItemBackground">
     <View
             android:id="@+id/active_view"
             android:layout_width="5dp"

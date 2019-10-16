@@ -8,7 +8,13 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.lakehub.adherenceapp.*
+import com.lakehub.adherenceapp.activities.client.CancelAlarmActivity
+import com.lakehub.adherenceapp.activities.client.EditAlarmActivity
+import com.lakehub.adherenceapp.activities.client.SingleAlarmActivity
 import com.lakehub.adherenceapp.data.Alarm
+import com.lakehub.adherenceapp.utils.displayDateTime
+import com.lakehub.adherenceapp.utils.displayTime
+import com.lakehub.adherenceapp.utils.limitStringLength
 import org.joda.time.format.DateTimeFormat
 
 
@@ -29,7 +35,8 @@ class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val alarm = alarms[position]
 
-        holder.tvDescription.text = limitStringLength(alarm.description, 30)
+        holder.tvDescription.text =
+            limitStringLength(alarm.description, 30)
         holder.tvCount.text = (position + 1).toString()
 
         if (alarm.recent) {
@@ -54,6 +61,21 @@ class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
             val myDate = myFormatter.parseDateTime(alarm.fromDate)
             val newDate = myDate.plusMinutes(alarm.snoozed)
             holder.timeTv.text = displayTime(newDate)
+        }
+
+        holder.itemView.setOnClickListener {
+            val myIntent = Intent(context, SingleAlarmActivity::class.java)
+            myIntent.putExtra("docId", alarm.docId)
+            myIntent.putExtra("id", alarm.id)
+            myIntent.putExtra("description", alarm.description)
+            myIntent.putExtra("tonePath", alarm.alarmTonePath)
+            myIntent.putExtra("fromDate", alarm.fromDate)
+            myIntent.putExtra("toDate", alarm.toDate)
+            myIntent.putExtra("place", alarm.place)
+            myIntent.putExtra("medType", alarm.medicationType)
+            myIntent.putExtra("repeatMode", alarm.repeatMode)
+            myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(myIntent)
         }
 
         /*holder.tvCount.setOnLongClickListener {

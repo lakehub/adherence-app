@@ -8,6 +8,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.lakehub.adherenceapp.*
 import com.lakehub.adherenceapp.data.ChvReminder
+import com.lakehub.adherenceapp.utils.displayDateTime
+import com.lakehub.adherenceapp.utils.displayTime
+import com.lakehub.adherenceapp.utils.limitStringLength
 import org.joda.time.format.DateTimeFormat
 
 
@@ -28,7 +31,8 @@ class AppointmentsAdapter(val context: Context, private val alarms: ArrayList<Ch
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val alarm = alarms[position]
 
-        holder.tvDescription.text = limitStringLength(alarm.description, 50)
+        holder.tvDescription.text =
+            limitStringLength(alarm.description, 50)
         holder.tvCount.text = (position + 1).toString()
 
         if (alarm.recent) {

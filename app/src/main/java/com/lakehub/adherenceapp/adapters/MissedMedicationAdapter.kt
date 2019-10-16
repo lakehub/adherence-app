@@ -11,6 +11,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.lakehub.adherenceapp.*
 import com.lakehub.adherenceapp.data.Alarm
 import com.lakehub.adherenceapp.data.FollowUp
+import com.lakehub.adherenceapp.utils.displayTime
+import com.lakehub.adherenceapp.utils.limitStringLength
+import com.lakehub.adherenceapp.utils.titleCase
 import kotlinx.android.synthetic.main.normal_toast.view.*
 import org.joda.time.format.DateTimeFormat
 
@@ -32,7 +35,8 @@ class MissedMedicationAdapter(val context: Context, private val alarms: ArrayLis
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val alarm = alarms[position]
 
-        holder.tvDescription.text = limitStringLength(alarm.description, 25)
+        holder.tvDescription.text =
+            limitStringLength(alarm.description, 25)
         holder.tvCount.text = (position + 1).toString()
         holder.timeTv.text = displayTime(alarm.fromDate)
         val medType = if (alarm.medicationType == 1) {

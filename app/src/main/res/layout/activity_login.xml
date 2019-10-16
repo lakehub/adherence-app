@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".LoginActivity"
+        tools:context=".activities.startup.LoginActivity"
         android:background="@color/colorPrimary">
     <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -80,7 +80,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_logo_dsc_sm"
                     android:gravity="center_horizontal"
                     android:layout_marginTop="20dp"
-                    android:textColor="@color/colorBlueLight"
+                    android:textColor="@color/colorGrandis"
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
                     android:fontFamily="@font/product_sans_bold"/>

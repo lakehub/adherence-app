@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.lakehub.adherenceapp.*
 import com.lakehub.adherenceapp.data.ChvReminder
+import com.lakehub.adherenceapp.utils.*
 import org.joda.time.format.DateTimeFormat
 
 
@@ -28,13 +29,17 @@ class ChvMissedReminderAdapter(val context: Context, private val alarms: ArrayLi
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val alarm = alarms[position]
 
-        holder.tvDescription.text = limitStringLength(alarm.description, 40)
+        holder.tvDescription.text =
+            limitStringLength(alarm.description, 40)
         holder.tvCount.text = (position + 1).toString()
 
         if (alarm.appointment!!) {
             holder.clientTv.makeVisible()
-            holder.clientTv.text = limitStringLength(alarm.clientAccessKey?.split(" ")?.get(0)!!, 6)
-            holder.tvDescription.text = limitStringLength(alarm.description, 30)
+            holder.clientTv.text = limitStringLength(
+                alarm.clientAccessKey?.split(" ")?.get(0)!!, 6
+            )
+            holder.tvDescription.text =
+                limitStringLength(alarm.description, 30)
         } else {
             holder.clientTv.makeGone()
         }
