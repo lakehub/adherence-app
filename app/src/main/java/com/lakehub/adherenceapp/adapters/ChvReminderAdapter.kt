@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.firebase.firestore.FirebaseFirestore
 import com.lakehub.adherenceapp.*
 import com.lakehub.adherenceapp.activities.chv.EditChvReminderActivity
+import com.lakehub.adherenceapp.activities.chv.SingleReminderActivity
 import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.ChvReminder
 import com.lakehub.adherenceapp.receivers.ChvReminderReceiver
@@ -85,6 +86,23 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
             val myDate = myFormatter.parseDateTime(alarm.dateTime)
             val newDate = myDate.plusMinutes(alarm.snoozed)
             holder.timeTv.text = displayTime(newDate)
+        }
+
+        holder.itemView.setOnClickListener {
+            val myIntent = Intent(context, SingleReminderActivity::class.java)
+            myIntent.putExtra("docId", alarm.docId)
+            myIntent.putExtra("id", alarm.id)
+            myIntent.putExtra("description", alarm.description)
+            myIntent.putExtra("tonePath", alarm.alarmTonePath)
+            myIntent.putExtra("date", alarm.dateTime)
+            myIntent.putExtra("drug", alarm.drug)
+            myIntent.putExtra("appointment", alarm.appointment)
+            myIntent.putExtra("medType", alarm.medicationType)
+            myIntent.putExtra("repeatMode", alarm.repeatMode)
+            myIntent.putExtra("clientAccessKey", alarm.clientAccessKey)
+            myIntent.putExtra("hospital", alarm.hospital)
+            myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(myIntent)
         }
 
         /*holder.tvCount.setOnLongClickListener {

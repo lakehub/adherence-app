@@ -1,0 +1,84 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <View
+            android:id="@+id/active_view"
+            android:layout_width="5dp"
+            android:layout_height="0dp"
+            android:background="@color/colorGreen"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraint_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@+id/active_view"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="25dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:paddingEnd="20dp"
+            android:paddingStart="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/active_view"
+            >
+
+        <TextView
+                android:id="@+id/tv_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/circular_tv_bg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/product_sans_regular"
+                android:text="@string/two"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:visibility="visible"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@+id/tv_count"
+                app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                    android:id="@+id/tv_dsc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="@string/hospital"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="20dp"
+                    android:textColor="@android:color/black"
+                    />
+
+            <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="@string/sample_time"
+                    app:layout_constraintStart_toStartOf="@+id/tv_dsc"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_dsc"
+                    android:textColor="@color/colorRed"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/colorTranslucent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,5 +20,6 @@ data class ChvReminder (
     val recent: Boolean = false,
     val hospital: String? = null,
     val millis: Long? = null,
-    val accessKey: String = ""
+    val accessKey: String = "",
+    val cleaned: Boolean = false
 )

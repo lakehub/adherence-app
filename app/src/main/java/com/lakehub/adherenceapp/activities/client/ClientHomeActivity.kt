@@ -178,6 +178,7 @@ class ClientHomeActivity : AppCompatActivity() {
             AppPreferences.accountType = 0
             AppPreferences.chvAccessKey = null
             AppPreferences.profileImg = null
+            AppPreferences.authenticated = false
             emptyDirectory("user_images")
             finish()
         }
@@ -206,6 +207,11 @@ class ClientHomeActivity : AppCompatActivity() {
             drawer_layout.closeDrawer(GravityCompat.START)
         }
 
+        appointmentsMenu.setOnClickListener {
+            startActivity(Intent(this, AppointmentsActivity::class.java))
+            drawer_layout.closeDrawer(GravityCompat.START)
+        }
+
         /*auth.addAuthStateListener {
             val user = it.currentUser
             if (user == null) {
@@ -219,8 +225,8 @@ class ClientHomeActivity : AppCompatActivity() {
         val date = DateTime.now(tz)
 
         when {
-            date.hourOfDay in 0..12 -> tv_title.text  =getString(R.string.good_morning)
-            date.hourOfDay in 13..16 -> tv_title.text  =getString(R.string.good_afternoon)
+            date.hourOfDay in 0..11 -> tv_title.text  =getString(R.string.good_morning)
+            date.hourOfDay in 12..16 -> tv_title.text  =getString(R.string.good_afternoon)
             date.hourOfDay in 17..24 -> tv_title.text  =getString(R.string.good_evening)
         }
 
@@ -417,7 +423,9 @@ class ClientHomeActivity : AppCompatActivity() {
                             if (!alarm?.cancelled!! && !alarm.rang && alarm.date == selectedDateStr) {
                                 alarmList.add(alarm)
                             } else if (alarm.missed) {
-                                missedAlarmList.add(alarm)
+                                if (!alarm.cleaned) {
+                                    missedAlarmList.add(alarm)
+                                }
                             } else if (alarm.rang && !alarm.cancelled) {
                                 takenList.add(alarm)
                             }
@@ -665,7 +673,9 @@ class ClientHomeActivity : AppCompatActivity() {
 
                     for (document in querySnapshot.documents) {
                         val alarm = document.toObject(Alarm::class.java)
-                        missedAlarmList.add(alarm!!)
+                        if (alarm?.cleaned == false) {
+                            missedAlarmList.add(alarm)
+                        }
 
                     }
 

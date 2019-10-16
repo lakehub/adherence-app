@@ -47,7 +47,8 @@ class EditClientActivity : AppCompatActivity() {
         val accessKey = intent.getStringExtra("accessKey")
         val location = intent.getStringExtra("location")
 
-        et_phone_no.setText(getString(R.string.phone_no, accessKey?.substring(4)))
+//        et_phone_no.setText(getString(R.string.phone_no, accessKey?.substring(4)))
+        et_phone_no.setText(accessKey)
         et_location.setText(titleCase(location!!))
 
         iv_cancel.setOnClickListener {

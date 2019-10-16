@@ -30,6 +30,7 @@ import com.kizitonwose.calendarview.utils.yearMonth
 import com.lakehub.adherenceapp.*
 import com.lakehub.adherenceapp.adapters.ChvMissedReminderAdapter
 import com.lakehub.adherenceapp.adapters.ChvReminderAdapter
+import com.lakehub.adherenceapp.adapters.TakenReminderAdapter
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.ChvReminder
@@ -60,8 +61,10 @@ class ChvDashboardActivity : AppCompatActivity() {
     private var currentYearMonth: YearMonth? = null
     private lateinit var alarmList: ArrayList<ChvReminder>
     private lateinit var missedAlarmList: ArrayList<ChvReminder>
+    private lateinit var takenList: ArrayList<ChvReminder>
     private lateinit var myAdapter: ChvReminderAdapter
     private lateinit var missedAlarmAdapter: ChvMissedReminderAdapter
+    private lateinit var takenAlarmAdapter: TakenReminderAdapter
     private var selected: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,6 +111,11 @@ class ChvDashboardActivity : AppCompatActivity() {
             drawer_layout.closeDrawer(GravityCompat.START)
         }
 
+        clTakenMenu.setOnClickListener {
+            showTaken()
+            drawer_layout.closeDrawer(GravityCompat.START)
+        }
+
         cl_follow_up_menu.setOnClickListener {
             startActivity(Intent(this, FollowUpActivity::class.java))
             drawer_layout.closeDrawer(GravityCompat.START)
@@ -146,6 +154,7 @@ class ChvDashboardActivity : AppCompatActivity() {
             AppPreferences.accountType = 0
             AppPreferences.chvAccessKey = null
             AppPreferences.profileImg = null
+            AppPreferences.authenticated = false
             emptyDirectory("user_images")
             emptyDirectory("client_images")
             finish()
@@ -166,11 +175,14 @@ class ChvDashboardActivity : AppCompatActivity() {
 
         alarmList = arrayListOf()
         missedAlarmList = arrayListOf()
+        takenList = arrayListOf()
         myAdapter = ChvReminderAdapter(this, alarmList)
         missedAlarmAdapter = ChvMissedReminderAdapter(this, missedAlarmList)
-        val mLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        takenAlarmAdapter = TakenReminderAdapter(this, takenList)
 
+        val mLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         val missedLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        val takenLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
 
         recycler_view_upcoming.apply {
             layoutManager = mLayoutManager
@@ -182,13 +194,18 @@ class ChvDashboardActivity : AppCompatActivity() {
             adapter = missedAlarmAdapter
         }
 
+        recyclerViewTaken.apply {
+            layoutManager = takenLayoutManager
+            adapter = takenAlarmAdapter
+        }
+
         val offset = TimeZone.getDefault().rawOffset
         val tz = DateTimeZone.forOffsetMillis(offset)
         val date = DateTime.now(tz)
 
         when {
-            date.hourOfDay in 0..12 -> tv_title.text  =getString(R.string.good_morning_chv)
-            date.hourOfDay in 13..16 -> tv_title.text  =getString(R.string.good_afternoon_chv)
+            date.hourOfDay in 0..11 -> tv_title.text  =getString(R.string.good_morning_chv)
+            date.hourOfDay in 12..16 -> tv_title.text  =getString(R.string.good_afternoon_chv)
             date.hourOfDay in 17..24 -> tv_title.text  =getString(R.string.good_evening_chv)
         }
 
@@ -437,22 +454,42 @@ class ChvDashboardActivity : AppCompatActivity() {
         tv_no_missed.makeGone()
     }
 
+    private fun hideTakenAlarms() {
+        recyclerViewTaken.makeGone()
+        tvNoTaken.makeVisible()
+    }
+
+    private fun showTakenAlarms() {
+        recyclerViewTaken.makeVisible()
+        tvNoTaken.makeGone()
+    }
+
     private fun showHome() {
         fetchRecent()
         cl_upcoming_alarms.makeVisible()
         cl_missed_alarms.makeVisible()
+        clTakenAlarms.makeVisible()
     }
 
     private fun showUpcoming() {
         fetchRecent()
         cl_upcoming_alarms.makeVisible()
         cl_missed_alarms.makeGone()
+        clTakenAlarms.makeGone()
     }
 
     private fun showMissed() {
         fetchRecent()
         cl_upcoming_alarms.makeGone()
         cl_missed_alarms.makeVisible()
+        clTakenAlarms.makeGone()
+    }
+
+    private fun showTaken() {
+        fetchRecent()
+        cl_upcoming_alarms.makeGone()
+        cl_missed_alarms.makeGone()
+        clTakenAlarms.makeVisible()
     }
 
 
@@ -489,6 +526,7 @@ class ChvDashboardActivity : AppCompatActivity() {
                     if (querySnapshot != null && querySnapshot.documents.isNotEmpty()) {
                         alarmList.clear()
                         missedAlarmList.clear()
+                        takenList.clear()
 
                         for (document in querySnapshot.documents) {
                             val alarm = document.toObject(ChvReminder::class.java)
@@ -496,7 +534,11 @@ class ChvDashboardActivity : AppCompatActivity() {
                             if (!alarm?.rang!! && alarm.date == selectedDateStr) {
                                 alarmList.add(alarm)
                             } else if (alarm.missed) {
-                                missedAlarmList.add(alarm)
+                                if (!alarm.cleaned) {
+                                    missedAlarmList.add(alarm)
+                                }
+                            } else if (alarm.rang && !alarm.cancelled) {
+                                takenList.add(alarm)
                             }
                         }
 
@@ -524,13 +566,28 @@ class ChvDashboardActivity : AppCompatActivity() {
                             }
                         })
 
+                        val takenSorted = takenList.sortedWith(Comparator { o1, o2 ->
+                            when {
+                                dateMillis(o1.dateTime) > dateMillis(
+                                    o2.dateTime
+                                ) -> 1
+                                dateMillis(o1.dateTime) < dateMillis(
+                                    o2.dateTime
+                                ) -> -1
+                                else -> 0
+                            }
+                        })
+
                         alarmList.clear()
                         missedAlarmList.clear()
+                        takenList.clear()
                         alarmList.addAll(sorted)
                         missedAlarmList.addAll(missedSorted)
+                        takenList.addAll(takenSorted)
 
                         myAdapter.notifyDataSetChanged()
                         missedAlarmAdapter.notifyDataSetChanged()
+                        takenAlarmAdapter.notifyDataSetChanged()
 
                         if (alarmList.isEmpty()) {
                             hideAlarms()
@@ -543,9 +600,16 @@ class ChvDashboardActivity : AppCompatActivity() {
                         } else {
                             showMissedAlarms()
                         }
+
+                        if (takenList.isEmpty()) {
+                            hideTakenAlarms()
+                        } else {
+                            showTakenAlarms()
+                        }
                     } else {
                         hideAlarms()
                         hideMissedAlarms()
+                        hideTakenAlarms()
                     }
                 }
             }
@@ -567,13 +631,21 @@ class ChvDashboardActivity : AppCompatActivity() {
             .whereEqualTo("rang", false)
             .whereGreaterThanOrEqualTo("millis", millis)
             .orderBy("millis", Query.Direction.ASCENDING)
-            .limit(5)
+//            .limit(5)
 
         val missedAlarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
             .whereEqualTo("accessKey", accessKey)
             .whereEqualTo("missed", true)
             .orderBy("millis", Query.Direction.ASCENDING)
-            .limit(5)
+//            .limit(5)
+
+        val takenAlarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
+            .whereEqualTo("accessKey", accessKey)
+            .whereEqualTo("missed", false)
+            .whereEqualTo("cancelled", false)
+            .whereEqualTo("rang", true)
+            .orderBy("millis", Query.Direction.ASCENDING)
+
         /*alarmsRef.get()
             .addOnCompleteListener {
                 if (it.isComplete) {
@@ -628,7 +700,9 @@ class ChvDashboardActivity : AppCompatActivity() {
 
                     for (document in querySnapshot.documents) {
                         val alarm = document.toObject(ChvReminder::class.java)
-                        missedAlarmList.add(alarm!!)
+                        if (alarm?.cleaned == false) {
+                            missedAlarmList.add(alarm)
+                        }
 
                     }
 
@@ -659,5 +733,45 @@ class ChvDashboardActivity : AppCompatActivity() {
                 }
             }
         }
+
+        takenAlarmsRef.addSnapshotListener { querySnapshot, e ->
+            if (!selected) {
+                if (querySnapshot != null && !querySnapshot.isEmpty) {
+                    takenList.clear()
+
+                    for (document in querySnapshot.documents) {
+                        val alarm = document.toObject(ChvReminder::class.java)
+                        takenList.add(alarm!!)
+
+                    }
+
+                    val takenSorted = takenList.sortedWith(Comparator { o1, o2 ->
+                        when {
+                            dateMillis(o1.dateTime) > dateMillis(
+                                o2.dateTime
+                            ) -> 1
+                            dateMillis(o1.dateTime) < dateMillis(
+                                o2.dateTime
+                            ) -> -1
+                            else -> 0
+                        }
+                    })
+
+                    takenList.clear()
+                    takenList.addAll(takenSorted)
+
+                    takenAlarmAdapter.notifyDataSetChanged()
+
+                    if (takenList.isEmpty()) {
+                        hideTakenAlarms()
+                    } else {
+                        showTakenAlarms()
+                    }
+                } else {
+                    hideTakenAlarms()
+                }
+            }
+        }
+
     }
 }

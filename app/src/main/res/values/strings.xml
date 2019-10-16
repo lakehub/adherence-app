@@ -13,7 +13,7 @@
     <string name="verification_code">Verification Code</string>
     <string name="dn_receive_code">Didn\'t receive a code?</string>
     <string name="resend_in">Resend in</string>
-    <string name="sec_count">%1$d seconds</string>
+    <string name="sec_count">%d seconds</string>
     <string name="code_on_sms">enter verification code received on sms</string>
     <string name="resend">Resend</string>
     <string name="invalid_code">Invalid Verification Code</string>
@@ -35,6 +35,7 @@
     <string name="adherence">Adherence</string>
     <string name="sch_app">scheduling app</string>
     <string name="login_dsc">enter your access key below to login</string>
+    <string name="login_dsc_phone">enter your phone number below to receive verification code</string>
     <string name="sign_in">Sign In</string>
     <string name="dnt_account">Don\'t have an account?</string>
     <string name="req_one">Request One</string>
@@ -86,8 +87,8 @@
     <string name="logout">Logout</string>
     <string name="two">2</string>
     <string name="add_alarm">Add Alarm</string>
-    <string name="short_dsc">Short Description. E.g, Drug Name</string>
-    <string name="short_dsc_chv">Short Description. E.g, Visit Port Florence Hospital</string>
+    <string name="short_dsc">Short Description</string>
+    <string name="short_dsc_chv">Short Description</string>
     <string name="all_day">All Day</string>
     <string name="from">From</string>
     <string name="to">To</string>
@@ -250,4 +251,11 @@
     <string name="clean">Clean</string>
     <string name="no_taken">No taken</string>
     <string name="alarm_cleaned">Alarm cleaned</string>
+    <string name="you_have_no_appointment">You have no appointment</string>
+    <string name="send_me_code">Send me code</string>
+    <string name="verification_code_desc">Enter the Verification Code sent to the phone number you provided.</string>
+    <string name="phone_required">Phone no is required</string>
+    <string name="sending">Sending</string>
+    <string name="reminder">Reminder</string>
+    <string name="missed_reminder">Missed Reminder</string>
 </resources>

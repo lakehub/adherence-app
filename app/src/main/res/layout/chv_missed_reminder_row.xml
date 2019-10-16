@@ -74,7 +74,21 @@
             app:layout_constraintTop_toTopOf="@+id/constraint_layout"
             android:layout_marginStart="20dp"
             android:textColor="@color/colorWhiteSemitransparent"
+            app:layout_constraintEnd_toStartOf="@+id/icMenu"
     />
+
+    <ImageView
+            android:id="@+id/icMenu"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/more_vertical"
+            app:layout_constraintTop_toTopOf="@+id/tv_client"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="@string/img_dsc"
+            android:tint="@android:color/white"/>
 
     <View
             android:id="@+id/divider"

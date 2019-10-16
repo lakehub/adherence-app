@@ -12,6 +12,9 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.R
+import com.lakehub.adherenceapp.utils.showNetworkError
+import com.lakehub.adherenceapp.utils.showSuccess
+import com.lakehub.adherenceapp.utils.showWarning
 import kotlinx.android.synthetic.main.activity_add_client.*
 import kotlinx.android.synthetic.main.content_add_client.*
 
@@ -104,59 +107,26 @@ class AddClientActivity : AppCompatActivity() {
                                                                 )
                                                             }
                                                         }
-                                                    val toast = Toast(this)
-                                                    val view: View = layoutInflater.inflate(R.layout.normal_toast, null)
-                                                    val textView: TextView = view.findViewById(R.id.message)
-                                                    textView.text = getString(R.string.client_add_success)
-                                                    toast.view = view
-                                                    toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                                    toast.duration = Toast.LENGTH_SHORT
-                                                    toast.show()
+                                                    showSuccess(getString(R.string.client_add_success))
                                                     finish()
                                                 }
                                             }
                                     } else {
                                         hideProgress()
-                                        val toast = Toast(this)
-                                        val view: View = layoutInflater.inflate(R.layout.warning, null)
-                                        val textView: TextView = view.findViewById(R.id.message)
-                                        textView.text = getString(R.string.client_exist)
-                                        toast.view = view
-                                        toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                        toast.duration = Toast.LENGTH_SHORT
-                                        toast.show()
+                                        showWarning(getString(R.string.client_exist))
                                     }
                                 } else {
                                     hideProgress()
-                                    val toast = Toast(this)
-                                    val view: View = layoutInflater.inflate(R.layout.network_error, null)
-                                    toast.view = view
-                                    toast.setGravity(Gravity.BOTTOM, 30, 30)
-                                    toast.duration = Toast.LENGTH_SHORT
-                                    toast.show()
+                                    showNetworkError()
                                 }
                             }
 
                     } else {
-                        val toast = Toast(this)
-                        val view: View = layoutInflater.inflate(R.layout.warning, null)
-                        val textView: TextView = view.findViewById(R.id.message)
-                        textView.text = getString(R.string.invalid_phone)
-                        toast.view = view
-                        toast.setGravity(Gravity.BOTTOM, 30, 30)
-                        toast.duration = Toast.LENGTH_SHORT
-                        toast.show()
+                        showWarning(getString(R.string.invalid_phone))
                     }
                 }
             } else {
-                val toast = Toast(this)
-                val view: View = layoutInflater.inflate(R.layout.warning, null)
-                val textView: TextView = view.findViewById(R.id.message)
-                textView.text = getString(R.string.fill_fields)
-                toast.view = view
-                toast.setGravity(Gravity.BOTTOM, 30, 30)
-                toast.duration = Toast.LENGTH_SHORT
-                toast.show()
+                showWarning(getString(R.string.fill_fields))
             }
         }
     }

@@ -93,7 +93,7 @@ class MissedAlarmAdapter(val context: Context, private val alarms: ArrayList<Ala
                         .collection("alarms")
                         .document(alarm.docId!!)
 
-                    alarmsRef.delete()
+                    alarmsRef.update("cleaned", true)
                     (context as AppCompatActivity).showSuccess(context.getString(R.string.alarm_cleaned))
                 }
             }

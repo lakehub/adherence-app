@@ -22,6 +22,7 @@ data class Alarm(
     val marked: Boolean = false,
     val chvAccessKey: String? = null,
     val confirmed: Boolean = false,
-    val millis: Long? = null
+    val millis: Long? = null,
+    val cleaned: Boolean = false
 
 )

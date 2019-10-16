@@ -55,7 +55,11 @@ class TutorialActivity : AppCompatActivity() {
                 view_pager.currentItem = view_pager.currentItem + 1
             } else {
                 AppPreferences.firstRun = false
-                startActivity(Intent(this, LoginActivity::class.java))
+                if (AppPreferences.authenticated) {
+                    startActivity(Intent(this, LoginActivity::class.java))
+                } else {
+                    startActivity(Intent(this, AuthActivity::class.java))
+                }
                 finish()
             }
         }

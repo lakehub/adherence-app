@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:paddingTop="20dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="20dp">
+
+    <TextView
+            android:id="@+id/text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/product_sans_regular"
+            android:gravity="center_horizontal"
+            android:text="@string/verification_code_desc"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_code"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="0dp"
+            app:errorEnabled="true"
+            app:helperTextEnabled="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_view">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/verification_code"
+                android:inputType="number" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.cardview.widget.CardView
+            android:id="@+id/cl_btn_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_code"
+            app:cardBackgroundColor="@color/colorPrimary"
+            app:contentPadding="5dp"
+            app:cardCornerRadius="5dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                    android:id="@+id/tv_btn_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="@string/submit"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            <ProgressBar
+                    android:id="@+id/progress_bar_submit"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:indeterminate="true"
+                    android:indeterminateDrawable="@drawable/button_progress_primary"
+                    android:indeterminateDuration="1000"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_btn_submit"
+                    app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cl_btn_submit"
+            android:layout_marginTop="20dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp">
+        <TextView
+                android:id="@+id/tv_resend_dsc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:text="@string/dn_receive_code"
+                android:textSize="15sp"
+                android:textColor="@android:color/black"
+                android:visibility="gone"/>
+
+        <TextView
+                android:id="@+id/tv_resend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_resend_dsc"
+                android:text="@string/resend_in"
+                android:textSize="15sp"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginStart="10dp"/>
+
+        <TextView
+                android:id="@+id/tv_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_resend"
+                android:text="@string/sec_count"
+                android:textSize="15sp"
+                android:textColor="@color/colorRed"
+                android:layout_marginStart="5dp"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

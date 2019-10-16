@@ -81,8 +81,8 @@ class SettingsActivity : AppCompatActivity() {
             AppPreferences.accountType = 0
             AppPreferences.chvAccessKey = null
             AppPreferences.profileImg = null
+            AppPreferences.authenticated = false
             emptyDirectory("user_images")
-
 
             this.finishAndRemoveTask()
         }

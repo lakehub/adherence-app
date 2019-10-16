@@ -81,6 +81,30 @@
                 android:background="@android:color/darker_gray"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clTakenMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:clickable="true"
+                android:background="?selectableItemBackground"
+                android:focusable="true">
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/taken_med"
+                    android:textColor="@android:color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:fontFamily="@font/product_sans_regular"
+                    android:textSize="20sp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@android:color/darker_gray"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_reports_menu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

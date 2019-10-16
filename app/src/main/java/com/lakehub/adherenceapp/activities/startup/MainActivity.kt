@@ -166,7 +166,11 @@ class MainActivity : AppCompatActivity() {
                         startActivity(Intent(this@MainActivity, TutorialActivity::class.java))
                     }
                 } else {
-                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                    if (AppPreferences.authenticated) {
+                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                    } else {
+                        startActivity(Intent(this@MainActivity, AuthActivity::class.java))
+                    }
                     finish()
                     /*if (AppPreferences.loggedIn) {
                         if (AppPreferences.accountType == 1) {

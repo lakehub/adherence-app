@@ -20,7 +20,15 @@
             android:supportsRtl="true"
             android:theme="@style/MaterialTheme.NoActionBar"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.client.SingleMissedAlarmActivity"></activity>
+        <activity
+                android:name=".activities.chv.SingleMissedReminderActivity"
+                android:theme="@style/MaterialThemeChv" />
+        <activity
+                android:name=".activities.chv.SingleReminderActivity"
+                android:theme="@style/MaterialThemeChv" />
+        <activity android:name=".activities.startup.AuthActivity" />
+        <activity android:name=".activities.client.AppointmentsActivity" />
+        <activity android:name=".activities.client.SingleMissedAlarmActivity" />
         <activity android:name=".activities.client.SingleAlarmActivity" />
         <activity android:name=".activities.client.MissedAlarmActivity" />
         <activity

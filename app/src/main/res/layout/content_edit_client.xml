@@ -22,31 +22,20 @@
                 android:theme="@style/LinearProgress"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:scaleY="3"/>
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout"
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_phone_no"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
-                android:padding="0dp"
-                app:errorEnabled="true"
-                app:helperTextEnabled="false"
-                app:hintEnabled="false"
-                app:boxBackgroundMode="none"
-        >
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_phone_no"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/phone_number"
-                    android:inputType="phone"
-                    android:textColor="@color/colorWhiteSemitransparent"
-                    android:textColorHint="@color/colorWhiteSemitransparent"
-                    android:enabled="false"
-            />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/phone_number"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/colorWhiteSemitransparent"
+                android:background="@null"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="30dp"
+                android:paddingBottom="30dp"
+                android:enabled="false"
+                />
 
         <View
                 android:layout_width="match_parent"
@@ -84,28 +73,19 @@
                 android:background="@android:color/darker_gray"
         android:visibility="gone"/>-->
 
-        <com.google.android.material.textfield.TextInputLayout
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
-                android:padding="0dp"
-                app:errorEnabled="true"
-                app:helperTextEnabled="false"
-                app:hintEnabled="false"
-                app:boxBackgroundMode="none"
-        >
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_location"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/location"
-                    android:inputType="text"
-                    android:textColor="@android:color/white"
-                    android:textColorHint="@color/colorWhiteSemitransparent"
-            />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/location"
+                android:inputType="text"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/colorWhiteSemitransparent"
+                android:background="@null"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="30dp"
+                android:paddingBottom="30dp"
+                />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

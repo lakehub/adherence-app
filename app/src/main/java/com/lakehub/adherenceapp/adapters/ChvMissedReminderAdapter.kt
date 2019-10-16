@@ -1,12 +1,19 @@
 package com.lakehub.adherenceapp.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.firebase.firestore.FirebaseFirestore
 import com.lakehub.adherenceapp.*
+import com.lakehub.adherenceapp.activities.chv.SingleMissedReminderActivity
+import com.lakehub.adherenceapp.activities.chv.SingleReminderActivity
+import com.lakehub.adherenceapp.activities.client.SingleMissedAlarmActivity
 import com.lakehub.adherenceapp.data.ChvReminder
 import com.lakehub.adherenceapp.utils.*
 import org.joda.time.format.DateTimeFormat
@@ -58,6 +65,26 @@ class ChvMissedReminderAdapter(val context: Context, private val alarms: ArrayLi
             holder.timeTv.text = displayTime(newDate)
         }
 
+        holder.itemView.setOnClickListener {
+            val myIntent = Intent(context, SingleMissedReminderActivity::class.java)
+            myIntent.putExtra("docId", alarm.docId)
+            myIntent.putExtra("id", alarm.id)
+            myIntent.putExtra("description", alarm.description)
+            myIntent.putExtra("tonePath", alarm.alarmTonePath)
+            myIntent.putExtra("date", alarm.dateTime)
+            myIntent.putExtra("drug", alarm.drug)
+            myIntent.putExtra("appointment", alarm.appointment)
+            myIntent.putExtra("medType", alarm.medicationType)
+            myIntent.putExtra("repeatMode", alarm.repeatMode)
+            myIntent.putExtra("clientAccessKey", alarm.clientAccessKey)
+            myIntent.putExtra("hospital", alarm.hospital)
+            myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(myIntent)
+        }
+
+        holder.icMenu.setOnClickListener {
+            openOptionMenu(it, alarm)
+        }
 
     }
 
@@ -66,6 +93,26 @@ class ChvMissedReminderAdapter(val context: Context, private val alarms: ArrayLi
         var tvDescription: TextView = view.findViewById(R.id.tv_dsc)
         var timeTv: TextView = view.findViewById(R.id.tv_time)
         var clientTv: TextView = view.findViewById(R.id.tv_client)
+        var icMenu: View = view.findViewById(R.id.icMenu)
+    }
+
+    private fun openOptionMenu(v: View, reminder: ChvReminder) {
+        val popup = PopupMenu(v.context, v)
+        popup.menuInflater.inflate(R.menu.missed_menu, popup.menu)
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.clean -> {
+                    val alarmsRef = FirebaseFirestore.getInstance()
+                        .collection("chv_reminders")
+                        .document(reminder.docId!!)
+
+                    alarmsRef.update("cleaned", true)
+                    (context as AppCompatActivity).showSuccess(context.getString(R.string.alarm_cleaned))
+                }
+            }
+            true
+        }
+        popup.show()
     }
 
 }

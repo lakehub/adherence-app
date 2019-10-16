@@ -2,7 +2,10 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?selectableItemBackground">
     <View
             android:id="@+id/active_view"
             android:layout_width="5dp"

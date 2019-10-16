@@ -104,38 +104,23 @@
                         android:src="@drawable/password"
                         android:tint="@android:color/white"
                         android:tintMode="src_atop"/>
-                <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/input_layout"
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="0dp"
-                        android:padding="0dp"
-                        app:errorEnabled="false"
-                        app:helperTextEnabled="false"
-                        app:hintEnabled="false"
-                        app:boxBackgroundMode="none"
-                        app:layout_constraintStart_toEndOf="@+id/iv_icon"
-                        app:layout_constraintTop_toTopOf="@+id/iv_icon"
-                        app:layout_constraintBottom_toBottomOf="@+id/iv_icon"
                         android:layout_marginTop="0dp"
                         android:layout_marginBottom="0dp"
-                        app:passwordToggleEnabled="false">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edit_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/access_key"
-                            android:inputType="numberPassword"
-                            android:textColor="@android:color/white"
-                            android:textColorHint="@android:color/white"
-                            android:textSize="18sp"
-                            android:layout_marginTop="0dp"
-                            android:layout_marginBottom="0dp"
-                            android:padding="0dp"
-                            android:fontFamily="@font/product_sans_bold"
-                    />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:fontFamily="@font/product_sans_bold"
+                        android:hint="@string/access_key"
+                        android:inputType="phone"
+                        android:padding="0dp"
+                        android:textColor="@android:color/white"
+                        android:textColorHint="@android:color/white"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_icon"
+                        app:layout_constraintStart_toEndOf="@+id/iv_icon"
+                        app:layout_constraintTop_toTopOf="@+id/iv_icon"
+                        android:background="@null"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View

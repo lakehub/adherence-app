@@ -187,7 +187,7 @@ class SingleMissedAlarmActivity : AppCompatActivity() {
                         .collection("alarms")
                         .document(docId!!)
 
-                    alarmsRef.delete()
+                    alarmsRef.update("cleaned", true)
                     showSuccess(getString(R.string.alarm_cleaned))
                     finish()
                 }

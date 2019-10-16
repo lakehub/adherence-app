@@ -19,6 +19,7 @@ object AppPreferences {
     private val EXIT = Pair("exit", false)
     private val SURFED = Pair("surfed", false)
     private val AUTO_START_ENABLED = Pair("auto_start_enabled", false)
+    private val AUTHENTICATED = Pair("authenticated", false)
 
 
     fun init(context: Context) {
@@ -98,5 +99,11 @@ object AppPreferences {
         get() = preferences.getBoolean(AUTO_START_ENABLED.first, AUTO_START_ENABLED.second)
         set(value) = preferences.edit {
             it.putBoolean(AUTO_START_ENABLED.first, value)
+        }
+
+    var authenticated: Boolean
+        get() = preferences.getBoolean(AUTHENTICATED.first, AUTHENTICATED.second)
+        set(value) = preferences.edit {
+            it.putBoolean(AUTHENTICATED.first, value)
         }
 }

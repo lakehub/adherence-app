@@ -107,7 +107,6 @@ class LoginActivity : AppCompatActivity() {
 
             } else {
                 showWarning(getString(R.string.empty_access_key))
-                input_layout.requestFocus()
             }
         }
 

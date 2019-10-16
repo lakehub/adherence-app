@@ -78,6 +78,7 @@ class ChvProfileActivity : AppCompatActivity() {
             AppPreferences.accountType = 0
             AppPreferences.chvAccessKey = null
             AppPreferences.profileImg = null
+            AppPreferences.authenticated = false
             emptyDirectory("user_images")
             emptyDirectory("client_images")
             this.finishAffinity()
