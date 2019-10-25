@@ -46,6 +46,9 @@ class ChvReminderActivity : AppCompatActivity() {
         val isAppointment = intent.extras?.getBoolean("appointment")
         val id = intent.extras?.getInt("id")
         val repeatMode = intent.extras?.getIntegerArrayList("repeatMode")
+        val medType = intent.extras?.getInt("medType")
+        val clientAccessKey = intent.extras?.getString("clientAccessKey")
+        val hospital = intent.extras?.getString("hospital")
 
         val db = FirebaseFirestore.getInstance()
         alarmDoc = db.collection("chv_reminders").document(docId!!)
@@ -164,6 +167,10 @@ class ChvReminderActivity : AppCompatActivity() {
                 myIntent.putExtra("repeatMode", repeatMode)
                 myIntent.putExtra("drug", isDrug)
                 myIntent.putExtra("appointment", isAppointment)
+                myIntent.putExtra("hospital", hospital)
+                myIntent.putExtra("medType", medType)
+                myIntent.putExtra("clientAccessKey", clientAccessKey)
+
                 val newPendingIntent =
                     PendingIntent.getBroadcast(this, id!!, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, newPendingIntent)

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "608813761969",
+    "firebase_url": "https://adherenceapp-71cf3.firebaseio.com",
+    "project_id": "adherenceapp-71cf3",
+    "storage_bucket": "adherenceapp-71cf3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608813761969:android:6cbd411c4c6aa3a0",
+        "android_client_info": {
+          "package_name": "com.lakehub.adherenceapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "608813761969-2r46q8np9rijjp9v1k7ge6gja6j333f5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lakehub.adherenceapp",
+            "certificate_hash": "8a31e95052a8f2940b2ea133acb77808f6413ee0"
+          }
+        },
+        {
+          "client_id": "608813761969-drbljcsquuu7cdj81tg5jct37hjvqmo1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu9kYevxIwjlm_sbNFifOWqHTBcCERfLA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "608813761969-drbljcsquuu7cdj81tg5jct37hjvqmo1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

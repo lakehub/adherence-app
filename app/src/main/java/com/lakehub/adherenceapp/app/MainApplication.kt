@@ -2,6 +2,8 @@ package com.lakehub.adherenceapp.app
 
 import android.app.Application
 import android.content.Context
+import com.crashlytics.android.Crashlytics
+import io.fabric.sdk.android.Fabric
 
 class MainApplication : Application() {
 
@@ -12,6 +14,7 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         AppPreferences.init(this)
+        Fabric.with(this, Crashlytics())
 //        registerActivityLifecycleCallbacks(MyLifecycleHandler())
     }
 

@@ -56,12 +56,16 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
             } else {
                 context.getString(R.string.arv)
             }
-            else -> holder.clientTv.text = titleCase(
-                limitStringLength(
-                    alarm.hospital!!,
-                    8
+            else -> holder.clientTv.text = if (alarm.hospital == null) {
+                ""
+            } else {
+                titleCase(
+                    limitStringLength(
+                        alarm.hospital,
+                        8
+                    )
                 )
-            )
+            }
         }
 
         if (alarm.recent) {

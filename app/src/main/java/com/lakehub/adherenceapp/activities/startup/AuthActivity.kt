@@ -178,17 +178,17 @@ class AuthActivity : AppCompatActivity() {
     private fun callback(): PhoneAuthProvider.OnVerificationStateChangedCallbacks =
         object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
-            override fun onVerificationCompleted(p0: PhoneAuthCredential) {
-
+            override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
                 hideProgress()
-                val code: String? = p0.smsCode
-                Log.e("TAG", "code: $code, id: $verificationId")
-                PhoneAuthProvider.getCredential(verificationId!!, code!!)
+                val code: String? = phoneAuthCredential.smsCode
+                signInWithPhoneAuthCredential(phoneAuthCredential)
                 editTextCode.setText(code)
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
                 hideProgress()
+                if (e.localizedMessage != null)
+                    showWarning(e.localizedMessage!!)
 
                 Log.d("TAG", "message: ${e.message}")
             }
@@ -198,7 +198,8 @@ class AuthActivity : AppCompatActivity() {
                 hideProgress()
                 verificationId = p0
                 Log.e("TAG", "verification id: $verificationId")
-                    startCountdown()
+                stopCountDown()
+                startCountdown()
                 alertDialog.show()
             }
 

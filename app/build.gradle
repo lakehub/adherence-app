@@ -6,20 +6,23 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'com.google.gms.google-services'
 
+apply plugin: 'io.fabric'
+
 android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.lakehub.adherenceapp"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 6
-        versionName "1.41"
+        versionCode 11
+        versionName "1.43"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            multiDexEnabled = true
         }
     }
     compileOptions {
@@ -42,7 +45,7 @@ dependencies {
 //    firebase
     implementation 'com.google.firebase:firebase-core:17.2.0'
     implementation 'com.google.firebase:firebase-auth:19.1.0'
-    implementation 'com.google.firebase:firebase-firestore:21.1.1'
+    implementation 'com.google.firebase:firebase-firestore:21.2.0'
     implementation 'com.google.firebase:firebase-storage:19.1.0'
     implementation 'com.firebaseui:firebase-ui-storage:4.3.2'
 
@@ -79,4 +82,7 @@ dependencies {
     // animation
     implementation 'com.daimajia.easing:library:2.0@aar'
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
+
+    // crashlytics
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 }

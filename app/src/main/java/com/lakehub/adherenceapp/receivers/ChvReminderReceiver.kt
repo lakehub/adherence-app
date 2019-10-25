@@ -223,6 +223,8 @@ class ChvReminderReceiver : BroadcastReceiver() {
             alarmIntent.putExtra("repeatMode", repeatMode)
             alarmIntent.putExtra("appointment", isAppointment)
             alarmIntent.putExtra("hospital", hospital)
+            alarmIntent.putExtra("medType", medType)
+            alarmIntent.putExtra("clientAccessKey", clientAccessKey)
             alarmIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             MainApplication.applicationContext().startActivity(alarmIntent)
         }

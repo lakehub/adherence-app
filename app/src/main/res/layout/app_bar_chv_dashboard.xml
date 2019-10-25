@@ -62,7 +62,8 @@
                             app:layout_constraintTop_toTopOf="@+id/iv_user"
                             app:layout_constraintEnd_toEndOf="@+id/iv_user"
                             android:layout_marginTop="0dp"
-                            android:background="@drawable/circular_bg_green_xs"/>
+                            android:background="@drawable/circular_bg_green_xs"
+                            android:visibility="gone"/>
 
                     <TextView
                             android:id="@+id/tv_title"
