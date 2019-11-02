@@ -94,7 +94,8 @@
                 android:noHistory="true"
                 android:screenOrientation="portrait"
                 android:showOnLockScreen="true"
-                android:theme="@style/Theme.AppCompat.Translucent" />
+                android:theme="@style/Theme.AppCompat.Translucent"
+                android:excludeFromRecents="true"/>
 
         <receiver
                 android:name=".receivers.ChvReminderReceiver"
@@ -122,7 +123,8 @@
                 android:noHistory="true"
                 android:screenOrientation="portrait"
                 android:showOnLockScreen="true"
-                android:theme="@style/Theme.AppCompat.Translucent" />
+                android:theme="@style/Theme.AppCompat.Translucent"
+                android:excludeFromRecents="true" />
         <activity
                 android:name=".activities.client.CongratulationsActivity"
                 android:noHistory="true"
@@ -133,7 +135,8 @@
                 android:name=".activities.client.CancelAlarmActivity"
                 android:noHistory="true"
                 android:screenOrientation="portrait"
-                android:theme="@style/Theme.AppCompat.Translucent" />
+                android:theme="@style/Theme.AppCompat.Translucent"
+                android:excludeFromRecents="true"/>
 
         <receiver
                 android:name=".receivers.ConfirmAttendPlaceReceiver"
@@ -172,7 +175,8 @@
                 android:noHistory="true"
                 android:screenOrientation="portrait"
                 android:showOnLockScreen="true"
-                android:theme="@style/Theme.AppCompat.Translucent" />
+                android:theme="@style/Theme.AppCompat.Translucent"
+                android:excludeFromRecents="true" />
         <activity
                 android:name=".activities.client.SettingsActivity"
                 android:screenOrientation="portrait"

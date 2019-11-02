@@ -36,7 +36,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/progress_bar"
-                android:textColor="@color/colorRed"
+                android:textColor="@color/colorGrandis"
                 android:layout_marginTop="20dp"
                 android:background="@color/colorPrimary"/>
         <androidx.constraintlayout.widget.ConstraintLayout

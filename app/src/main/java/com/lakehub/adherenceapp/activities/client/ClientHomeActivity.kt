@@ -181,6 +181,7 @@ class ClientHomeActivity : AppCompatActivity() {
             AppPreferences.profileImg = null
             AppPreferences.authenticated = false
             emptyDirectory("user_images")
+            FirebaseAuth.getInstance().signOut()
             finish()
         }
 
@@ -337,14 +338,14 @@ class ClientHomeActivity : AppCompatActivity() {
 
         calendar_view.scrollToDate(LocalDate.now())
 
-        toolbar.iv_next.setOnClickListener {
+        iv_next.setOnClickListener {
             calendar_view.findFirstVisibleDay()?.let {
                 calendar_view.smoothScrollToDate(it.date.plusDays(7))
             }
 
         }
 
-        toolbar.iv_prev.setOnClickListener {
+        iv_prev.setOnClickListener {
             calendar_view.findFirstVisibleDay()?.let {
                 calendar_view.smoothScrollToDate(it.date.minusDays(7))
             }

@@ -88,7 +88,7 @@
                             app:layout_constraintTop_toBottomOf="@+id/iv_user"
                             android:layout_marginTop="30dp"
                             android:paddingStart="5dp"
-                            android:paddingEnd="15dp">
+                            android:paddingEnd="5dp">
 
                         <TextView
                                 android:id="@+id/tv_yr"
@@ -105,29 +105,31 @@
 
                         <ImageView
                                 android:id="@+id/iv_prev"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/tv_yr"
+                                app:layout_constraintTop_toTopOf="@+id/linearLayout"
+                                app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
                                 android:contentDescription="@string/img_dsc"
                                 android:src="@drawable/chevron_left"
                                 android:background="?selectableItemBackgroundBorderless"
                                 android:clickable="true"
                                 android:focusable="true"
-                                android:padding="10dp"/>
+                                android:padding="5dp"/>
 
                         <ImageView
                                 android:id="@+id/iv_next"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/tv_yr"
+                                app:layout_constraintTop_toTopOf="@+id/linearLayout"
+                                app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
                                 android:contentDescription="@string/img_dsc"
                                 android:src="@drawable/chevron_right"
                                 android:background="?selectableItemBackgroundBorderless"
                                 android:clickable="true"
                                 android:focusable="true"
-                                android:padding="10dp"/>
+                                android:padding="5dp"/>
 
                         <TextView
                                 android:id="@+id/tv_month"
@@ -136,19 +138,21 @@
                                 app:layout_constraintStart_toEndOf="@+id/iv_prev"
                                 app:layout_constraintEnd_toStartOf="@+id/iv_next"
                                 app:layout_constraintTop_toBottomOf="@+id/tv_yr"
-                                app:layout_constraintBottom_toBottomOf="@+id/iv_next"
                                 android:text="@string/jan"
                                 android:textAllCaps="true"
                                 android:fontFamily="@font/product_sans_regular"
                                 android:textColor="@android:color/white"
-                                android:textSize="20sp"/>
+                                android:textSize="20sp"
+                                android:layout_marginTop="10dp"/>
                         <LinearLayout
-                                android:layout_width="match_parent"
+                                android:id="@+id/linearLayout"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                app:layout_constraintTop_toBottomOf="@+id/iv_prev"
-                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_month"
+                                app:layout_constraintStart_toEndOf="@+id/iv_prev"
+                                app:layout_constraintEnd_toStartOf="@+id/iv_next"
                                 android:orientation="vertical"
-                                android:layout_marginTop="-10dp">
+                                android:layout_marginTop="10dp">
                             <include
                                     android:id="@+id/day_view"
                                     layout="@layout/calendar_day_legend"/>

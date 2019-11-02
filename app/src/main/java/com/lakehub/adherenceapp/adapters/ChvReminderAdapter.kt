@@ -92,6 +92,22 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
             holder.timeTv.text = displayTime(newDate)
         }
 
+        if (alarm.repeatMode?.size == 1) {
+            when (alarm.repeatMode[0]) {
+                8 -> {
+                    holder.tvMode.text = context.getString(R.string.once)
+                }
+                9 -> {
+                    holder.tvMode.text = context.getString(R.string.daily)
+                }
+                10 -> {
+                    holder.tvMode.text = context.getString(R.string.weekday)
+                }
+            }
+        } else {
+            holder.tvMode.text = context.getString(R.string.custom)
+        }
+
         holder.itemView.setOnClickListener {
             val myIntent = Intent(context, SingleReminderActivity::class.java)
             myIntent.putExtra("docId", alarm.docId)
@@ -120,7 +136,11 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
     }
 
     inner class MyViewHolder(view: View) : ViewHolder(view), View.OnCreateContextMenuListener {
-        override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuinfo: ContextMenu.ContextMenuInfo?) {
+        override fun onCreateContextMenu(
+            menu: ContextMenu?,
+            v: View?,
+            menuinfo: ContextMenu.ContextMenuInfo?
+        ) {
             menu?.add(Menu.NONE, v?.id!!, 0, "Cancel")
             menu?.add(Menu.NONE, v?.id!!, 0, "Edit")
         }
@@ -131,6 +151,7 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
         var clientTv: TextView = view.findViewById(R.id.tv_client)
         var activeView: View = view.findViewById(R.id.active_view)
         var menu: ImageView = view.findViewById(R.id.iv_menu)
+        var tvMode: TextView = view.findViewById(R.id.tvMode)
     }
 
     private fun openOptionMenu(v: View, position: Int) {
@@ -163,10 +184,14 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
                     alarmsRef.update("cancelled", true)
                     val activity = context as AppCompatActivity?
                     activity?.showWarning(context.getString(R.string.alarm_cancel_success))
-                    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    val alarmManager =
+                        context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
                     val myIntent =
-                        Intent(MainApplication.applicationContext(), ChvReminderReceiver::class.java)
+                        Intent(
+                            MainApplication.applicationContext(),
+                            ChvReminderReceiver::class.java
+                        )
                     val pendingIntent =
                         PendingIntent.getBroadcast(
                             context,

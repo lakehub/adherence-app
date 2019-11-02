@@ -126,7 +126,9 @@
                         app:layout_constraintStart_toEndOf="@+id/iv_icon"
                         app:layout_constraintTop_toTopOf="@+id/iv_icon"
                         android:layout_marginStart="10dp"
-                        android:background="@null"/>
+                        android:background="@null"
+                        android:textColorLink="@color/colorWhite"
+                        android:textColorHighlight="@color/colorGrandis"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View

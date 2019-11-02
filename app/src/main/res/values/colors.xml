@@ -25,6 +25,7 @@
     <color name="colorGreen">#9DA712</color>
     <color name="colorTranslucent">#30FFFFFF</color>
     <color name="colorYellow">#FEF200</color>
+    <color name="colorYellow1">#80FEF200</color>
     <color name="colorRed">#C62132</color>
     <color name="colorPurple">#33004B</color>
     <color name="colorGreenLight">#3AB54A</color>
@@ -34,6 +35,8 @@
     <color name="colorMaroon">#3B090F</color>
     <color name="colorRedLight">#FF6961</color>
     <color name="colorGrandis">#FFCF79</color>
+    <color name="colorWhite">#FFF</color>
+    <color name="colorBlack">#000</color>
 
     <!--uCrop Activity-->
     <color name="ucrop_color_toolbar" tools:override="true">@color/colorPrimary</color>

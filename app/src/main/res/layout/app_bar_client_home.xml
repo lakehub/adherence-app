@@ -110,8 +110,8 @@
                                 android:id="@+id/tv_yr"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:layout_constraintStart_toEndOf="@+id/iv_prev"
-                                app:layout_constraintEnd_toStartOf="@+id/iv_next"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 android:text="@string/sample_year"
                                 android:textAllCaps="true"
@@ -120,40 +120,13 @@
                                 android:textSize="20sp"
                                 android:paddingBottom="15dp"/>
 
-                        <ImageView
-                                android:id="@+id/iv_prev"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/tv_yr"
-                                android:contentDescription="@string/img_dsc"
-                                android:src="@drawable/chevron_left"
-                                android:background="?selectableItemBackgroundBorderless"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:padding="10dp"/>
-
-                        <ImageView
-                                android:id="@+id/iv_next"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/tv_yr"
-                                android:contentDescription="@string/img_dsc"
-                                android:src="@drawable/chevron_right"
-                                android:background="?selectableItemBackgroundBorderless"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:padding="10dp"/>
-
                         <TextView
                                 android:id="@+id/tv_month"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:layout_constraintStart_toEndOf="@+id/iv_prev"
-                                app:layout_constraintEnd_toStartOf="@+id/iv_next"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/tv_yr"
-                                app:layout_constraintBottom_toBottomOf="@+id/iv_next"
                                 android:text="@string/jan"
                                 android:textAllCaps="true"
                                 android:fontFamily="@font/product_sans_regular"

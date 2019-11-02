@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.lakehub.adherenceapp.R
@@ -35,6 +36,25 @@ class LoginActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
 
         val usersRef = db.collection("users")
+
+        edit_text.addTextChangedListener {
+            if (it.isNullOrBlank()) {
+                tv_btn_submit.setTextColor(
+                    ContextCompat.getColor(applicationContext, R.color.colorBlack)
+                )
+                cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this,
+                    R.color.colorWhiteSemitransparent
+                ))
+            } else {
+                tv_btn_submit.setTextColor(
+                    ContextCompat.getColor(applicationContext, android.R.color.black)
+                )
+
+                cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this,
+                    R.color.colorYellow
+                ))
+            }
+        }
 
         cl_btn_submit.setOnClickListener {
             val accessKey: String = edit_text.text.toString().trim()
@@ -118,7 +138,7 @@ class LoginActivity : AppCompatActivity() {
             R.color.colorPrimary
         ))
         progress_bar_submit.visibility = View.VISIBLE
-//        edit_text.isEnabled = false
+        edit_text.isEnabled = false
         cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this,
             R.color.materialColorGray
         ))
@@ -134,7 +154,16 @@ class LoginActivity : AppCompatActivity() {
         cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this,
             R.color.colorYellow
         ))
-//        edit_text.isEnabled = true
+
+        if (edit_text.text.isNullOrBlank()){
+            tv_btn_submit.setTextColor(
+                ContextCompat.getColor(applicationContext, R.color.colorBlack)
+            )
+            cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this,
+                R.color.colorWhiteSemitransparent
+            ))
+        }
+        edit_text.isEnabled = true
     }
 
     override fun onBackPressed() {

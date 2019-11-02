@@ -147,7 +147,7 @@ class ChvDashboardActivity : AppCompatActivity() {
 
         cl_logout_menu.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START)
-//            auth.signOut()
+            FirebaseAuth.getInstance().signOut()
 //            FirebaseFirestore.getInstance().clearPersistence()
             AppPreferences.loggedIn = false
             AppPreferences.accessKey = null
@@ -265,7 +265,7 @@ class ChvDashboardActivity : AppCompatActivity() {
                                 textView.setBackgroundResource(R.drawable.selected_date_bg)
                             }
                             day.date == today -> {
-                                textView.setTextColorRes(R.color.colorPrimary)
+                                textView.setTextColorRes(R.color.colorWhite)
                                 textView.background = null
                             }
                             else -> {
@@ -279,7 +279,7 @@ class ChvDashboardActivity : AppCompatActivity() {
                                 textView.setBackgroundResource(R.drawable.selected_date_bg)
                             }
                             day.date == today -> {
-                                textView.setTextColorRes(R.color.colorPrimary)
+                                textView.setTextColorRes(R.color.colorWhite)
                                 textView.background = null
                             }
                             else -> {

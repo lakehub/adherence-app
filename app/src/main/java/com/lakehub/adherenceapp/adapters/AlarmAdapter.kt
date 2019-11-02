@@ -63,6 +63,22 @@ class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
             holder.timeTv.text = displayTime(newDate)
         }
 
+        if (alarm.repeatMode?.size == 1) {
+            when (alarm.repeatMode[0]) {
+                8 -> {
+                    holder.tvMode.text = context.getString(R.string.once)
+                }
+                9 -> {
+                    holder.tvMode.text = context.getString(R.string.daily)
+                }
+                10 -> {
+                    holder.tvMode.text = context.getString(R.string.weekday)
+                }
+            }
+        } else {
+            holder.tvMode.text = context.getString(R.string.custom)
+        }
+
         holder.itemView.setOnClickListener {
             val myIntent = Intent(context, SingleAlarmActivity::class.java)
             myIntent.putExtra("docId", alarm.docId)
@@ -99,6 +115,7 @@ class AlarmAdapter(val context: Context, private val alarms: ArrayList<Alarm>) :
         var timeTv: TextView = view.findViewById(R.id.tv_time)
         var activeView: View = view.findViewById(R.id.active_view)
         var menu: ImageView = view.findViewById(R.id.iv_menu)
+        var tvMode: TextView = view.findViewById(R.id.tvMode)
     }
 
     private fun openOptionMenu(v: View, position: Int) {

@@ -26,6 +26,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
@@ -83,6 +84,7 @@ class SettingsActivity : AppCompatActivity() {
             AppPreferences.profileImg = null
             AppPreferences.authenticated = false
             emptyDirectory("user_images")
+            FirebaseAuth.getInstance().signOut()
 
             this.finishAndRemoveTask()
         }

@@ -71,8 +71,21 @@
                     android:text="@string/sample_time"
                     app:layout_constraintStart_toStartOf="@+id/tv_dsc"
                     app:layout_constraintTop_toBottomOf="@+id/tv_dsc"
-                    android:textColor="@color/colorRed"
+                    android:textColor="@color/colorGrandis"
                     app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+            <TextView
+                    android:id="@+id/tvMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="@string/once"
+                    app:layout_constraintStart_toEndOf="@+id/tv_time"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_dsc"
+                    android:textColor="@color/colorGrandis"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginStart="5dp"
             />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import com.google.android.gms.tasks.TaskExecutors
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -71,6 +72,25 @@ class AuthActivity : AppCompatActivity() {
         hideVerificationProgress()
 
         hideProgress()
+
+        edit_text.addTextChangedListener {
+            if (it.isNullOrBlank()) {
+                tv_btn_submit.setTextColor(
+                    ContextCompat.getColor(applicationContext, R.color.colorBlack)
+                )
+                cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this,
+                    R.color.colorWhiteSemitransparent
+                ))
+            } else {
+                tv_btn_submit.setTextColor(
+                    ContextCompat.getColor(applicationContext, android.R.color.black)
+                )
+
+                cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this,
+                    R.color.colorYellow
+                ))
+            }
+        }
 
         cl_btn_submit.setOnClickListener {
             phoneNumber = edit_text.text.toString().trim()
@@ -250,6 +270,15 @@ class AuthActivity : AppCompatActivity() {
         progress_bar_submit.visibility = View.GONE
         cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this, R.color.colorGreen))
         edit_text.isEnabled = true
+
+        if (edit_text.text.isNullOrBlank()){
+            tv_btn_submit.setTextColor(
+                ContextCompat.getColor(applicationContext, R.color.colorBlack)
+            )
+            cl_btn_submit.setBackgroundColor(ContextCompat.getColor(this,
+                R.color.colorWhiteSemitransparent
+            ))
+        }
     }
 
     private fun showVerificationProgress() {
