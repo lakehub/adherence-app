@@ -258,4 +258,7 @@
     <string name="sending">Sending</string>
     <string name="reminder">Reminder</string>
     <string name="missed_reminder">Missed Reminder</string>
+<!--    <string name="i_have_no_access_key"><![CDATA[<a href="https://lakehub.co.ke">I have no Access Key</a>]]></string>-->
+    <string name="i_have_no_access_key"><u>I have no Access Key</u></string>
+    <string name="no_browser_installed">No browser app installed</string>
 </resources>

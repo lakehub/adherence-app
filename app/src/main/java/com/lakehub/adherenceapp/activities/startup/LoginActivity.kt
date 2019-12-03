@@ -1,8 +1,10 @@
 package com.lakehub.adherenceapp.activities.startup
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +22,8 @@ import com.lakehub.adherenceapp.utils.showNetworkError
 import com.lakehub.adherenceapp.utils.showWarning
 import kotlinx.android.synthetic.main.activity_login.*
 import java.io.File
+import java.util.regex.Pattern
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -30,6 +34,26 @@ class LoginActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         hideProgress()
+
+//        tvInfo.text = HtmlCompat.fromHtml(getString(R.string.i_have_no_access_key), FROM_HTML_MODE_COMPACT)
+//        tvInfo.movementMethod = LinkMovementMethod.getInstance()
+//        LinkifyCompat.addLinks(tvInfo, Linkify.ALL)
+
+        val wikiWordMatcher = Pattern.compile("\\b[A-Z]+[a-z0-9]+[A-Z][A-Za-z0-9]+\\b")
+        val wikiViewURL = "content://com.google.android.wikinotes.db.wikinotes/wikinotes/"
+//        Linkify.addLinks(tvInfo, wikiWordMatcher, wikiViewURL)
+
+        tvInfo.setOnClickListener {
+            val url = "https://lakehub.co.ke"
+            val mIntent = Intent(Intent.ACTION_VIEW)
+            mIntent.data = Uri.parse(url)
+            try {
+                startActivity(mIntent)
+            } catch (ex: ActivityNotFoundException) {
+                showWarning(getString(R.string.no_browser_installed))
+            }
+        }
+
 
         val hadLaunched: Boolean = intent.getBooleanExtra("hadLaunched", false)
 

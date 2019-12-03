@@ -216,8 +216,8 @@ class AddChvReminderActivity : AppCompatActivity() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, p2: Int, p3: Long) {
-                (parent?.getChildAt(0) as TextView)
-                    .setTextColor(ContextCompat.getColor(this@AddChvReminderActivity, android.R.color.white))
+                (parent?.getChildAt(0) as TextView?)
+                    ?.setTextColor(ContextCompat.getColor(this@AddChvReminderActivity, android.R.color.white))
             }
 
         }

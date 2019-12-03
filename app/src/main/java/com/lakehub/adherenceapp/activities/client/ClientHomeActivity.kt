@@ -374,7 +374,15 @@ class ClientHomeActivity : AppCompatActivity() {
 
         }
 
-        fetchRecent()
+        val oldDate = selectedDate
+        selectedDate = today
+        calendar_view.notifyDateChanged(today)
+        oldDate?.let { calendar_view.notifyDateChanged(oldDate) }
+
+        selectedDateStr = selectedDate.toString()
+        selected = true
+
+        fetchByDate()
 
     }
 
