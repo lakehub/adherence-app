@@ -42,12 +42,12 @@ class ClientAltAdapter(val context: Context, private val clients: ArrayList<Clie
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val client = clients[position]
-        holder.tvAccessKey.text = titleCase(client.accessKey)
+        holder.tvAccessKey.text = titleCase(client.userId)
         holder.tvLocation.text = titleCase(client.location)
 
         holder.itemView.setOnClickListener {
             val returnIntent = Intent()
-            returnIntent.putExtra("accessKey", client.accessKey)
+            returnIntent.putExtra("userId", client.userId)
             val activity = context as Activity
             activity.setResult(Activity.RESULT_OK, returnIntent)
             activity.finish()

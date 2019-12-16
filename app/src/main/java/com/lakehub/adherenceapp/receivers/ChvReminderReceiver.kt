@@ -6,10 +6,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.google.firebase.firestore.FirebaseFirestore
-import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.activities.chv.ChvReminderActivity
 import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.ChvReminder
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.toUtc
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -19,7 +19,8 @@ import java.util.*
 class ChvReminderReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (AppPreferences.loggedIn) {
+        val userRepository = UserRepository()
+        if (userRepository.isAuthenticated) {
             val note = intent.extras?.getString("note")
             val date = intent.extras?.getString("date")
             val docId = intent.extras?.getString("docId")
@@ -31,7 +32,7 @@ class ChvReminderReceiver : BroadcastReceiver() {
             val id = intent.extras?.getInt("id")
             val repeatMode = intent.getIntegerArrayListExtra("repeatMode")
             val medType = intent.extras?.getInt("medType")
-            val clientAccessKey = intent.extras?.getString("clientAccessKey")
+            val clientUserId = intent.extras?.getString("clientUserId")
 
 //        val notificationManager = MyNotificationManager(context)
 //        notificationManager.displayAlarmNotification(note!!, context)
@@ -49,7 +50,6 @@ class ChvReminderReceiver : BroadcastReceiver() {
             val dateFormat = "yyyy-MM-dd"
             val dateFormatter = DateTimeFormat.forPattern(dateFormat)
 
-            val phoneNumber = AppPreferences.accessKey
             val alarmsRef = FirebaseFirestore.getInstance()
                 .collection("chv_reminders")
                 .document()
@@ -65,7 +65,7 @@ class ChvReminderReceiver : BroadcastReceiver() {
             myIntent.putExtra("docId", alarmsRef.id)
             myIntent.putExtra("repeatMode", repeatMode)
             myIntent.putExtra("medType", medType)
-            myIntent.putExtra("clientAccessKey", clientAccessKey)
+            myIntent.putExtra("clientAccessKey", clientUserId)
 
             if (repeatMode?.size == 1) {
                 if (repeatMode[0].toInt() != 8) {
@@ -129,7 +129,7 @@ class ChvReminderReceiver : BroadcastReceiver() {
 
                     val data = ChvReminder(
                         id = id!!,
-                        accessKey = AppPreferences.accessKey!!,
+                        userId = userRepository.userId,
                         description = note!!,
                         alarmTonePath = tonePath,
                         repeatMode = repeatMode,
@@ -138,7 +138,7 @@ class ChvReminderReceiver : BroadcastReceiver() {
                         appointment = isAppointment,
                         date = dateFormatter.print(myFromDate),
                         medicationType = medType!!,
-                        clientAccessKey = clientAccessKey,
+                        clientUserId = clientUserId,
                         millis = myFromDate.millis,
                         hospital = hospital,
                         snoozed = snoozed!!
@@ -189,7 +189,7 @@ class ChvReminderReceiver : BroadcastReceiver() {
 
                 val data = ChvReminder(
                     id = id!!,
-                    accessKey = AppPreferences.accessKey!!,
+                    userId = userRepository.userId,
                     description = note!!,
                     alarmTonePath = tonePath,
                     repeatMode = repeatMode,
@@ -198,7 +198,7 @@ class ChvReminderReceiver : BroadcastReceiver() {
                     appointment = isAppointment,
                     date = dateFormatter.print(myFromDate),
                     medicationType = medType!!,
-                    clientAccessKey = clientAccessKey,
+                    clientUserId = clientUserId,
                     millis = myFromDate.millis,
                     hospital = hospital,
                     snoozed = snoozed!!
@@ -224,7 +224,7 @@ class ChvReminderReceiver : BroadcastReceiver() {
             alarmIntent.putExtra("appointment", isAppointment)
             alarmIntent.putExtra("hospital", hospital)
             alarmIntent.putExtra("medType", medType)
-            alarmIntent.putExtra("clientAccessKey", clientAccessKey)
+            alarmIntent.putExtra("clientAccessKey", clientUserId)
             alarmIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             MainApplication.applicationContext().startActivity(alarmIntent)
         }

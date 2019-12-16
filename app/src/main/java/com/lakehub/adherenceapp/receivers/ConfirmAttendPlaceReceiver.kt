@@ -8,6 +8,7 @@ import android.content.Intent
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.activities.client.ConfirmPopUpActivity
 import com.lakehub.adherenceapp.app.MainApplication
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.toUtc
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -17,7 +18,7 @@ import java.util.*
 class ConfirmAttendPlaceReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (AppPreferences.loggedIn) {
+        if (UserRepository().isAuthenticated) {
             val note = intent.extras?.getString("note")
             val date = intent.extras?.getString("date")
             val docId = intent.extras?.getString("docId")

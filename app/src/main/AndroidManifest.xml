@@ -210,10 +210,6 @@
                 android:screenOrientation="portrait"
                 android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name=".VerifyActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
-        <activity
                 android:name=".activities.startup.RegisterActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/MaterialTheme.NoActionBar" />

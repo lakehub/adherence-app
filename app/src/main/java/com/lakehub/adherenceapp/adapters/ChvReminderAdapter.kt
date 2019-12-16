@@ -50,7 +50,7 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
         holder.tvCount.text = (position + 1).toString()
 
         when {
-            alarm.appointment!! -> holder.clientTv.text = alarm.clientAccessKey
+            alarm.appointment!! -> holder.clientTv.text = alarm.clientUserId
             alarm.drug!! -> holder.clientTv.text = if (alarm.medicationType == 1) {
                 context.getString(R.string.treatment)
             } else {
@@ -119,7 +119,7 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
             myIntent.putExtra("appointment", alarm.appointment)
             myIntent.putExtra("medType", alarm.medicationType)
             myIntent.putExtra("repeatMode", alarm.repeatMode)
-            myIntent.putExtra("clientAccessKey", alarm.clientAccessKey)
+            myIntent.putExtra("clientUserId", alarm.clientUserId)
             myIntent.putExtra("hospital", alarm.hospital)
             myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(myIntent)
@@ -171,7 +171,7 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
                     myIntent.putExtra("appointment", alarm.appointment)
                     myIntent.putExtra("medType", alarm.medicationType)
                     myIntent.putExtra("repeatMode", alarm.repeatMode)
-                    myIntent.putExtra("clientAccessKey", alarm.clientAccessKey)
+                    myIntent.putExtra("clientUserId", alarm.clientUserId)
                     myIntent.putExtra("hospital", alarm.hospital)
                     myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     context.startActivity(myIntent)

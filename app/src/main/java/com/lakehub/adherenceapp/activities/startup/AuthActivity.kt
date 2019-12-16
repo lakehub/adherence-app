@@ -1,6 +1,7 @@
 package com.lakehub.adherenceapp.activities.startup
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.tasks.TaskExecutors
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -25,9 +27,17 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.lakehub.adherenceapp.R
+import com.lakehub.adherenceapp.activities.chv.ChvDashboardActivity
+import com.lakehub.adherenceapp.activities.client.ClientHomeActivity
 import com.lakehub.adherenceapp.app.AppPreferences
+import com.lakehub.adherenceapp.data.Role
+import com.lakehub.adherenceapp.data.User
+import com.lakehub.adherenceapp.repositories.UserRepository
+import com.lakehub.adherenceapp.utils.USER_CLIENT
 import com.lakehub.adherenceapp.utils.showWarning
 import kotlinx.android.synthetic.main.activity_auth.*
+import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
 class AuthActivity : AppCompatActivity() {
@@ -42,11 +52,11 @@ class AuthActivity : AppCompatActivity() {
     private lateinit var progressBarSubmit: ProgressBar
     private var verificationId: String? = null
     private var credential: PhoneAuthCredential? = null
-    private val auth = FirebaseAuth.getInstance()
     private lateinit var tvCount: TextView
     private lateinit var tvResend: TextView
     private var phoneNumber = ""
-    private var handlerRunning = false
+
+    private var role: Role? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,6 +113,7 @@ class AuthActivity : AppCompatActivity() {
                     if (phoneNumber.length == 10) {
                         phoneNumber = "+254${phoneNumber.substring(1)}"
                     }
+
                     PhoneAuthProvider.getInstance().verifyPhoneNumber(
                         phoneNumber,
                         60,
@@ -110,6 +121,7 @@ class AuthActivity : AppCompatActivity() {
                         TaskExecutors.MAIN_THREAD,
                         callback()
                     )
+
                 }
             } else {
                 showWarning(getString(R.string.phone_required))
@@ -230,27 +242,36 @@ class AuthActivity : AppCompatActivity() {
         }
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                hideVerificationProgress()
-                if (task.isSuccessful) {
-                    alertDialog.dismiss()
-                    AppPreferences.authenticated = true
-                    startActivity(Intent(this, LoginActivity::class.java))
-                    finish()
-                    Log.e("TAG", "authenticated")
+        lifecycleScope.launch {
+            try{
+                val userRepository = UserRepository()
+                userRepository.signIn(credential)
 
+                val user = userRepository.getCurrentUser()
+                if(user == null) {
+                    FirebaseAuth.getInstance().signOut()
+                    Log.e("TAG", "Current user was missing in database.")
+                    showWarning(getString(R.string.invalid_access_key))
                 } else {
-                    // Sign in failed, display a message and update the UI
-                    Log.w("TAG", "signInWithCredential:failure", task.exception)
+                    //Store user image locally if the user has an user image
+                    user.image?.let { userRepository.storeUserImageLocally(this@AuthActivity) }
+                    AppPreferences.chvUserId = user.chvUserId
+                    AppPreferences.role = user.role ?: Role.CLIENT
 
-                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        // The verification code entered was invalid
-                        Toast.makeText(this, getString(R.string.invalid_code), Toast.LENGTH_SHORT)
-                            .show()
-                    }
+                    alertDialog.dismiss()
+                    val activityType = if(user.role == Role.CHV) ChvDashboardActivity::class.java else ClientHomeActivity::class.java
+                    startActivity(Intent(this@AuthActivity, activityType))
+                    finish()
+                }
+
+            } catch (e: Exception) {
+                if (e is FirebaseAuthInvalidCredentialsException) {
+                    // The verification code entered was invalid
+                    Toast.makeText(this@AuthActivity, getString(R.string.invalid_code), Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
+        }
     }
 
     private fun showProgress() {

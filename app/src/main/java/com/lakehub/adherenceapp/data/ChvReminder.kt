@@ -16,10 +16,10 @@ data class ChvReminder (
     val missed: Boolean = false,
     val docId: String? = null,
     val snoozed: Int = 0,
-    val clientAccessKey: String? = null,
+    val clientUserId: String? = null,
     val recent: Boolean = false,
     val hospital: String? = null,
     val millis: Long? = null,
-    val accessKey: String = "",
+    val userId: String = "",
     val cleaned: Boolean = false
 )

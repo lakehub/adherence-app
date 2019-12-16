@@ -28,10 +28,10 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import com.lakehub.adherenceapp.R
-import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.ChvReminder
 import com.lakehub.adherenceapp.receivers.ChvReminderReceiver
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.limitStringLength
 import com.lakehub.adherenceapp.utils.showSuccess
 import com.lakehub.adherenceapp.utils.showWarning
@@ -96,11 +96,11 @@ class MakeAppointmentActivity : AppCompatActivity() {
         repeatModeList = arrayListOf()
         repeatModeList.add(8)
 
-        val clientAccessKey = intent.getStringExtra("clientAccessKey")
+        val clientUserId = intent.getStringExtra("clientUserId")
         val followUpDate = intent.getStringExtra("date")
 
         val followUpRef = db.collection("follow_ups")
-            .whereEqualTo("clientAccessKey", clientAccessKey)
+            .whereEqualTo("clientAccessKey", clientUserId)
             .whereEqualTo("dateTime", followUpDate)
 
 
@@ -123,7 +123,7 @@ class MakeAppointmentActivity : AppCompatActivity() {
             openToneMenu()
         }
 
-        tv_client.text = clientAccessKey
+        tv_client.text = clientUserId
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Dexter.withActivity(this)
@@ -209,7 +209,7 @@ class MakeAppointmentActivity : AppCompatActivity() {
 
                 val alarm = ChvReminder(
                     id = id,
-                    accessKey = AppPreferences.accessKey!!,
+                    userId = UserRepository().userId,
                     description = description,
                     alarmTonePath = tonePath,
                     repeatMode = repeatModeList,
@@ -218,7 +218,7 @@ class MakeAppointmentActivity : AppCompatActivity() {
                     appointment = true,
                     date = myFinalDateStr,
                     medicationType = 0,
-                    clientAccessKey = clientAccessKey,
+                    clientUserId = clientUserId,
                     millis = fromDate.millis,
                     hospital = null,
                     docId = alarmsRef.id
@@ -250,7 +250,7 @@ class MakeAppointmentActivity : AppCompatActivity() {
                 myIntent.putExtra("appointment", true)
                 myIntent.putExtra("hospital", "")
                 myIntent.putExtra("medType", 0)
-                myIntent.putExtra("clientAccessKey", clientAccessKey)
+                myIntent.putExtra("clientAccessKey", clientUserId)
                 val pendingIntent =
                     PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)

@@ -8,6 +8,7 @@ import androidx.viewpager.widget.ViewPager
 import com.lakehub.adherenceapp.R
 import com.lakehub.adherenceapp.adapters.TutorialsPagerAdapter
 import com.lakehub.adherenceapp.app.AppPreferences
+import com.lakehub.adherenceapp.repositories.UserRepository
 import kotlinx.android.synthetic.main.activity_tutorial.*
 
 class TutorialActivity : AppCompatActivity() {
@@ -55,7 +56,7 @@ class TutorialActivity : AppCompatActivity() {
                 view_pager.currentItem = view_pager.currentItem + 1
             } else {
                 AppPreferences.firstRun = false
-                if (AppPreferences.authenticated) {
+                if (UserRepository().isAuthenticated) {
                     startActivity(Intent(this, LoginActivity::class.java))
                 } else {
                     startActivity(Intent(this, AuthActivity::class.java))

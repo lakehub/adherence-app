@@ -44,8 +44,8 @@ class FollowUpAdapter(val context: Context, private val followUps: ArrayList<Fol
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val followUp = followUps[position]
 
-        holder.tv.text = followUp.clientAccessKey
-        val clientRef = FirebaseFirestore.getInstance().collection("users").document(followUp.clientAccessKey)
+        holder.tv.text = followUp.clientUserId
+        val clientRef = FirebaseFirestore.getInstance().collection("users").document(followUp.clientUserId)
 
         clientRef.get()
             .addOnCompleteListener {
@@ -144,7 +144,7 @@ class FollowUpAdapter(val context: Context, private val followUps: ArrayList<Fol
         holder.itemView.setOnClickListener {
             val activity = context as Activity
             val intent = Intent(context, MakeAppointmentActivity::class.java)
-            intent.putExtra("clientAccessKey", followUp.clientAccessKey)
+            intent.putExtra("clientUserId", followUp.clientUserId)
             intent.putExtra("date", followUp.dateTime)
             activity.startActivity(intent)
         }

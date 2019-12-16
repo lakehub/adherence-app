@@ -47,7 +47,7 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val client = clients[position]
         holder.tvLocation.text = client.location
-        holder.tvAccessKey.text = titleCase(client.accessKey)
+        holder.tvAccessKey.text = titleCase(client.userId)
 
         holder.menu.setOnClickListener {
             openOptionMenu(holder.menu, holder.adapterPosition)
@@ -55,7 +55,7 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
 
         holder.itemView.setOnClickListener {
             val myIntent = Intent(context, ClientAppointmentsActivity::class.java)
-            myIntent.putExtra("clientAccessKey", client.accessKey)
+            myIntent.putExtra("clientUserId", client.userId)
             context.startActivity(myIntent)
         }
 
@@ -162,7 +162,7 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
             when (item.itemId) {
                 R.id.edit -> {
                     val myIntent = Intent(context, EditClientActivity::class.java)
-                    myIntent.putExtra("accessKey", client.accessKey)
+                    myIntent.putExtra("userId", client.userId)
                     myIntent.putExtra("location", client.location)
                     myIntent.putExtra("name", client.name)
                     myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -170,7 +170,7 @@ class ClientAdapter(val context: Context, private val clients: ArrayList<Client>
                 }
                 R.id.delete -> {
                     val myIntent = Intent(context, DeactivateClientActivity::class.java)
-                    myIntent.putExtra("accessKey", client.accessKey)
+                    myIntent.putExtra("userId", client.userId)
                     myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     context.startActivity(myIntent)
                 }

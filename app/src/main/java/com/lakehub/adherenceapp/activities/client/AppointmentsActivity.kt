@@ -8,6 +8,7 @@ import com.lakehub.adherenceapp.R
 import com.lakehub.adherenceapp.adapters.ClientAppointmentsAdapter
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.data.ChvReminder
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.dateMillis
 import com.lakehub.adherenceapp.utils.makeGone
 import com.lakehub.adherenceapp.utils.makeVisible
@@ -58,7 +59,7 @@ class AppointmentsActivity : AppCompatActivity() {
 
         val alarmsRef = db.collection("chv_reminders")
             .whereEqualTo("appointment", true)
-            .whereEqualTo("clientAccessKey", AppPreferences.accessKey)
+            .whereEqualTo("clientUserId", UserRepository().userId)
             .whereEqualTo("cancelled", false)
             .whereEqualTo("rang", false)
             .whereEqualTo("missed", false)

@@ -11,6 +11,8 @@ import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.R
 import com.lakehub.adherenceapp.adapters.ClientAdapter
 import com.lakehub.adherenceapp.data.Client
+import com.lakehub.adherenceapp.data.User
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.makeGone
 import com.lakehub.adherenceapp.utils.makeVisible
 import kotlinx.android.synthetic.main.activity_clients.*
@@ -63,10 +65,10 @@ class ClientsActivity : AppCompatActivity() {
 
     private fun fetchData() {
         showProgress()
-        val phoneNo = AppPreferences.accessKey
+        val userId = UserRepository().userId
 
         val userRef = FirebaseFirestore.getInstance().collection("users")
-        userRef.whereEqualTo("chvAccessKey", phoneNo!!)
+        userRef.whereEqualTo(User::chvUserId.name, userId)
             .get()
             .addOnCompleteListener {
                 hideProgress()
@@ -76,8 +78,8 @@ class ClientsActivity : AppCompatActivity() {
                 hideProgress()
             }
 
-        userRef.whereEqualTo("chvAccessKey", phoneNo)
-            .whereEqualTo("active", true)
+        userRef.whereEqualTo(User::chvUserId.name, userId)
+            .whereEqualTo(User::active.name, true)
             .addSnapshotListener { querySnapshot, _ ->
                 hideProgress()
                 if (querySnapshot != null && querySnapshot.documents.isNotEmpty()) {

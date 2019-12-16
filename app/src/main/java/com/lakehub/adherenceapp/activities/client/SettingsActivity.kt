@@ -39,6 +39,7 @@ import com.lakehub.adherenceapp.R
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.User
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.*
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_settings.*
@@ -55,7 +56,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var destinationUri: Uri
     private var inProgress = false
     private val userRef = FirebaseFirestore.getInstance().collection("users")
-        .document(AppPreferences.accessKey!!)
+        .document(UserRepository().userId)
     private var myForResult = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,12 +78,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         cl_logout.setOnClickListener {
-            AppPreferences.loggedIn = false
-            AppPreferences.accessKey = null
-            AppPreferences.accountType = 0
-            AppPreferences.chvAccessKey = null
             AppPreferences.profileImg = null
-            AppPreferences.authenticated = false
             emptyDirectory("user_images")
             FirebaseAuth.getInstance().signOut()
 
@@ -137,7 +133,7 @@ class SettingsActivity : AppCompatActivity() {
 
         }
 
-        toolbar_username.text = titleCase(AppPreferences.accessKey!!)
+        toolbar_username.text = titleCase(UserRepository().userId)
 //        edit_text.setText(titleCase(AppPreferences.myName!!))
 
         val mContextWrapper = ContextWrapper(this)
@@ -264,7 +260,7 @@ class SettingsActivity : AppCompatActivity() {
         val metadata = StorageMetadata.Builder()
             .setContentType("image/jpeg")
             .build()
-        val filename = "${getRandomString(26)}.jpeg"
+        val filename = UserRepository().userImageFilename
         val imgRef = storageRef.child("client_images/$filename")
         val stream = FileInputStream(File(filePath!!))
         val uploadTask = imgRef.putStream(stream, metadata)

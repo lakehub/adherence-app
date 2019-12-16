@@ -29,10 +29,10 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import com.lakehub.adherenceapp.*
-import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.ChvReminder
 import com.lakehub.adherenceapp.receivers.ChvReminderReceiver
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.limitStringLength
 import com.lakehub.adherenceapp.utils.makeGone
 import com.lakehub.adherenceapp.utils.makeVisible
@@ -71,7 +71,7 @@ class AddChvReminderActivity : AppCompatActivity() {
     private lateinit var clSat: ConstraintLayout
     private lateinit var clSun: ConstraintLayout
     private var permissionGranted = false
-    private var clientAccessKey: String? = null
+    private var clientUserId: String? = null
     private val hospitals = arrayListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -468,7 +468,7 @@ class AddChvReminderActivity : AppCompatActivity() {
             val myFinalDateStr = myFinalDateFormatter.print(fromDate)
 
             if (!inProgress) {
-                if (description.isBlank() || (isAppointment && clientAccessKey == null) ||
+                if (description.isBlank() || (isAppointment && clientUserId == null) ||
                     (!isAppointment && !isDrug && hos_spinner.selectedItemPosition == 0)
                 ) {
                     val toast = Toast(this)
@@ -505,7 +505,7 @@ class AddChvReminderActivity : AppCompatActivity() {
                     val alarm = if (isAppointment) {
                         ChvReminder(
                             id = id,
-                            accessKey = AppPreferences.accessKey!!,
+                            userId = UserRepository().userId,
                             description = description,
                             alarmTonePath = tonePath,
                             repeatMode = repeatModeList,
@@ -514,7 +514,7 @@ class AddChvReminderActivity : AppCompatActivity() {
                             appointment = isAppointment,
                             date = myFinalDateStr,
                             medicationType = medType,
-                            clientAccessKey = clientAccessKey,
+                            clientUserId = clientUserId,
                             millis = fromDate.millis,
                             hospital = hospital,
                             docId = alarmsRef.id
@@ -522,7 +522,7 @@ class AddChvReminderActivity : AppCompatActivity() {
                     } else {
                         ChvReminder(
                             id = id,
-                            accessKey = AppPreferences.accessKey!!,
+                            userId = UserRepository().userId,
                             description = description,
                             alarmTonePath = tonePath,
                             repeatMode = repeatModeList,
@@ -531,7 +531,7 @@ class AddChvReminderActivity : AppCompatActivity() {
                             appointment = isAppointment,
                             date = myFinalDateStr,
                             medicationType = medType,
-                            clientAccessKey = null,
+                            clientUserId = null,
                             millis = fromDate.millis,
                             hospital = hospital,
                             docId = alarmsRef.id
@@ -565,7 +565,7 @@ class AddChvReminderActivity : AppCompatActivity() {
                     myIntent.putExtra("appointment", isAppointment)
                     myIntent.putExtra("hospital", hospital)
                     myIntent.putExtra("medType", medType)
-                    myIntent.putExtra("clientAccessKey", clientAccessKey)
+                    myIntent.putExtra("clientUserId", clientUserId)
                     val pendingIntent =
                         PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)
@@ -588,8 +588,8 @@ class AddChvReminderActivity : AppCompatActivity() {
             val finalFilename = filename.split(".")[0]
             tv_tone.text = limitStringLength(finalFilename, 20)
         } else if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
-            clientAccessKey = data?.extras!!.getString("accessKey")
-            tv_client.text = clientAccessKey
+            clientUserId = data?.extras!!.getString("userId")
+            tv_client.text = clientUserId
         }
     }
 

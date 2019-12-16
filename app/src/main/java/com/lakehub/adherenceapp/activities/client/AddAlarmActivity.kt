@@ -35,6 +35,7 @@ import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.Alarm
 import com.lakehub.adherenceapp.receivers.AlarmReceiver
 import com.lakehub.adherenceapp.receivers.ConfirmAttendPlaceReceiver
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.limitStringLength
 import com.lakehub.adherenceapp.utils.showSuccess
 import com.lakehub.adherenceapp.utils.toUtc
@@ -455,9 +456,9 @@ class AddAlarmActivity : AppCompatActivity() {
             } else {
                 val id = ThreadLocalRandom.current().nextInt()
                 val alarmsRef = firebaseFirestore.collection("alarms").document()
-
+                val userRepository = UserRepository()
                 val alarm = Alarm(
-                    accessKey = AppPreferences.accessKey,
+                    userId = userRepository.userId,
                     description = description,
                     fromDate = dateFormatter.print(fromDate),
                     toDate = toDateStr,
@@ -467,7 +468,7 @@ class AddAlarmActivity : AppCompatActivity() {
                     date = myFinalDateStr,
                     medicationType = medType,
                     millis = fromDate.millis,
-                    chvAccessKey = AppPreferences.chvAccessKey!!,
+                    chvUserId = AppPreferences.chvUserId,
                     id = id,
                     docId = alarmsRef.id
                 )

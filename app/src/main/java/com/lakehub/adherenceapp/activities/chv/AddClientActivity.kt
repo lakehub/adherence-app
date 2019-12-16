@@ -12,6 +12,9 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.R
+import com.lakehub.adherenceapp.data.Role
+import com.lakehub.adherenceapp.data.User
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.showNetworkError
 import com.lakehub.adherenceapp.utils.showSuccess
 import com.lakehub.adherenceapp.utils.showWarning
@@ -74,28 +77,26 @@ class AddClientActivity : AppCompatActivity() {
                         }
                         val db = FirebaseFirestore.getInstance()
                         val userRef = db.collection("users").document(phoneNumber)
-                        val chvPhoneNumber = AppPreferences.accessKey
+                        val chvUserId = UserRepository().userId
 
                         userRef.get()
                             .addOnCompleteListener {
                                 if (it.isSuccessful) {
                                     if (it.result?.data == null) {
-                                        val data = hashMapOf(
-                                            "accessKey" to phoneNumber,
-                                            "location" to location,
-                                            "name" to name,
-                                            "points" to 0,
-                                            "chvPhoneNumber" to chvPhoneNumber,
-                                            "category" to 1,
-                                            "active" to true
+                                        val user = User(
+                                            chvUserId = chvUserId,
+                                            location = location,
+                                            name = name,
+                                            role = Role.CLIENT,
+                                            active = true
                                         )
 
-                                        userRef.set(data)
+                                        userRef.set(user)
                                             .addOnCompleteListener { task ->
                                                 if (task.isComplete) {
                                                     hideProgress()
                                                     val chvDoc = db.collection("users")
-                                                        .document(AppPreferences.accessKey!!)
+                                                        .document(UserRepository().userId)
 
                                                     chvDoc.get()
                                                         .addOnCompleteListener { docSnap ->

@@ -38,6 +38,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.lakehub.adherenceapp.*
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.app.MainApplication
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.*
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_chv_profile.*
@@ -49,7 +50,7 @@ import java.io.FileInputStream
 
 class ChvProfileActivity : AppCompatActivity() {
     val userRef = FirebaseFirestore.getInstance().collection("users")
-        .document(AppPreferences.accessKey!!)
+        .document(UserRepository().userId)
     private val gallery = 1002
     private var filePath: String? = null
     private lateinit var destinationUri: Uri
@@ -74,12 +75,7 @@ class ChvProfileActivity : AppCompatActivity() {
         }
 
         cl_logout.setOnClickListener {
-            AppPreferences.loggedIn = false
-            AppPreferences.accessKey = null
-            AppPreferences.accountType = 0
-            AppPreferences.chvAccessKey = null
             AppPreferences.profileImg = null
-            AppPreferences.authenticated = false
             emptyDirectory("user_images")
             emptyDirectory("client_images")
             FirebaseAuth.getInstance().signOut()
@@ -126,7 +122,7 @@ class ChvProfileActivity : AppCompatActivity() {
         }
 
         toolbar_username.text =
-            titleCase(AppPreferences.accessKey!!)
+            titleCase(UserRepository().userId)
 
         val mContextWrapper = ContextWrapper(this)
         val mDirectory: File = mContextWrapper.getDir(

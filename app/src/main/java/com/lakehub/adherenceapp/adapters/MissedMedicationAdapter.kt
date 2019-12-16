@@ -49,7 +49,7 @@ class MissedMedicationAdapter(val context: Context, private val alarms: ArrayLis
         holder.menu.setOnClickListener {
             openOptionMenu(holder.menu, holder.adapterPosition)
         }
-        holder.accessKeyTv.text = alarm.accessKey
+        holder.accessKeyTv.text = alarm.userId
 
         if (alarm.snoozed > 0) {
             val format = "yyyy MM dd HH:mm"
@@ -83,7 +83,7 @@ class MissedMedicationAdapter(val context: Context, private val alarms: ArrayLis
                     val alarmRef = FirebaseFirestore.getInstance().collection("alarms")
                         .document(alarm.docId!!)
                     val data = FollowUp(
-                        clientAccessKey = alarm.accessKey!!,
+                        clientUserId = alarm.userId,
                         date = alarm.date!!,
                         dateTime = alarm.fromDate
                     )
@@ -92,7 +92,7 @@ class MissedMedicationAdapter(val context: Context, private val alarms: ArrayLis
                             if (it.isComplete) {
                                 val followUpRef = FirebaseFirestore.getInstance().collection("follow_ups")
                                 followUpRef.whereEqualTo("date", alarm.date)
-                                    .whereEqualTo("clientAccessKey", alarm.accessKey)
+                                    .whereEqualTo("clientAccessKey", alarm.userId)
                                     .whereEqualTo("marked", false)
                                     .get()
                                     .addOnCompleteListener {qs ->

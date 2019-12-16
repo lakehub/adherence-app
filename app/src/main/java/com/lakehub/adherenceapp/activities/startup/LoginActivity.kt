@@ -81,9 +81,11 @@ class LoginActivity : AppCompatActivity() {
         }
 
         cl_btn_submit.setOnClickListener {
+            /*
             val accessKey: String = edit_text.text.toString().trim()
 
             if (accessKey.isNotEmpty()) {
+
                 if (AppPreferences.loggedIn) {
                     if (accessKey.equals(AppPreferences.accessKey, true)) {
                         AppPreferences.appInForeground = true
@@ -113,6 +115,7 @@ class LoginActivity : AppCompatActivity() {
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
                                 hideProgress()
+
                                 if (it.result!!.data != null) {
                                     val user = it.result!!.toObject(User::class.java)
                                     AppPreferences.accountType = user?.category!!
@@ -133,7 +136,7 @@ class LoginActivity : AppCompatActivity() {
                                     }
                                     if (user.category == USER_CLIENT) {
                                         finish()
-                                        AppPreferences.chvAccessKey = user.chvAccessKey
+                                        //AppPreferences.chvAccessKey = user.chvAccessKey
                                         startActivity(Intent(this, ClientHomeActivity::class.java))
                                     } else {
                                         finish()
@@ -147,11 +150,14 @@ class LoginActivity : AppCompatActivity() {
                                 showNetworkError()
                             }
                         }
+
                 }
 
             } else {
                 showWarning(getString(R.string.empty_access_key))
             }
+
+             */
         }
 
     }
@@ -191,7 +197,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        AppPreferences.exit = true
+        //AppPreferences.exit = true
         finish()
     }
 }

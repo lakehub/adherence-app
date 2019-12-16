@@ -34,6 +34,7 @@ import com.lakehub.adherenceapp.adapters.TakenReminderAdapter
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.ChvReminder
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.*
 import com.lakehub.adherenceapp.utils.setTextColorRes
 import kotlinx.android.synthetic.main.activity_chv_dashboard.*
@@ -122,13 +123,11 @@ class ChvDashboardActivity : AppCompatActivity() {
         }
 
         cl_reports_menu.setOnClickListener {
-            AppPreferences.surfed = true
             startActivity(Intent(this, ChvReportActivity::class.java))
             drawer_layout.closeDrawer(GravityCompat.START)
         }
 
         add_fab.setOnClickListener {
-            AppPreferences.surfed = true
             startActivityForResult(Intent(this, AddChvReminderActivity::class.java), 900)
             drawer_layout.closeDrawer(GravityCompat.START, true)
         }
@@ -136,11 +135,9 @@ class ChvDashboardActivity : AppCompatActivity() {
         cl_profile_menu.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START, true)
             startActivity(Intent(this, ChvProfileActivity::class.java))
-            AppPreferences.surfed = true
         }
 
         iv_user.setOnClickListener {
-            AppPreferences.surfed = true
             startActivity(Intent(this, ChvProfileActivity::class.java))
             drawer_layout.closeDrawer(GravityCompat.START, true)
         }
@@ -148,13 +145,7 @@ class ChvDashboardActivity : AppCompatActivity() {
         cl_logout_menu.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START)
             FirebaseAuth.getInstance().signOut()
-//            FirebaseFirestore.getInstance().clearPersistence()
-            AppPreferences.loggedIn = false
-            AppPreferences.accessKey = null
-            AppPreferences.accountType = 0
-            AppPreferences.chvAccessKey = null
             AppPreferences.profileImg = null
-            AppPreferences.authenticated = false
             emptyDirectory("user_images")
             emptyDirectory("client_images")
             finish()
@@ -164,14 +155,6 @@ class ChvDashboardActivity : AppCompatActivity() {
             drawer_layout.closeDrawer(GravityCompat.START)
             startActivity(Intent(this, ClientsActivity::class.java))
         }
-
-        /*auth.addAuthStateListener {
-            val user = it.currentUser
-            if (user == null) {
-//                startActivity(Intent(this, LoginActivity::class.java))
-                this.finish()
-            }
-        }*/
 
         alarmList = arrayListOf()
         missedAlarmList = arrayListOf()
@@ -515,10 +498,10 @@ class ChvDashboardActivity : AppCompatActivity() {
     private fun fetchByDate() {
         if (selectedDateStr != null) {
             showProgress()
-            val accessKey = AppPreferences.accessKey
+            val userId = UserRepository().userId
 
             val alarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
-                .whereEqualTo("accessKey", accessKey!!)
+                .whereEqualTo("userId", userId)
                 .whereEqualTo("date", selectedDateStr)
                 .whereEqualTo("cancelled", false)
 
@@ -631,10 +614,10 @@ class ChvDashboardActivity : AppCompatActivity() {
         val tz = DateTimeZone.forOffsetMillis(offset)
         val millis = DateTime.now(tz).millis
         showProgress()
-        val accessKey = AppPreferences.accessKey
+        val userId = UserRepository().userId
 
         val alarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
-            .whereEqualTo("accessKey", accessKey!!)
+            .whereEqualTo("userId", userId)
             .whereEqualTo("cancelled", false)
             .whereEqualTo("rang", false)
             .whereGreaterThanOrEqualTo("millis", millis)
@@ -642,13 +625,13 @@ class ChvDashboardActivity : AppCompatActivity() {
 //            .limit(5)
 
         val missedAlarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
-            .whereEqualTo("accessKey", accessKey)
+            .whereEqualTo("userId", userId)
             .whereEqualTo("missed", true)
             .orderBy("millis", Query.Direction.ASCENDING)
 //            .limit(5)
 
         val takenAlarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
-            .whereEqualTo("accessKey", accessKey)
+            .whereEqualTo("userId", userId)
             .whereEqualTo("missed", false)
             .whereEqualTo("cancelled", false)
             .whereEqualTo("rang", true)

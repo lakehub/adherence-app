@@ -9,6 +9,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.lakehub.adherenceapp.activities.client.AlarmActivity
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.app.MainApplication
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.toUtc
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -17,7 +18,7 @@ import java.util.*
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        if (AppPreferences.loggedIn) {
+        if (UserRepository().isAuthenticated) {
             val note = intent.extras?.getString("note")
             var date = intent.extras?.getString("date")
             val fromDate = intent.extras?.getString("fromDate")
@@ -56,7 +57,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 diffMillis = myToDate.millis.minus(myDate.millis)
             }
 
-            val phoneNumber = AppPreferences.accessKey
+            val userId = UserRepository().userId
             val alarmsRef = FirebaseFirestore.getInstance()
                 .collection("alarms")
                 .document()
@@ -137,7 +138,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
                     val data = hashMapOf(
                         "id" to id,
-                        "accessKey" to phoneNumber,
+                        "userId" to userId,
                         "description" to note,
                         "alarmTonePath" to tonePath,
                         "repeatMode" to repeatMode,
@@ -153,7 +154,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         "reasonToCancel" to "",
                         "rang" to false,
                         "millis" to myFromDate.millis,
-                        "chvPhoneNumber" to AppPreferences.chvAccessKey,
+                        "chvUserId" to AppPreferences.chvUserId,
                         "marked" to false
                     )
 
@@ -208,7 +209,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
                 val alarm = hashMapOf(
                     "id" to id,
-                    "accessKey" to phoneNumber,
+                    "userId" to userId,
                     "description" to note,
                     "alarmTonePath" to tonePath,
                     "repeatMode" to repeatMode,
@@ -224,7 +225,7 @@ class AlarmReceiver : BroadcastReceiver() {
                     "reasonToCancel" to "",
                     "rang" to false,
                     "millis" to myFromDate.millis,
-                    "chvPhoneNumber" to AppPreferences.chvAccessKey,
+                    "chvUserId" to AppPreferences.chvUserId,
                     "marked" to false
                 )
 

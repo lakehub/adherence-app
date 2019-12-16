@@ -13,6 +13,7 @@ import com.lakehub.adherenceapp.R
 import com.lakehub.adherenceapp.activities.chv.ChvDashboardActivity
 import com.lakehub.adherenceapp.activities.client.ClientHomeActivity
 import com.lakehub.adherenceapp.app.AppPreferences
+import com.lakehub.adherenceapp.data.Role
 import kotlinx.android.synthetic.main.activity_select_account_type.*
 
 class SelectAccountTypeActivity : AppCompatActivity() {
@@ -41,7 +42,7 @@ class SelectAccountTypeActivity : AppCompatActivity() {
                 .update("category", 1)
                 .addOnSuccessListener {
                     hideProgress()
-                    AppPreferences.accountType = 1
+                    AppPreferences.role = Role.CLIENT
                     startActivity(Intent(this@SelectAccountTypeActivity, ClientHomeActivity::class.java))
                     finish()
                 }
@@ -62,7 +63,7 @@ class SelectAccountTypeActivity : AppCompatActivity() {
                 .update("category", 2)
                 .addOnSuccessListener {
                     hideProgress()
-                    AppPreferences.accountType = 2
+                    AppPreferences.role = Role.CHV
                     startActivity(Intent(this@SelectAccountTypeActivity, ChvDashboardActivity::class.java))
                     finish()
                 }

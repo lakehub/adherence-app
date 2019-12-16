@@ -39,7 +39,7 @@ class TakenReminderAdapter(val context: Context, private val alarms: ArrayList<C
         if (alarm.appointment!!) {
             holder.clientTv.makeVisible()
             holder.clientTv.text = limitStringLength(
-                alarm.clientAccessKey?.split(" ")?.get(0)!!, 6
+                alarm.clientUserId?.split(" ")?.get(0)!!, 6
             )
             holder.tvDescription.text =
                 limitStringLength(alarm.description, 30)
@@ -72,7 +72,7 @@ class TakenReminderAdapter(val context: Context, private val alarms: ArrayList<C
             myIntent.putExtra("appointment", alarm.appointment)
             myIntent.putExtra("medType", alarm.medicationType)
             myIntent.putExtra("repeatMode", alarm.repeatMode)
-            myIntent.putExtra("clientAccessKey", alarm.clientAccessKey)
+            myIntent.putExtra("clientUserId", alarm.clientUserId)
             myIntent.putExtra("hospital", alarm.hospital)
             myIntent.putExtra("taken", true)
             myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

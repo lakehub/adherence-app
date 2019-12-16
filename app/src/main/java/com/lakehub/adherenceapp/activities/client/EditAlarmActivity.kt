@@ -590,7 +590,6 @@ class EditAlarmActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        AppPreferences.appInForeground = true
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
             val uri: Uri = data!!.getParcelableExtra<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) as Uri
             tonePath = uri.path
@@ -605,13 +604,11 @@ class EditAlarmActivity : AppCompatActivity() {
     private fun showProgress() {
         inProgress = true
         progress_bar.visibility = View.VISIBLE
-//        fab.isEnabled = false
     }
 
     private fun hideProgress() {
         inProgress = false
         progress_bar.visibility = View.GONE
-//        fab.isEnabled = true
     }
 
     private fun openToneMenu() {

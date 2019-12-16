@@ -11,6 +11,7 @@ import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.R
 import com.lakehub.adherenceapp.data.Report
 import com.lakehub.adherenceapp.data.User
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.makeGone
 import com.lakehub.adherenceapp.utils.makeVisible
 import kotlinx.android.synthetic.main.activity_chv_report.*
@@ -136,9 +137,10 @@ class ChvReportActivity : AppCompatActivity() {
     private fun fetchData() {
         showProgress()
         var clients = 0
+        val userId = UserRepository().userId
 
         val docRef = FirebaseFirestore.getInstance().collection("reports")
-        docRef.whereEqualTo("chvAccessKey", AppPreferences.accessKey)
+        docRef.whereEqualTo("chvAccessKey", UserRepository().userId)
             .whereEqualTo("date", selectedDateStr)
             .addSnapshotListener { querySnapshot, _ ->
                 if (querySnapshot!!.documents.isNotEmpty()) {
@@ -157,7 +159,7 @@ class ChvReportActivity : AppCompatActivity() {
                     tv_snooze_percent.text = "${snoozed.toFloat().div(total).times(100).roundToInt()}%"
                     tv_missed_percent.text = "${missed.toFloat().div(total).times(100).roundToInt()}%"
 
-                    FirebaseFirestore.getInstance().collection("users").document(AppPreferences.accessKey!!)
+                    FirebaseFirestore.getInstance().collection("users").document(UserRepository().userId)
                         .get()
                         .addOnCompleteListener {
                             if (it.isComplete) {

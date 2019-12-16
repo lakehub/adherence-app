@@ -54,9 +54,6 @@ class RegisterActivity : AppCompatActivity() {
                                         .set(myUser)
                                         .addOnCompleteListener { task ->
                                             if (task.isSuccessful) {
-                                                AppPreferences.accountType = 2
-                                                AppPreferences.loggedIn = true
-                                                AppPreferences.accessKey = phoneNumber
                                                 startActivity(Intent(this, ChvDashboardActivity::class.java))
                                                 finish()
                                             } else {

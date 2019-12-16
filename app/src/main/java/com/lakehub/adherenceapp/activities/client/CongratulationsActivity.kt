@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.R
 import com.lakehub.adherenceapp.data.User
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.makeGone
 import com.lakehub.adherenceapp.utils.makeVisible
 import kotlinx.android.synthetic.main.activity_congratulations.*
@@ -22,9 +23,9 @@ class CongratulationsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_congratulations)
         hideProgress()
 
-        val accessKey = AppPreferences.accessKey
+        val userId = UserRepository().userId
         val db = FirebaseFirestore.getInstance()
-        val usersDoc = db.collection("users").document(accessKey!!)
+        val usersDoc = db.collection("users").document(userId)
         usersDoc.get()
             .addOnCompleteListener {
                 if (it.isComplete) {

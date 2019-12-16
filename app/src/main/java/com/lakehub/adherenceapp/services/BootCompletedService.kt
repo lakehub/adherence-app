@@ -14,9 +14,11 @@ import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.Alarm
 import com.lakehub.adherenceapp.data.ChvReminder
 import com.lakehub.adherenceapp.data.Report
+import com.lakehub.adherenceapp.data.Role
 import com.lakehub.adherenceapp.receivers.AlarmReceiver
 import com.lakehub.adherenceapp.receivers.ChvReminderReceiver
 import com.lakehub.adherenceapp.receivers.ConfirmAttendPlaceReceiver
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.MyNotificationManager
 import com.lakehub.adherenceapp.utils.USER_CHV
 import com.lakehub.adherenceapp.utils.displayTime
@@ -40,9 +42,9 @@ class BootCompletedService : Service() {
         val now = DateTime.now(tz)
         val millis = now.millis
         val firebaseFirestore = FirebaseFirestore.getInstance()
-        if (AppPreferences.accountType == USER_CHV) {
+        if (AppPreferences.role == Role.CHV) {
             val alarmsRef = firebaseFirestore.collection("chv_reminders")
-                .whereEqualTo("accessKey", AppPreferences.accessKey!!)
+                .whereEqualTo("userId", UserRepository().userId)
                 .whereEqualTo("cancelled", false)
 
             val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -72,7 +74,7 @@ class BootCompletedService : Service() {
                             myIntent.putExtra("appointment", reminder.appointment)
                             myIntent.putExtra("hospital", reminder.hospital)
                             myIntent.putExtra("medType", reminder.medicationType)
-                            myIntent.putExtra("clientAccessKey", reminder.clientAccessKey)
+                            myIntent.putExtra("clientUserId", reminder.clientUserId)
                             val pendingIntent = PendingIntent.getBroadcast(
                                 this,
                                 reminder.id,
@@ -104,7 +106,7 @@ class BootCompletedService : Service() {
             }
         } else {
             val alarmsRef = firebaseFirestore.collection("alarms")
-                .whereEqualTo("accessKey", AppPreferences.accessKey!!)
+                .whereEqualTo("userId", UserRepository().userId)
                 .whereEqualTo("cancelled", false)
 
             val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -189,7 +191,7 @@ class BootCompletedService : Service() {
                                 missedAlarmRef.update(data)
                                 val reportRef = firebaseFirestore.collection("reports")
                                 Log.d("TAG", "doc updated")
-                                reportRef.whereEqualTo("chvAccessKey", AppPreferences.chvAccessKey)
+                                reportRef.whereEqualTo("chvUserId", AppPreferences.chvUserId)
                                     .whereEqualTo("date", reportDateStr)
                                     .get()
                                     .addOnCompleteListener { qSnap ->
@@ -198,13 +200,15 @@ class BootCompletedService : Service() {
                                             Log.e("TAG", "completed")
                                             if (qSnap.result!!.documents.isEmpty()) {
                                                 Log.e("TAG", "will create report")
-                                                val report = Report(
-                                                    chvAccessKey = AppPreferences.chvAccessKey!!,
-                                                    missed = 1,
-                                                    date = reportDateStr
-                                                )
+                                                AppPreferences.chvUserId?.let{
+                                                    val report = Report(
+                                                        chvUserId = it,
+                                                        missed = 1,
+                                                        date = reportDateStr
+                                                    )
 
-                                                reportRef.add(report)
+                                                    reportRef.add(report)
+                                                }
                                             } else {
                                                 Log.e("TAG", "result: ${qSnap.result}")
                                                 Log.e("TAG", "documents: ${qSnap.result?.documents}")

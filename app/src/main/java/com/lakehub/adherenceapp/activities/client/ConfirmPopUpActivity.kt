@@ -46,7 +46,7 @@ class ConfirmPopUpActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         alarmDoc = db.collection("alarms").document(docId!!)
         reportDoc = db.collection("reports")
-            .whereEqualTo("chvAccessKey", AppPreferences.chvAccessKey)
+            .whereEqualTo("chvUserId", AppPreferences.chvUserId)
             .whereEqualTo("date", dateStr)
 
         if (isPlace!!) {
@@ -82,7 +82,7 @@ class ConfirmPopUpActivity : AppCompatActivity() {
                     if (qSnap.isComplete) {
                         if (qSnap.result!!.documents.isEmpty()) {
                             val myData = mutableMapOf(
-                                "chvAccessKey" to AppPreferences.chvAccessKey,
+                                "chvUserId" to AppPreferences.chvUserId,
                                 "date" to dateStr,
                                 "taken" to 1,
                                 "snoozed" to 0,

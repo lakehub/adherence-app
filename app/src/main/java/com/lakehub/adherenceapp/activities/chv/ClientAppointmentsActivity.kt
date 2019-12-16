@@ -9,6 +9,7 @@ import com.lakehub.adherenceapp.*
 import com.lakehub.adherenceapp.adapters.AppointmentsAdapter
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.data.ChvReminder
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.dateMillis
 import com.lakehub.adherenceapp.utils.makeGone
 import com.lakehub.adherenceapp.utils.makeVisible
@@ -64,7 +65,7 @@ class ClientAppointmentsActivity : AppCompatActivity() {
         val offset = TimeZone.getDefault().rawOffset
         val tz = DateTimeZone.forOffsetMillis(offset)
         val millis = DateTime.now(tz).millis
-        val accessKey = AppPreferences.accessKey
+        val accessKey = UserRepository().userId
 
         val alarmsRef = db.collection("chv_reminders")
             .whereEqualTo("appointment", true)

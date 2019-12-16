@@ -14,6 +14,7 @@ import com.lakehub.adherenceapp.R
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.data.ChvReminder
 import com.lakehub.adherenceapp.receivers.ChvReminderReceiver
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.displayTime
 import com.lakehub.adherenceapp.utils.toUtc
 import displayNotification
@@ -29,7 +30,7 @@ class BootCompleteService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (AppPreferences.loggedIn) {
+        if (UserRepository().isAuthenticated) {
             Log.d("TAG", "boot completed")
             val offset = TimeZone.getDefault().rawOffset
             val tz = DateTimeZone.forOffsetMillis(offset)
@@ -37,7 +38,7 @@ class BootCompleteService : Service() {
             val millis = now.millis
             val firebaseFirestore = FirebaseFirestore.getInstance()
             val alarmsRef = firebaseFirestore.collection("chv_reminders")
-                .whereEqualTo("accessKey", AppPreferences.accessKey!!)
+                .whereEqualTo("userId", UserRepository().userId)
                 .whereEqualTo("cancelled", false)
 
             val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -67,7 +68,7 @@ class BootCompleteService : Service() {
                             myIntent.putExtra("appointment", reminder.appointment)
                             myIntent.putExtra("hospital", reminder.hospital)
                             myIntent.putExtra("medType", reminder.medicationType)
-                            myIntent.putExtra("clientAccessKey", reminder.clientAccessKey)
+                            myIntent.putExtra("clientUserId", reminder.clientUserId)
                             val pendingIntent = PendingIntent.getBroadcast(
                                 this,
                                 reminder.id,

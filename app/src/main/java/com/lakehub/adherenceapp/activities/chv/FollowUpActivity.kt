@@ -17,6 +17,7 @@ import com.lakehub.adherenceapp.adapters.*
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.data.Alarm
 import com.lakehub.adherenceapp.data.FollowUp
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.dateMillis
 import com.lakehub.adherenceapp.utils.makeGone
 import com.lakehub.adherenceapp.utils.makeVisible
@@ -219,7 +220,7 @@ class FollowUpActivity : AppCompatActivity() {
         val alarmRef = FirebaseFirestore.getInstance().collection("alarms")
         val followUpRef = FirebaseFirestore.getInstance().collection("follow_ups")
 
-        alarmRef.whereEqualTo("chvAccessKey", AppPreferences.accessKey)
+        alarmRef.whereEqualTo("chvUserId", UserRepository().userId)
             .whereEqualTo("date", selectedDateStr)
             .whereEqualTo("missed", true)
             .whereEqualTo("place", false)

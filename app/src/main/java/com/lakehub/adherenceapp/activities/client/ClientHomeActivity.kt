@@ -35,6 +35,7 @@ import com.lakehub.adherenceapp.adapters.TakenAlarmAdapter
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.Alarm
+import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.*
 import com.lakehub.adherenceapp.utils.setTextColorRes
 import kotlinx.android.synthetic.main.activity_client_home.*
@@ -110,13 +111,11 @@ class ClientHomeActivity : AppCompatActivity() {
 
         add_fab.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START, true)
-            AppPreferences.surfed = true
             startActivityForResult(Intent(this, AddAlarmActivity::class.java), 900)
         }
 
         cl_profile_menu.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START, true)
-            AppPreferences.surfed = true
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
@@ -172,14 +171,7 @@ class ClientHomeActivity : AppCompatActivity() {
 
         cl_logout_menu.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START)
-//            auth.signOut()
-//            FirebaseFirestore.getInstance().clearPersistence()
-            AppPreferences.loggedIn = false
-            AppPreferences.accessKey = null
-            AppPreferences.accountType = 0
-            AppPreferences.chvAccessKey = null
             AppPreferences.profileImg = null
-            AppPreferences.authenticated = false
             emptyDirectory("user_images")
             FirebaseAuth.getInstance().signOut()
             finish()
@@ -406,10 +398,10 @@ class ClientHomeActivity : AppCompatActivity() {
     private fun fetchByDate() {
         if (selectedDateStr != null) {
             showProgress()
-            val accessKey = AppPreferences.accessKey
+            val userId = UserRepository().userId
 
             val alarmsRef = FirebaseFirestore.getInstance().collection("alarms")
-                .whereEqualTo("accessKey", accessKey!!)
+                .whereEqualTo("userId", userId)
                 .whereEqualTo("date", selectedDateStr)
                 .whereEqualTo("cancelled", false)
 
@@ -612,10 +604,10 @@ class ClientHomeActivity : AppCompatActivity() {
         val tz = DateTimeZone.forOffsetMillis(offset)
         val millis = DateTime.now(tz).millis
         showProgress()
-        val accessKey = AppPreferences.accessKey
+        val userId = UserRepository().userId
 
         val alarmsRef = FirebaseFirestore.getInstance().collection("alarms")
-            .whereEqualTo("accessKey", accessKey!!)
+            .whereEqualTo("userId", userId)
             .whereEqualTo("cancelled", false)
             .whereEqualTo("rang", false)
             .whereGreaterThanOrEqualTo("millis", millis)
@@ -623,13 +615,13 @@ class ClientHomeActivity : AppCompatActivity() {
 //            .limit(5)
 
         val missedAlarmsRef = FirebaseFirestore.getInstance().collection("alarms")
-            .whereEqualTo("accessKey", accessKey)
+            .whereEqualTo("userId", userId)
             .whereEqualTo("missed", true)
             .orderBy("millis", Query.Direction.ASCENDING)
 //            .limit(5)
 
         val takenAlarmsRef = FirebaseFirestore.getInstance().collection("alarms")
-            .whereEqualTo("accessKey", accessKey)
+            .whereEqualTo("userId", userId)
             .whereEqualTo("missed", false)
             .whereEqualTo("cancelled", false)
             .whereEqualTo("rang", true)
