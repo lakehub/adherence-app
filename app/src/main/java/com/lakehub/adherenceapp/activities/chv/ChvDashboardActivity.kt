@@ -54,7 +54,6 @@ import java.io.File
 import java.util.*
 
 class ChvDashboardActivity : AppCompatActivity() {
-    private val auth = FirebaseAuth.getInstance()
     private val today = LocalDate.now()
     private val monthTitleFormatter = DateTimeFormatter.ofPattern("MMMM")
     private var selectedDate: LocalDate? = null

@@ -113,6 +113,7 @@ class MyService : JobIntentService() {
                 if (querySnapshot != null && !querySnapshot.isEmpty) {
                     for (document in querySnapshot.documents) {
                         val reminder = document.toObject(Alarm::class.java)
+                        reminder?.docId = document.id
                         val myMillis = toUtc(
                             fmt.parseDateTime(
                                 reminder!!.fromDate
@@ -177,8 +178,8 @@ class MyService : JobIntentService() {
                                 val reportDateFormat = "yyyy-MM"
                                 val reportDateFormatter = DateTimeFormat.forPattern(reportDateFormat)
                                 val reportDateStr = reportDateFormatter.print(now)
-                                val missedAlarmRef = firebaseFirestore.collection("alarms")
-                                    .document(reminder.docId!!)
+                                val alarmId = reminder.docId!!
+                                val missedAlarmRef = firebaseFirestore.collection("alarms").document(alarmId)
                                 val data = mapOf(
                                     "rang" to true,
                                     "missed" to true

@@ -232,7 +232,7 @@ class FollowUpActivity : AppCompatActivity() {
 
                     for (document in querySnapshot.documents) {
                         val alarm = document.toObject(Alarm::class.java)
-
+                        alarm?.docId = document.id
                         alarmList.add(alarm!!)
                     }
 

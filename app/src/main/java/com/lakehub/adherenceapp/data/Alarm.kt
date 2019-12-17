@@ -15,7 +15,7 @@ data class Alarm(
     val medicationType: Int? = null,
     val cancelled: Boolean = false,
     val missed: Boolean = false,
-    val docId: String? = null,
+    var docId: String? = null,
     val reasonToCancel: String? = null,
     val snoozed: Int = 0,
     val recent: Boolean = false,

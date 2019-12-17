@@ -65,7 +65,6 @@ class ClientHomeActivity : AppCompatActivity() {
     private lateinit var missedAlarmAdapter: MissedAlarmAdapter
     private lateinit var takenAlarmAdapter: TakenAlarmAdapter
 
-    private val selectedDates = mutableSetOf<LocalDate>()
     private val today = LocalDate.now()
     private val monthTitleFormatter = DateTimeFormatter.ofPattern("MMMM")
     private var selectedDate: LocalDate? = null
@@ -81,8 +80,6 @@ class ClientHomeActivity : AppCompatActivity() {
 
         add_fab.setColorFilter(Color.WHITE)
         val states = arrayOf(intArrayOf(android.R.attr.state_enabled), intArrayOf(android.R.attr.state_pressed))
-
-        val auth = FirebaseAuth.getInstance()
 
         val colors = intArrayOf(
             ContextCompat.getColor(this, R.color.colorGreen),
@@ -206,14 +203,6 @@ class ClientHomeActivity : AppCompatActivity() {
             drawer_layout.closeDrawer(GravityCompat.START)
         }
 
-        /*auth.addAuthStateListener {
-            val user = it.currentUser
-            if (user == null) {
-//                startActivity(Intent(this, LoginActivity::class.java))
-                this.finish()
-            }
-        }*/
-
         val offset = TimeZone.getDefault().rawOffset
         val tz = DateTimeZone.forOffsetMillis(offset)
         val date = DateTime.now(tz)
@@ -258,32 +247,6 @@ class ClientHomeActivity : AppCompatActivity() {
                 }
             }
         }
-
-        /*class DayViewContainer(view: View) : ViewContainer(view) {
-            // Will be set when this container is bound. See the dayBinder.
-            lateinit var day: CalendarDay
-
-            val textView = with(view) {
-                setOnClickListener {
-                    if (day.owner == DayOwner.THIS_MONTH) {
-                        if (selectedDate == day.date) {
-                            selectedDate = null
-                            calendar_view.notifyDayChanged(day)
-                        } else {
-                            val oldDate = selectedDate
-                            selectedDate = day.date
-                            calendar_view.notifyDateChanged(day.date)
-                            oldDate?.let { calendar_view.notifyDateChanged(oldDate) }
-                        }
-                    }
-                }
-                return@with this as TextView
-
-                val textView = view.exOneDayText
-            }
-
-        }*/
-
 
         calendar_view.dayBinder = object : DayBinder<DayViewContainer> {
             override fun create(view: View) = DayViewContainer(view)
@@ -386,15 +349,6 @@ class ClientHomeActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        /*if (requestCode == 900 && resultCode == Activity.RESULT_OK) {
-            val success = data?.getBooleanExtra("success", false)
-            if (success != null && success)
-                fetchByDate(selectedDateStr!!)
-        }*/
-    }
-
     private fun fetchByDate() {
         if (selectedDateStr != null) {
             showProgress()
@@ -421,6 +375,7 @@ class ClientHomeActivity : AppCompatActivity() {
 
                         for (document in querySnapshot.documents) {
                             val alarm = document.toObject(Alarm::class.java)
+                            alarm?.docId = document.id
 
                             if (!alarm?.cancelled!! && !alarm.rang && alarm.date == selectedDateStr) {
                                 alarmList.add(alarm)
@@ -636,6 +591,7 @@ class ClientHomeActivity : AppCompatActivity() {
 
                     for (document in querySnapshot.documents) {
                         val alarm = document.toObject(Alarm::class.java)
+                        alarm?.docId = document.id
                         alarmList.add(alarm!!)
 
                     }
@@ -675,6 +631,7 @@ class ClientHomeActivity : AppCompatActivity() {
 
                     for (document in querySnapshot.documents) {
                         val alarm = document.toObject(Alarm::class.java)
+                        alarm?.docId = document.id
                         if (alarm?.cleaned == false) {
                             missedAlarmList.add(alarm)
                         }
@@ -716,6 +673,7 @@ class ClientHomeActivity : AppCompatActivity() {
 
                     for (document in querySnapshot.documents) {
                         val alarm = document.toObject(Alarm::class.java)
+                        alarm?.docId = document.id
                         takenList.add(alarm!!)
 
                     }
