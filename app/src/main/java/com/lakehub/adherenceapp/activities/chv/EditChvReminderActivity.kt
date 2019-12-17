@@ -156,7 +156,7 @@ class EditChvReminderActivity : AppCompatActivity() {
 
         val docId = intent.getStringExtra("docId")
         val fromDate = intent.getStringExtra("date")
-        val clientAccessKey = intent.getStringExtra("clientAccessKey")
+        val clientUserId = intent.getStringExtra("clientUserId")
         val description = intent.getStringExtra("description")
         val hospital = intent.getStringExtra("hospital")
         tonePath = intent.getStringExtra("tonePath")
@@ -443,7 +443,7 @@ class EditChvReminderActivity : AppCompatActivity() {
                 cl_client.makeVisible()
                 appointment_container.makeVisible()
                 appointment_divider.makeVisible()
-                tv_client.text = clientAccessKey
+                tv_client.text = clientUserId
             }
             else -> {
                 cl_hospital.makeVisible()
@@ -532,7 +532,7 @@ class EditChvReminderActivity : AppCompatActivity() {
                     myIntent.putExtra("appointment", appointment_switch.isChecked)
                     myIntent.putExtra("hospital", hospital)
                     myIntent.putExtra("medType", medType)
-                    myIntent.putExtra("clientAccessKey", clientAccessKey)
+                    myIntent.putExtra("clientUserId", clientUserId)
                     val pendingIntent =
                         PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)

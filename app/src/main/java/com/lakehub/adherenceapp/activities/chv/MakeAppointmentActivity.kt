@@ -100,7 +100,7 @@ class MakeAppointmentActivity : AppCompatActivity() {
         val followUpDate = intent.getStringExtra("date")
 
         val followUpRef = db.collection("follow_ups")
-            .whereEqualTo("clientAccessKey", clientUserId)
+            .whereEqualTo("clientUserId", clientUserId)
             .whereEqualTo("dateTime", followUpDate)
 
 
@@ -250,7 +250,7 @@ class MakeAppointmentActivity : AppCompatActivity() {
                 myIntent.putExtra("appointment", true)
                 myIntent.putExtra("hospital", "")
                 myIntent.putExtra("medType", 0)
-                myIntent.putExtra("clientAccessKey", clientUserId)
+                myIntent.putExtra("clientUserId", clientUserId)
                 val pendingIntent =
                     PendingIntent.getBroadcast(this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, pendingIntent)

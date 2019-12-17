@@ -65,7 +65,7 @@ class ChvReminderReceiver : BroadcastReceiver() {
             myIntent.putExtra("docId", alarmsRef.id)
             myIntent.putExtra("repeatMode", repeatMode)
             myIntent.putExtra("medType", medType)
-            myIntent.putExtra("clientAccessKey", clientUserId)
+            myIntent.putExtra("clientUserId", clientUserId)
 
             if (repeatMode?.size == 1) {
                 if (repeatMode[0].toInt() != 8) {
@@ -224,7 +224,7 @@ class ChvReminderReceiver : BroadcastReceiver() {
             alarmIntent.putExtra("appointment", isAppointment)
             alarmIntent.putExtra("hospital", hospital)
             alarmIntent.putExtra("medType", medType)
-            alarmIntent.putExtra("clientAccessKey", clientUserId)
+            alarmIntent.putExtra("clientUserId", clientUserId)
             alarmIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             MainApplication.applicationContext().startActivity(alarmIntent)
         }

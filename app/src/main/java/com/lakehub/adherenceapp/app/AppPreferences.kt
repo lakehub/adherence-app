@@ -10,7 +10,7 @@ object AppPreferences {
     lateinit var preferences: SharedPreferences
 
     private val FIRST_RUN = Pair("first_run", true)
-    private val CHV_ACCESS_KEY = Pair("chv_access_Key", null)
+    private val CHV_USER_ID = Pair("chv_user_id", null)
     private val USER_ROLE = Pair("user_role", 1)
     private val PROFILE_IMG = Pair("profile_img", null)
     private val AUTO_START_ENABLED = Pair("auto_start_enabled", false)
@@ -42,9 +42,9 @@ object AppPreferences {
         }
 
     var chvUserId: String?
-        get() = preferences.getString(CHV_ACCESS_KEY.first, CHV_ACCESS_KEY.second)
+        get() = preferences.getString(CHV_USER_ID.first, CHV_USER_ID.second)
         set(value) = preferences.edit {
-            it.putString(CHV_ACCESS_KEY.first, value)
+            it.putString(CHV_USER_ID.first, value)
         }
 
     var profileImg: String?

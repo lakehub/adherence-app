@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.lakehub.adherenceapp.R
+import com.lakehub.adherenceapp.activities.chv.ChvDashboardActivity
+import com.lakehub.adherenceapp.activities.client.ClientHomeActivity
 import com.lakehub.adherenceapp.adapters.TutorialsPagerAdapter
 import com.lakehub.adherenceapp.app.AppPreferences
+import com.lakehub.adherenceapp.data.Role
 import com.lakehub.adherenceapp.repositories.UserRepository
 import kotlinx.android.synthetic.main.activity_tutorial.*
 
@@ -57,7 +60,8 @@ class TutorialActivity : AppCompatActivity() {
             } else {
                 AppPreferences.firstRun = false
                 if (UserRepository().isAuthenticated) {
-                    startActivity(Intent(this, LoginActivity::class.java))
+                    val intent = Intent(this, if(AppPreferences.role == Role.CHV) ChvDashboardActivity::class.java else ClientHomeActivity::class.java)
+                    startActivity(intent)
                 } else {
                     startActivity(Intent(this, AuthActivity::class.java))
                 }

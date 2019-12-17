@@ -44,11 +44,11 @@ class EditClientActivity : AppCompatActivity() {
         val colorList = ColorStateList(states, colors)
         fab.backgroundTintList = colorList
 
-        val accessKey = intent.getStringExtra("accessKey")
+        val userId = intent.getStringExtra("userId")
         val location = intent.getStringExtra("location")
 
 //        et_phone_no.setText(getString(R.string.phone_no, accessKey?.substring(4)))
-        et_phone_no.setText(accessKey)
+        et_phone_no.setText(userId)
         et_location.setText(titleCase(location!!))
 
         iv_cancel.setOnClickListener {
@@ -59,7 +59,7 @@ class EditClientActivity : AppCompatActivity() {
             val clientLocation = et_location.text.toString()
             if (clientLocation.isNotEmpty()) {
                 val db = FirebaseFirestore.getInstance()
-                val userRef = db.collection("users").document(accessKey!!)
+                val userRef = db.collection("users").document(userId!!)
                 val data = mapOf(
                     "location" to clientLocation
                 )

@@ -47,7 +47,7 @@ class ChvReminderActivity : AppCompatActivity() {
         val id = intent.extras?.getInt("id")
         val repeatMode = intent.extras?.getIntegerArrayList("repeatMode")
         val medType = intent.extras?.getInt("medType")
-        val clientAccessKey = intent.extras?.getString("clientAccessKey")
+        val clientUserId = intent.extras?.getString("clientUserId")
         val hospital = intent.extras?.getString("hospital")
 
         val db = FirebaseFirestore.getInstance()
@@ -169,7 +169,7 @@ class ChvReminderActivity : AppCompatActivity() {
                 myIntent.putExtra("appointment", isAppointment)
                 myIntent.putExtra("hospital", hospital)
                 myIntent.putExtra("medType", medType)
-                myIntent.putExtra("clientAccessKey", clientAccessKey)
+                myIntent.putExtra("clientUserId", clientUserId)
 
                 val newPendingIntent =
                     PendingIntent.getBroadcast(this, id!!, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)

@@ -7,7 +7,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.lakehub.adherenceapp.*
 import com.lakehub.adherenceapp.adapters.AppointmentsAdapter
-import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.data.ChvReminder
 import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.dateMillis
@@ -26,7 +25,7 @@ class ClientAppointmentsActivity : AppCompatActivity() {
     private val appointments = arrayListOf<ChvReminder>()
     private lateinit var myAdapter: AppointmentsAdapter
     private lateinit var db: FirebaseFirestore
-    private var clientAccessKey: String? = null
+    private var clientUserId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +37,7 @@ class ClientAppointmentsActivity : AppCompatActivity() {
             R.color.colorRedDark
         )
 
-        clientAccessKey = intent.extras?.getString("clientAccessKey")
+        clientUserId = intent.extras?.getString("clientUserId")
         db = FirebaseFirestore.getInstance()
 
         myAdapter = AppointmentsAdapter(this, appointments)
@@ -56,7 +55,7 @@ class ClientAppointmentsActivity : AppCompatActivity() {
             finish()
         }
 
-        tv_client_name.text = titleCase(clientAccessKey!!)
+        tv_client_name.text = titleCase(clientUserId!!)
         fetchAppointments()
     }
 
@@ -65,12 +64,12 @@ class ClientAppointmentsActivity : AppCompatActivity() {
         val offset = TimeZone.getDefault().rawOffset
         val tz = DateTimeZone.forOffsetMillis(offset)
         val millis = DateTime.now(tz).millis
-        val accessKey = UserRepository().userId
+        val userId = UserRepository().userId
 
         val alarmsRef = db.collection("chv_reminders")
             .whereEqualTo("appointment", true)
-            .whereEqualTo("clientAccessKey", clientAccessKey)
-            .whereEqualTo("accessKey", accessKey)
+            .whereEqualTo("clientUserId", clientUserId)
+            .whereEqualTo("userId", userId)
             .whereEqualTo("cancelled", false)
             .whereEqualTo("rang", false)
             .whereEqualTo("missed", false)

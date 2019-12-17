@@ -231,9 +231,7 @@
     <string name="snoozed">snoozed</string>
     <string name="missed">missed</string>
     <string name="no_report_for_this_month">No Report for this month</string>
-    <string name="enter_access_key">Enter Access Key Here</string>
-    <string name="invalid_access_key">No user account was found for this phone number</string>
-    <string name="access_key">Access Key</string>
+    <string name="invalid_phone_nr">No user account was found for this phone number</string>
     <string name="missed_alarm">Missed Alarm</string>
     <string name="missed_alarm_notification_body">You missed an alarm at %1$s</string>
     <string name="allow_auto_start_description">Please Allow this App to auto start, else the app won\'t function

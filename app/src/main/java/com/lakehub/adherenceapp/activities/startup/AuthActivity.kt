@@ -1,7 +1,6 @@
 package com.lakehub.adherenceapp.activities.startup
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
@@ -31,9 +30,7 @@ import com.lakehub.adherenceapp.activities.chv.ChvDashboardActivity
 import com.lakehub.adherenceapp.activities.client.ClientHomeActivity
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.data.Role
-import com.lakehub.adherenceapp.data.User
 import com.lakehub.adherenceapp.repositories.UserRepository
-import com.lakehub.adherenceapp.utils.USER_CLIENT
 import com.lakehub.adherenceapp.utils.showWarning
 import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.coroutines.launch
@@ -251,7 +248,7 @@ class AuthActivity : AppCompatActivity() {
                 if(user == null) {
                     FirebaseAuth.getInstance().signOut()
                     Log.e("TAG", "Current user was missing in database.")
-                    showWarning(getString(R.string.invalid_access_key))
+                    showWarning(getString(R.string.invalid_phone_nr))
                 } else {
                     //Store user image locally if the user has an user image
                     user.image?.let { userRepository.storeUserImageLocally(this@AuthActivity) }

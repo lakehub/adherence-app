@@ -139,7 +139,7 @@ class ChvReportActivity : AppCompatActivity() {
         var clients = 0
 
         val docRef = FirebaseFirestore.getInstance().collection("reports")
-        docRef.whereEqualTo("chvAccessKey", UserRepository().userId)
+        docRef.whereEqualTo("chvUserId", UserRepository().userId)
             .whereEqualTo("date", selectedDateStr)
             .addSnapshotListener { querySnapshot, _ ->
                 if (querySnapshot!!.documents.isNotEmpty()) {

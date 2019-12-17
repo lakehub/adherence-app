@@ -12,9 +12,11 @@ import android.graphics.Color
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.lakehub.adherenceapp.R
+import com.lakehub.adherenceapp.activities.chv.ChvDashboardActivity
 import com.lakehub.adherenceapp.activities.client.ClientHomeActivity
-import com.lakehub.adherenceapp.activities.startup.LoginActivity
+import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.app.MainApplication
+import com.lakehub.adherenceapp.data.Role
 import java.util.concurrent.ThreadLocalRandom
 
 
@@ -101,12 +103,7 @@ class MyNotificationManager(context: Context) {
          *  But for your project you can customize it as you want
          * */
 
-        /*val resultIntent = if (AppPreferences.accountType == USER_CLIENT) {
-            Intent(context, ClientHomeActivity::class.java)
-        } else {
-            Intent(context, ChvDashboardActivity::class.java)
-        }*/
-        val resultIntent = Intent(context, LoginActivity::class.java)
+        val resultIntent = Intent(context, if(AppPreferences.role == Role.CHV) ChvDashboardActivity::class.java else ClientHomeActivity::class.java)
 
         /*
          *  Now we will create a pending intent

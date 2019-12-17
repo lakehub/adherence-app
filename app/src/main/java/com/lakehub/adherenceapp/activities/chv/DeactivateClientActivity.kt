@@ -17,7 +17,7 @@ class DeactivateClientActivity : AppCompatActivity() {
 
         progress_bar.makeGone()
 
-        val accessKey = intent.extras?.getString("accessKey")
+        val userId = intent.extras?.getString("userId")
 
         tv_cancel.setOnClickListener {
             finish()
@@ -26,7 +26,7 @@ class DeactivateClientActivity : AppCompatActivity() {
         tv_ok.setOnClickListener {
             progress_bar.makeVisible()
             FirebaseFirestore.getInstance().collection("users")
-                .document(accessKey!!)
+                .document(userId!!)
                 .update("active", false)
             showSuccess(getString(R.string.client_deactivate_success))
             finish()

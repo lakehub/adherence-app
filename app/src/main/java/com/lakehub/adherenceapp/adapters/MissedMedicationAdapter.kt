@@ -92,7 +92,7 @@ class MissedMedicationAdapter(val context: Context, private val alarms: ArrayLis
                             if (it.isComplete) {
                                 val followUpRef = FirebaseFirestore.getInstance().collection("follow_ups")
                                 followUpRef.whereEqualTo("date", alarm.date)
-                                    .whereEqualTo("clientAccessKey", alarm.userId)
+                                    .whereEqualTo("clientUserId", alarm.userId)
                                     .whereEqualTo("marked", false)
                                     .get()
                                     .addOnCompleteListener {qs ->

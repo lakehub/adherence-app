@@ -22,7 +22,7 @@ class SingleMissedReminderActivity : AppCompatActivity() {
     private var tonePath: String? = null
     private var docId: String? = null
     private var fromDate: String? = null
-    private var clientAccessKey: String? = null
+    private var clientUserId: String? = null
     private var description = ""
     private var hospital: String? = null
     private var isDrug = false
@@ -41,7 +41,7 @@ class SingleMissedReminderActivity : AppCompatActivity() {
 
         docId = intent.getStringExtra("docId")
         fromDate = intent.getStringExtra("date")
-        clientAccessKey = intent.getStringExtra("clientAccessKey")
+        clientUserId = intent.getStringExtra("clientUserId")
         description = intent.getStringExtra("description")!!
         hospital = intent.getStringExtra("hospital")
         tonePath = intent.getStringExtra("tonePath")
@@ -205,7 +205,7 @@ class SingleMissedReminderActivity : AppCompatActivity() {
                 cl_client.makeVisible()
                 appointment_container.makeVisible()
                 appointment_divider.makeVisible()
-                tv_client.text = clientAccessKey
+                tv_client.text = clientUserId
             }
             else -> {
                 cl_hospital.makeVisible()
