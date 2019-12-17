@@ -137,7 +137,6 @@ class ChvReportActivity : AppCompatActivity() {
     private fun fetchData() {
         showProgress()
         var clients = 0
-        val userId = UserRepository().userId
 
         val docRef = FirebaseFirestore.getInstance().collection("reports")
         docRef.whereEqualTo("chvAccessKey", UserRepository().userId)

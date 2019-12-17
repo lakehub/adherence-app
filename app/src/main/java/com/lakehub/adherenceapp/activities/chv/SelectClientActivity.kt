@@ -78,6 +78,7 @@ class SelectClientActivity : AppCompatActivity() {
 
                     for (document in querySnapshot.documents) {
                         val client = document.toObject(Client::class.java)
+                        client?.userId = document.id
                         clients.add(client!!)
                     }
 
