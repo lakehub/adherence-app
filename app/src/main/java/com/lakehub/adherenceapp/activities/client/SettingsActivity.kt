@@ -16,16 +16,21 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -47,6 +52,7 @@ import kotlinx.android.synthetic.main.app_bar_client_home.toolbar
 import kotlinx.android.synthetic.main.app_bar_settings.view.iv_back
 import kotlinx.android.synthetic.main.content_settings.*
 import kotlinx.android.synthetic.main.normal_toast.view.*
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 
@@ -58,6 +64,7 @@ class SettingsActivity : AppCompatActivity() {
     private val userRef = FirebaseFirestore.getInstance().collection("users")
         .document(UserRepository().userId)
     private var myForResult = false
+    private var user: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +84,15 @@ class SettingsActivity : AppCompatActivity() {
             uploadImage()
         }
 
+        use_access_key_switch.setOnCheckedChangeListener { _, checked ->
+            if(user?.hasAccessKey == checked) return@setOnCheckedChangeListener
+
+            if(checked)
+                showEditAccesssKeyDialog()
+            else
+                disableAccessKey()
+        }
+
         cl_logout.setOnClickListener {
             AppPreferences.profileImg = null
             emptyDirectory("user_images")
@@ -84,6 +100,7 @@ class SettingsActivity : AppCompatActivity() {
 
             this.finishAndRemoveTask()
         }
+
 
         userRef.get()
             .addOnCompleteListener {
@@ -196,6 +213,16 @@ class SettingsActivity : AppCompatActivity() {
             }
 
         })
+
+        lifecycleScope.launch {
+            try {
+                user = UserRepository().getCurrentUser()
+                use_access_key_switch.isChecked = user!!.hasAccessKey
+                use_access_key_switch.visibility = View.VISIBLE
+            }catch (e: Exception) {
+                Log.e("SettingsActivity", "Failed to load user: ${e.message}")
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -240,6 +267,7 @@ class SettingsActivity : AppCompatActivity() {
             val cropError: Throwable? = UCrop.getError(data!!)
             Log.d("TAG", "crop error: $cropError")
         }
+
     }
 
     private fun choosePhotoFromGallery() {
@@ -309,4 +337,42 @@ class SettingsActivity : AppCompatActivity() {
         set(value) {
             myForResult = value
         }
+
+    private fun showEditAccesssKeyDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setCancelable(true)
+        val inflater: LayoutInflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.content_edit_access_key, null)
+        alertDialogBuilder.setView(dialogView)
+        val alertDialog = alertDialogBuilder.create()
+
+        val accessKeyEditText = dialogView.findViewById<TextInputEditText>(R.id.input_access_key)
+        val cancelView = dialogView.findViewById<TextView>(R.id.tv_cancel)
+        val okView = dialogView.findViewById<TextView>(R.id.tv_ok)
+
+        accessKeyEditText.setText(user?.accessKey ?: "")
+
+        cancelView.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        accessKeyEditText.doAfterTextChanged {
+            okView.isEnabled = it?.isNotEmpty() ?: false
+        }
+
+        okView.setOnClickListener {
+            alertDialog.dismiss()
+            user!!.hasAccessKey = true
+            user!!.accessKey = accessKeyEditText.text.toString()
+            UserRepository().updateAccessKey(true, user!!.accessKey)
+        }
+
+        alertDialog.show()
+    }
+
+    private fun disableAccessKey() {
+        lifecycleScope.launch {
+            UserRepository().updateAccessKey(false)
+        }
+    }
 }

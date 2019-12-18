@@ -133,12 +133,19 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     if (UserRepository().isAuthenticated) {
                         lifecycleScope.launch {
-                            val user = UserRepository().getCurrentUser()
-                            val activityType = if(user?.role == Role.CHV) ChvDashboardActivity::class.java else ClientHomeActivity::class.java
-                            startActivity(Intent(this@MainActivity, activityType))
+                            val user = UserRepository().getCurrentUser()!!
+                            if(user.hasAccessKey) {
+                                startActivity(Intent(this@MainActivity, AccessKeyActivity::class.java))
+                            } else {
+                                val activityType = if(user.role == Role.CHV) ChvDashboardActivity::class.java else ClientHomeActivity::class.java
+                                startActivity(Intent(this@MainActivity, activityType))
+                            }
+
+                            finish()
                         }
                     } else {
-                        startActivity(Intent(this@MainActivity, AuthActivity::class.java))
+                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                        finish()
                     }
                 }
 

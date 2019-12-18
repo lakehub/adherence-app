@@ -157,6 +157,9 @@
     <string name="snooze">Snooze</string>
     <string name="remaining">(%1$d remaining)</string>
     <string name="med_type">Medication Type</string>
+    <string name="enter_access_key">Enter Access Key Here</string>
+    <string name="invalid_access_key">Invalid access key</string>
+    <string name="access_key">Access Key</string>
     <string-array name="med_type_array">
         <item>Treatment</item>
         <item>ARV</item>
@@ -216,6 +219,7 @@
     <string name="sample_name_short">Chris</string>
     <string name="mark_follow_up_success">Client marked for follow up successfully</string>
     <string name="user_photo">User Photo</string>
+    <string name="use_access_key">Use access key</string>
     <string name="browse">Browse</string>
     <string name="username">Username</string>
     <string name="img_update_success">Profile image updated successfully</string>
@@ -256,7 +260,7 @@
     <string name="sending">Sending</string>
     <string name="reminder">Reminder</string>
     <string name="missed_reminder">Missed Reminder</string>
-<!--    <string name="i_have_no_access_key"><![CDATA[<a href="https://lakehub.co.ke">I have no Access Key</a>]]></string>-->
+    <!--    <string name="i_have_no_access_key"><![CDATA[<a href="https://lakehub.co.ke">I have no Access Key</a>]]></string>-->
     <string name="i_have_no_access_key"><u>I have no Access Key</u></string>
     <string name="no_browser_installed">No browser app installed</string>
 </resources>

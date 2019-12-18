@@ -2,9 +2,15 @@ package com.lakehub.adherenceapp.activities.startup
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.PhoneAuthCredential
 import com.lakehub.adherenceapp.R
 import com.lakehub.adherenceapp.activities.chv.ChvDashboardActivity
 import com.lakehub.adherenceapp.activities.client.ClientHomeActivity
@@ -12,7 +18,10 @@ import com.lakehub.adherenceapp.adapters.TutorialsPagerAdapter
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.data.Role
 import com.lakehub.adherenceapp.repositories.UserRepository
+import com.lakehub.adherenceapp.utils.showWarning
 import kotlinx.android.synthetic.main.activity_tutorial.*
+import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class TutorialActivity : AppCompatActivity() {
 
@@ -54,18 +63,10 @@ class TutorialActivity : AppCompatActivity() {
         })
 
         btn_next.setOnClickListener {
-
             if (view_pager.currentItem <= 1) {
                 view_pager.currentItem = view_pager.currentItem + 1
             } else {
-                AppPreferences.firstRun = false
-                if (UserRepository().isAuthenticated) {
-                    val intent = Intent(this, if(AppPreferences.role == Role.CHV) ChvDashboardActivity::class.java else ClientHomeActivity::class.java)
-                    startActivity(intent)
-                } else {
-                    startActivity(Intent(this, AuthActivity::class.java))
-                }
-                finish()
+                finishTutorial()
             }
         }
 
@@ -73,6 +74,32 @@ class TutorialActivity : AppCompatActivity() {
             R.color.colorPrimaryDark
         )
     }
+
+
+    private fun finishTutorial() {
+        AppPreferences.firstRun = false
+
+        lifecycleScope.launch {
+
+            val userRepository = UserRepository()
+            if (userRepository.isAuthenticated) {
+
+                val user = userRepository.getCurrentUser()
+                if(user?.hasAccessKey == true) {
+                    startActivity(Intent(this@TutorialActivity, AccessKeyActivity::class.java))
+                } else {
+                    val activityType = if(user?.role == Role.CHV) ChvDashboardActivity::class.java else ClientHomeActivity::class.java
+                    startActivity(Intent(this@TutorialActivity, activityType))
+                }
+
+            } else {
+                startActivity(Intent(this@TutorialActivity, LoginActivity::class.java))
+            }
+
+            finish()
+        }
+    }
+
 
     private fun unSelectAllDots () {
         dot_1.setBackgroundResource(R.drawable.circular_bg_green_xs)

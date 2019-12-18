@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        package="com.lakehub.adherenceapp">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.lakehub.adherenceapp">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -12,146 +12,151 @@
     <uses-permission android:name="com.huawei.permission.external_app_settings.USE_COMPONENT" />
 
     <application
-            android:name=".app.MainApplication"
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
-            android:supportsRtl="true"
-            android:theme="@style/MaterialTheme.NoActionBar"
-            tools:ignore="GoogleAppIndexingWarning">
+        android:name=".app.MainApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/MaterialTheme.NoActionBar"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
-                android:name=".activities.chv.SingleMissedReminderActivity"
-                android:theme="@style/MaterialThemeChv" />
+            android:name=".activities.startup.AccessKeyActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme"></activity>
         <activity
-                android:name=".activities.chv.SingleReminderActivity"
-                android:theme="@style/MaterialThemeChv" />
-        <activity android:name=".activities.startup.AuthActivity" />
+            android:name=".activities.chv.SingleMissedReminderActivity"
+            android:theme="@style/MaterialThemeChv" />
+        <activity
+            android:name=".activities.chv.SingleReminderActivity"
+            android:theme="@style/MaterialThemeChv" />
+        <activity android:name=".activities.startup.LoginActivity" />
         <activity android:name=".activities.client.AppointmentsActivity" />
         <activity android:name=".activities.client.SingleMissedAlarmActivity" />
         <activity android:name=".activities.client.SingleAlarmActivity" />
         <activity android:name=".activities.client.MissedAlarmActivity" />
         <activity
-                android:name=".activities.chv.MakeAppointmentActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.chv.MakeAppointmentActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name=".activities.startup.EnableAutoStartActivity"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.startup.EnableAutoStartActivity"
+            android:theme="@style/MaterialTheme.NoActionBar" />
 
         <service
-                android:name=".services.BootCompleteService"
-                android:enabled="true"
-                android:exported="false" />
+            android:name=".services.BootCompleteService"
+            android:enabled="true"
+            android:exported="false" />
 
         <activity
-                android:name=".activities.chv.ChvReportActivity"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.chv.ChvReportActivity"
+            android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name=".activities.chv.ChvProfileActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.chv.ChvProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name="com.yalantis.ucrop.UCropActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name=".activities.chv.ClientAppointmentsActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.chv.ClientAppointmentsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name=".activities.chv.FollowUpActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.chv.FollowUpActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name=".activities.chv.EditChvReminderActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.chv.EditChvReminderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
 
         <meta-data
-                android:name="google_analytics_adid_collection_enabled"
-                android:value="false" />
+            android:name="google_analytics_adid_collection_enabled"
+            android:value="false" />
         <meta-data
-                android:name="firebase_analytics_collection_deactivated"
-                android:value="true" />
+            android:name="firebase_analytics_collection_deactivated"
+            android:value="true" />
 
         <activity
-                android:name=".activities.chv.DeactivateClientActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/Theme.AppCompat.Translucent" />
+            android:name=".activities.chv.DeactivateClientActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Translucent" />
         <activity
-                android:name=".activities.chv.EditClientActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
-
-        <receiver
-                android:name=".receivers.ChvPlaceReceiver"
-                android:enabled="true"
-                android:exported="false" />
-
-        <activity
-                android:name=".activities.chv.ChvReminderActivity"
-                android:noHistory="true"
-                android:screenOrientation="portrait"
-                android:showOnLockScreen="true"
-                android:theme="@style/Theme.AppCompat.Translucent"
-                android:excludeFromRecents="true"/>
+            android:name=".activities.chv.EditClientActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
 
         <receiver
-                android:name=".receivers.ChvReminderReceiver"
-                android:enabled="true"
-                android:exported="false" />
+            android:name=".receivers.ChvPlaceReceiver"
+            android:enabled="true"
+            android:exported="false" />
 
         <activity
-                android:name=".activities.chv.SelectClientActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
-        <activity
-                android:name=".activities.chv.AddClientActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
-        <activity
-                android:name=".activities.chv.ClientsActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
-        <activity
-                android:name=".activities.chv.AddChvReminderActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
-        <activity
-                android:name=".activities.client.AlarmActivity"
-                android:noHistory="true"
-                android:screenOrientation="portrait"
-                android:showOnLockScreen="true"
-                android:theme="@style/Theme.AppCompat.Translucent"
-                android:excludeFromRecents="true" />
-        <activity
-                android:name=".activities.client.CongratulationsActivity"
-                android:noHistory="true"
-                android:screenOrientation="portrait"
-                android:showOnLockScreen="true"
-                android:theme="@style/Theme.AppCompat.Translucent" />
-        <activity
-                android:name=".activities.client.CancelAlarmActivity"
-                android:noHistory="true"
-                android:screenOrientation="portrait"
-                android:theme="@style/Theme.AppCompat.Translucent"
-                android:excludeFromRecents="true"/>
+            android:name=".activities.chv.ChvReminderActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
+            android:theme="@style/Theme.AppCompat.Translucent" />
 
         <receiver
-                android:name=".receivers.ConfirmAttendPlaceReceiver"
-                android:enabled="true"
-                android:exported="false" />
+            android:name=".receivers.ChvReminderReceiver"
+            android:enabled="true"
+            android:exported="false" />
 
         <activity
-                android:name=".activities.client.EditAlarmActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.chv.SelectClientActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
+        <activity
+            android:name=".activities.chv.AddClientActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
+        <activity
+            android:name=".activities.chv.ClientsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
+        <activity
+            android:name=".activities.chv.AddChvReminderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
+        <activity
+            android:name=".activities.client.AlarmActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
+            android:theme="@style/Theme.AppCompat.Translucent" />
+        <activity
+            android:name=".activities.client.CongratulationsActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
+            android:theme="@style/Theme.AppCompat.Translucent" />
+        <activity
+            android:name=".activities.client.CancelAlarmActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Translucent" />
 
         <receiver
-                android:name=".receivers.BootCompletedReceiver"
-                android:enabled="true"
-                android:exported="true">
+            android:name=".receivers.ConfirmAttendPlaceReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.client.EditAlarmActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
+
+        <receiver
+            android:name=".receivers.BootCompletedReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
@@ -163,59 +168,54 @@
         </receiver>
 
         <service
-                android:name=".services.MyService"
-                android:permission="android.permission.BIND_JOB_SERVICE" />
+            android:name=".services.MyService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
-                android:name=".services.BootCompletedService"
-                android:enabled="true"
-                android:exported="true" />
+            android:name=".services.BootCompletedService"
+            android:enabled="true"
+            android:exported="true" />
 
         <activity
-                android:name=".activities.client.ConfirmPopUpActivity"
-                android:noHistory="true"
-                android:screenOrientation="portrait"
-                android:showOnLockScreen="true"
-                android:theme="@style/Theme.AppCompat.Translucent"
-                android:excludeFromRecents="true" />
+            android:name=".activities.client.ConfirmPopUpActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
+            android:theme="@style/Theme.AppCompat.Translucent" />
         <activity
-                android:name=".activities.client.SettingsActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.client.SettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name=".activities.client.AddAlarmActivity"
-                android:launchMode="singleTop"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.client.AddAlarmActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name=".activities.chv.ChvDashboardActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.chv.ChvDashboardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name=".activities.client.ClientHomeActivity"
-                android:launchMode="singleTop"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.client.ClientHomeActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name=".activities.startup.SelectAccountTypeActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.startup.SelectAccountTypeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name=".activities.startup.LoginActivity"
-                android:launchMode="singleTop"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme" />
+            android:name=".activities.startup.TutorialActivity"
+            android:label="@string/title_activity_tutorial"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name=".activities.startup.TutorialActivity"
-                android:label="@string/title_activity_tutorial"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
+            android:name=".activities.startup.RegisterActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.NoActionBar" />
         <activity
-                android:name=".activities.startup.RegisterActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/MaterialTheme.NoActionBar" />
-        <activity
-                android:name=".activities.startup.MainActivity"
-                android:screenOrientation="portrait">
+            android:name=".activities.startup.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -224,9 +224,9 @@
         </activity>
 
         <receiver
-                android:name=".receivers.AlarmReceiver"
-                android:enabled="true"
-                android:exported="false" />
+            android:name=".receivers.AlarmReceiver"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

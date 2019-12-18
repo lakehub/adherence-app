@@ -32,12 +32,12 @@ import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.data.Role
 import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.showWarning
-import kotlinx.android.synthetic.main.activity_auth.*
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
-class AuthActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
     var canResend = false
     val handler = Handler()
     private lateinit var alertDialog: AlertDialog
@@ -57,7 +57,7 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_auth)
+        setContentView(R.layout.activity_login)
 
         alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setCancelable(false)
@@ -249,22 +249,27 @@ class AuthActivity : AppCompatActivity() {
                     FirebaseAuth.getInstance().signOut()
                     Log.e("TAG", "Current user was missing in database.")
                     showWarning(getString(R.string.invalid_phone_nr))
-                } else {
-                    //Store user image locally if the user has an user image
-                    user.image?.let { userRepository.storeUserImageLocally(this@AuthActivity) }
-                    AppPreferences.chvUserId = user.chvUserId
-                    AppPreferences.role = user.role ?: Role.CLIENT
-
-                    alertDialog.dismiss()
-                    val activityType = if(user.role == Role.CHV) ChvDashboardActivity::class.java else ClientHomeActivity::class.java
-                    startActivity(Intent(this@AuthActivity, activityType))
-                    finish()
+                    return@launch
                 }
 
+                //Store user image locally if the user has an user image
+                user.image?.let { userRepository.storeUserImageLocally(this@LoginActivity) }
+                AppPreferences.chvUserId = user.chvUserId
+                AppPreferences.role = user.role ?: Role.CLIENT
+                alertDialog.dismiss()
+
+                if(user.hasAccessKey) {
+                    startActivity(Intent(this@LoginActivity, AccessKeyActivity::class.java))
+                } else {
+                    val activityType = if(user.role == Role.CHV) ChvDashboardActivity::class.java else ClientHomeActivity::class.java
+                    startActivity(Intent(this@LoginActivity, activityType))
+                }
+
+                finish()
             } catch (e: Exception) {
                 if (e is FirebaseAuthInvalidCredentialsException) {
                     // The verification code entered was invalid
-                    Toast.makeText(this@AuthActivity, getString(R.string.invalid_code), Toast.LENGTH_SHORT)
+                    Toast.makeText(this@LoginActivity, getString(R.string.invalid_code), Toast.LENGTH_SHORT)
                         .show()
                 }
             }

@@ -8,5 +8,7 @@ data class User (
     var points: Int = 0,
     var clients: Int = 0,
     var role: Role? = null,
-    var name: String? = null
+    var name: String? = null,
+    var hasAccessKey: Boolean = false,
+    var accessKey: String? = null
 )

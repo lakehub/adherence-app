@@ -33,11 +33,6 @@ class UserRepository {
 
     val userImageFilename get() = "$userId.jpeg"
 
-    suspend fun hasAccess(phoneNumber: String) : Boolean {
-        val doc = db.collection(USER_COLLECTION_REF).document(phoneNumber).get().await()
-        return  doc.exists()
-    }
-
     suspend fun signIn(credential: AuthCredential) {
         auth.signInWithCredential(credential).await()
     }
@@ -45,6 +40,10 @@ class UserRepository {
     suspend fun getCurrentUser() : User? {
         val snapshot = db.collection(USER_COLLECTION_REF).document(userId).get().await()
         return snapshot.toObject(User::class.java)
+    }
+
+    suspend fun validateAccessKey(accessKey: String): Boolean {
+        return getCurrentUser()?.accessKey?.equals(accessKey, ignoreCase = true) ?: false
     }
 
     fun storeUserImageLocally(context: Context) {
@@ -57,6 +56,14 @@ class UserRepository {
             )
             val file = File(mDirectory, userImageFilename)
             imgRef.getFile(file)
+    }
+
+    fun updateAccessKey(hasAccessKey: Boolean, accessKey: String? = null) {
+        val data = mutableMapOf<String, Any>(User::hasAccessKey.name to hasAccessKey)
+        if(hasAccessKey && accessKey != null)
+            data[User::accessKey.name] = accessKey
+
+        db.collection(USER_COLLECTION_REF).document(userId).update(data)
     }
 
 

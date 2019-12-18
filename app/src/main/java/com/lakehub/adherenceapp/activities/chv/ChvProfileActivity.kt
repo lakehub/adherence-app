@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.ImageDecoder
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
@@ -17,15 +18,21 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -38,13 +45,18 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.lakehub.adherenceapp.*
 import com.lakehub.adherenceapp.app.AppPreferences
 import com.lakehub.adherenceapp.app.MainApplication
+import com.lakehub.adherenceapp.data.User
 import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.*
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_chv_profile.*
 import kotlinx.android.synthetic.main.activity_chv_profile.view.*
-import kotlinx.android.synthetic.main.content_chv_profile.*
+import kotlinx.android.synthetic.main.content_chv_profile.cl_logout
+import kotlinx.android.synthetic.main.content_chv_profile.edit_text
+import kotlinx.android.synthetic.main.content_chv_profile.tv_browse
+import kotlinx.android.synthetic.main.content_chv_profile.use_access_key_switch
 import kotlinx.android.synthetic.main.normal_toast.view.*
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 
@@ -55,6 +67,7 @@ class ChvProfileActivity : AppCompatActivity() {
     private var filePath: String? = null
     private lateinit var destinationUri: Uri
     private var inProgress = false
+    private var user: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +85,38 @@ class ChvProfileActivity : AppCompatActivity() {
 
         cl_refresh.setOnClickListener {
             uploadImage()
+        }
+
+        val switchStatesThumb =
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf(-android.R.attr.state_checked))
+
+
+        val switchColorsThumb = intArrayOf(
+            ContextCompat.getColor(this, R.color.colorRed),
+            ContextCompat.getColor(this, R.color.colorGreen)
+        )
+        val switchColorListThumb = ColorStateList(switchStatesThumb, switchColorsThumb)
+
+        val switchStatesTrack =
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf(-android.R.attr.state_checked))
+
+
+        val switchColorsTrack = intArrayOf(
+            ContextCompat.getColor(this, R.color.colorGreen),
+            ContextCompat.getColor(this, R.color.colorRed)
+        )
+        val switchColorListTrack = ColorStateList(switchStatesTrack, switchColorsTrack)
+
+        use_access_key_switch.thumbTintList = switchColorListThumb
+        use_access_key_switch.trackTintList = switchColorListTrack
+
+        use_access_key_switch.setOnCheckedChangeListener { _, checked ->
+            if(user?.hasAccessKey == checked) return@setOnCheckedChangeListener
+
+            if(checked)
+                showEditAccesssKeyDialog()
+            else
+                disableAccessKey()
         }
 
         cl_logout.setOnClickListener {
@@ -177,6 +222,16 @@ class ChvProfileActivity : AppCompatActivity() {
             }
 
         })
+
+        lifecycleScope.launch {
+            try {
+                user = UserRepository().getCurrentUser()
+                use_access_key_switch.isChecked = user!!.hasAccessKey
+                use_access_key_switch.visibility = View.VISIBLE
+            }catch (e: Exception) {
+                Log.e("SettingsActivity", "Failed to load user: ${e.message}")
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -280,5 +335,43 @@ class ChvProfileActivity : AppCompatActivity() {
             Log.d("TAG", "progress: ${100 * it.bytesTransferred}")
         }
 
+    }
+
+    private fun showEditAccesssKeyDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setCancelable(true)
+        val inflater: LayoutInflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.content_edit_access_key, null)
+        alertDialogBuilder.setView(dialogView)
+        val alertDialog = alertDialogBuilder.create()
+
+        val accessKeyEditText = dialogView.findViewById<TextInputEditText>(R.id.input_access_key)
+        val cancelView = dialogView.findViewById<TextView>(R.id.tv_cancel)
+        val okView = dialogView.findViewById<TextView>(R.id.tv_ok)
+
+        accessKeyEditText.setText(user?.accessKey ?: "")
+
+        cancelView.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        accessKeyEditText.doAfterTextChanged {
+            okView.isEnabled = it?.isNotEmpty() ?: false
+        }
+
+        okView.setOnClickListener {
+            alertDialog.dismiss()
+            user!!.hasAccessKey = true
+            user!!.accessKey = accessKeyEditText.text.toString()
+            UserRepository().updateAccessKey(true, user!!.accessKey)
+        }
+
+        alertDialog.show()
+    }
+
+    private fun disableAccessKey() {
+        lifecycleScope.launch {
+            UserRepository().updateAccessKey(false)
+        }
     }
 }
