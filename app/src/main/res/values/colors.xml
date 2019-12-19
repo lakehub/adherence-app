@@ -7,7 +7,7 @@
     <color name="colorPrimaryTranslucent">#2C5F20</color>
     <color name="colorPrimaryDark">#004116</color>
     <color name="colorBlackTranslucent">#80000000</color>
-    <color name="colorAccent">@color/colorPrimary</color>
+    <color name="colorAccent">@color/colorWhite</color>
     <color name="colorNormal">@color/colorPrimary</color>
     <color name="warningColor">#FA812F</color>
     <color name="errorColor">#99FA4032</color>

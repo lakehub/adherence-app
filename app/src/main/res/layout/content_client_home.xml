@@ -1,192 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <ProgressBar
-                android:id="@+id/progress_bar"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:indeterminate="true"
-                android:indeterminateDuration="1000"
-                android:theme="@style/LinearProgress"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/progress_bar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:indeterminate="true"
+            android:indeterminateDuration="1000"
+            android:theme="@style/LinearProgress"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-                android:id="@+id/iv_prev"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/linearLayout"
-                app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
-                android:contentDescription="@string/img_dsc"
-                android:src="@drawable/chevron_left"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="10dp"
-                android:tint="@color/colorBlack"/>
+            android:id="@+id/iv_prev"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/img_dsc"
+            android:focusable="true"
+            android:padding="10dp"
+            android:src="@drawable/chevron_left"
+            android:tint="@color/colorBlack"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout" />
 
         <ImageView
-                android:id="@+id/iv_next"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/linearLayout"
-                app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
-                android:contentDescription="@string/img_dsc"
-                android:src="@drawable/chevron_right"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="10dp"
-                android:tint="@color/colorBlack"/>
+            android:id="@+id/iv_next"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/img_dsc"
+            android:focusable="true"
+            android:padding="10dp"
+            android:src="@drawable/chevron_right"
+            android:tint="@color/colorBlack"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout" />
 
         <LinearLayout
-                android:id="@+id/linearLayout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintStart_toEndOf="@+id/iv_prev"
-                app:layout_constraintEnd_toStartOf="@+id/iv_next"
-                app:layout_constraintTop_toBottomOf="@+id/progress_bar">
+            android:id="@+id/linearLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/iv_next"
+            app:layout_constraintStart_toEndOf="@+id/iv_prev"
+            app:layout_constraintTop_toBottomOf="@+id/progress_bar">
 
             <include
-                    android:id="@+id/day_view"
-                    layout="@layout/calendar_day_legend"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp" />
+                android:id="@+id/day_view"
+                layout="@layout/calendar_day_legend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp" />
 
             <com.kizitonwose.calendarview.CalendarView
-                    android:id="@+id/calendar_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cv_dayViewResource="@layout/calendar_day"
-                    app:cv_inDateStyle="allMonths"
-                    app:cv_orientation="horizontal"
-                    app:cv_outDateStyle="endOfRow"
-                    app:cv_scrollMode="paged" />
+                android:id="@+id/calendar_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cv_dayViewResource="@layout/calendar_day"
+                app:cv_inDateStyle="allMonths"
+                app:cv_orientation="horizontal"
+                app:cv_outDateStyle="endOfRow"
+                app:cv_scrollMode="paged" />
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_upcoming_alarms"
+            android:id="@+id/cl_upcoming_alarms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_upcoming"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout">
-
-            <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view_upcoming"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                    android:id="@+id/tv_no_alarm"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/product_sans_regular"
-                    android:gravity="center"
-                    android:padding="20dp"
-                    android:text="@string/no_alarm"
-                    android:textSize="20sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:id="@+id/tv_no_alarm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/product_sans_regular"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="@string/no_alarm"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_missed_alarms"
+            android:id="@+id/cl_missed_alarms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cl_upcoming_alarms">
+
+            <TextView
+                android:id="@+id/tv_missed_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/materialColorGray"
+                android:fontFamily="@font/product_sans_regular"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/missed_alarms"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_missed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cl_upcoming_alarms">
+                app:layout_constraintTop_toBottomOf="@+id/tv_missed_title" />
 
             <TextView
-                    android:id="@+id/tv_missed_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/materialColorGray"
-                    android:fontFamily="@font/product_sans_regular"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:text="@string/missed_alarms"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="20sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view_missed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_missed_title" />
-
-            <TextView
-                    android:id="@+id/tv_no_missed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/product_sans_regular"
-                    android:gravity="center"
-                    android:padding="20dp"
-                    android:text="@string/no_missed_alarm"
-                    android:textSize="20sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_missed_title" />
+                android:id="@+id/tv_no_missed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/product_sans_regular"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="@string/no_missed_alarm"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_missed_title" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/clTakenAlarms"
+            android:id="@+id/clTakenAlarms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cl_missed_alarms">
+
+            <TextView
+                android:id="@+id/tvTakenTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/materialColorGray"
+                android:fontFamily="@font/product_sans_regular"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/taken_med"
+                android:textColor="@color/colorBlue"
+                android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cl_missed_alarms">
-
-            <TextView
-                    android:id="@+id/tvTakenTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/materialColorGray"
-                    android:fontFamily="@font/product_sans_regular"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:text="@string/taken_med"
-                    android:textColor="@color/colorBlue"
-                    android:textSize="20sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewTaken"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="100dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvTakenTitle" />
+                android:id="@+id/recyclerViewTaken"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="100dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvTakenTitle" />
 
             <TextView
-                    android:id="@+id/tvNoTaken"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/product_sans_regular"
-                    android:gravity="center"
-                    android:padding="20dp"
-                    android:text="@string/no_taken"
-                    android:textSize="20sp"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvTakenTitle" />
+                android:id="@+id/tvNoTaken"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/product_sans_regular"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="@string/no_taken"
+                android:textSize="20sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvTakenTitle" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

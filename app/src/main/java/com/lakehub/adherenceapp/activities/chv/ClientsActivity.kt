@@ -1,5 +1,6 @@
 package com.lakehub.adherenceapp.activities.chv
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -49,7 +50,7 @@ class ClientsActivity : AppCompatActivity() {
         }
 
         add_fab.setOnClickListener {
-//            startActivity(Intent(this, AddClientActivity::class.java))
+            startActivity(Intent(this, AddClientActivity::class.java))
         }
 
         myAdapter = ClientAdapter(this, clients)

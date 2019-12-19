@@ -95,7 +95,7 @@ class AddClientActivity : AppCompatActivity() {
                                             .addOnCompleteListener { task ->
                                                 if (task.isComplete) {
                                                     hideProgress()
-                                                    val chvDoc = db.collection("users")
+                                                    /*val chvDoc = db.collection("users")
                                                         .document(UserRepository().userId)
 
                                                     chvDoc.get()
@@ -107,7 +107,7 @@ class AddClientActivity : AppCompatActivity() {
                                                                         .toInt().plus(1)
                                                                 )
                                                             }
-                                                        }
+                                                        }*/
                                                     showSuccess(getString(R.string.client_add_success))
                                                     finish()
                                                 }
