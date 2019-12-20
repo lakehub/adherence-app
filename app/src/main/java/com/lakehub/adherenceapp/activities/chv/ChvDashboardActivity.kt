@@ -7,6 +7,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -27,7 +28,7 @@ import com.kizitonwose.calendarview.model.InDateStyle
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarview.utils.yearMonth
-import com.lakehub.adherenceapp.*
+import com.lakehub.adherenceapp.R
 import com.lakehub.adherenceapp.adapters.ChvMissedReminderAdapter
 import com.lakehub.adherenceapp.adapters.ChvReminderAdapter
 import com.lakehub.adherenceapp.adapters.TakenReminderAdapter
@@ -36,7 +37,6 @@ import com.lakehub.adherenceapp.app.MainApplication
 import com.lakehub.adherenceapp.data.ChvReminder
 import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.*
-import com.lakehub.adherenceapp.utils.setTextColorRes
 import kotlinx.android.synthetic.main.activity_chv_dashboard.*
 import kotlinx.android.synthetic.main.app_bar_chv_dashboard.*
 import kotlinx.android.synthetic.main.app_bar_chv_dashboard.view.*
@@ -225,10 +225,8 @@ class ChvDashboardActivity : AppCompatActivity() {
                             selectedDateStr = selectedDate.toString()
                             selected = true
 
-                            fetchByDate()
-
+                            fetchByDate(true)
                         }
-//                        toolbar.calendar_view.notifyDayChanged(day)
                     }
                 }
             }
@@ -323,7 +321,7 @@ class ChvDashboardActivity : AppCompatActivity() {
         selectedDateStr = selectedDate.toString()
         selected = true
 
-        fetchByDate()
+        fetchByDate(false)
     }
 
     override fun onResume() {
@@ -490,18 +488,16 @@ class ChvDashboardActivity : AppCompatActivity() {
             selectedDate = date
             oldDate?.let { calendar_view.notifyDateChanged(it) }
             calendar_view.notifyDateChanged(date)
-
         }
     }
 
-    private fun fetchByDate() {
+    private fun fetchByDate(isFromDateFilter: Boolean) {
         if (selectedDateStr != null) {
             showProgress()
             val userId = UserRepository().userId
 
             val alarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
                 .whereEqualTo("userId", userId)
-                .whereEqualTo("date", selectedDateStr)
                 .whereEqualTo("cancelled", false)
 
             alarmsRef.get()
@@ -518,12 +514,27 @@ class ChvDashboardActivity : AppCompatActivity() {
                         missedAlarmList.clear()
                         takenList.clear()
 
+                        val offset = TimeZone.getDefault().rawOffset
+                        val tz = DateTimeZone.forOffsetMillis(offset)
+                        val millis = DateTime.now(tz).millis
+
                         for (document in querySnapshot.documents) {
                             val alarm = document.toObject(ChvReminder::class.java)
 
-                            if (!alarm?.rang!! && alarm.date == selectedDateStr) {
-                                alarmList.add(alarm)
-                            } else if (alarm.missed) {
+                            val calendarNow: Calendar = Calendar.getInstance()
+                            calendarNow.timeInMillis = millis
+
+                            val calendarAlarm: Calendar = Calendar.getInstance()
+                            calendarAlarm.timeInMillis = alarm?.millis ?: 0
+
+                            if (!alarm?.rang!!) {
+                                /*if(isFromDateFilter && calendarNow.get(Calendar.DAY_OF_MONTH) <= calendarAlarm.get(Calendar.DAY_OF_MONTH))
+                                    continue*/
+
+                                if(alarm.date == selectedDateStr || alarm.repeatMode?.get(0) == 9)
+                                    alarmList.add(alarm)
+                            }
+                            else if (alarm.missed) {
                                 if (!alarm.cleaned) {
                                     missedAlarmList.add(alarm)
                                 }
@@ -596,6 +607,11 @@ class ChvDashboardActivity : AppCompatActivity() {
                         } else {
                             showTakenAlarms()
                         }
+
+                        if(isFromDateFilter){
+                            cl_missed_alarms.makeGone()
+                            clTakenAlarms.makeGone()
+                        }
                     } else {
                         hideAlarms()
                         hideMissedAlarms()
@@ -621,13 +637,11 @@ class ChvDashboardActivity : AppCompatActivity() {
             .whereEqualTo("rang", false)
             .whereGreaterThanOrEqualTo("millis", millis)
             .orderBy("millis", Query.Direction.ASCENDING)
-//            .limit(5)
 
         val missedAlarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
             .whereEqualTo("userId", userId)
             .whereEqualTo("missed", true)
             .orderBy("millis", Query.Direction.ASCENDING)
-//            .limit(5)
 
         val takenAlarmsRef = FirebaseFirestore.getInstance().collection("chv_reminders")
             .whereEqualTo("userId", userId)
@@ -635,13 +649,6 @@ class ChvDashboardActivity : AppCompatActivity() {
             .whereEqualTo("cancelled", false)
             .whereEqualTo("rang", true)
             .orderBy("millis", Query.Direction.ASCENDING)
-
-        /*alarmsRef.get()
-            .addOnCompleteListener {
-                if (it.isComplete) {
-                    hideProgress()
-                }
-            }*/
 
         alarmsRef.addSnapshotListener { querySnapshot, _ ->
             hideProgress()
@@ -651,8 +658,11 @@ class ChvDashboardActivity : AppCompatActivity() {
 
                     for (document in querySnapshot.documents) {
                         val alarm = document.toObject(ChvReminder::class.java)
-                        alarmList.add(alarm!!)
 
+                        /*if(alarm?.repeatMode?.get(0) == 9)
+                            alarmList.add(alarm)*/
+
+                        alarmList.add(alarm!!)
                     }
 
                     val sorted = alarmList.sortedWith(Comparator { o1, o2 ->

@@ -44,6 +44,17 @@ import kotlinx.android.synthetic.main.app_bar_client_home.view.*
 import kotlinx.android.synthetic.main.calendar_day.view.*
 import kotlinx.android.synthetic.main.content_client_home.*
 import kotlinx.android.synthetic.main.client_menu.*
+import kotlinx.android.synthetic.main.content_chv_dashboard.*
+import kotlinx.android.synthetic.main.content_client_home.clTakenAlarms
+import kotlinx.android.synthetic.main.content_client_home.cl_missed_alarms
+import kotlinx.android.synthetic.main.content_client_home.cl_upcoming_alarms
+import kotlinx.android.synthetic.main.content_client_home.progress_bar
+import kotlinx.android.synthetic.main.content_client_home.recyclerViewTaken
+import kotlinx.android.synthetic.main.content_client_home.recycler_view_missed
+import kotlinx.android.synthetic.main.content_client_home.recycler_view_upcoming
+import kotlinx.android.synthetic.main.content_client_home.tvNoTaken
+import kotlinx.android.synthetic.main.content_client_home.tv_no_alarm
+import kotlinx.android.synthetic.main.content_client_home.tv_no_missed
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
@@ -239,10 +250,9 @@ class ClientHomeActivity : AppCompatActivity() {
 
                             selectedDateStr = selectedDate.toString()
                             selected = true
-                            fetchByDate()
 
+                            fetchByDate(true)
                         }
-//                        calendar_view.notifyDayChanged(day)
                     }
                 }
             }
@@ -337,7 +347,7 @@ class ClientHomeActivity : AppCompatActivity() {
         selectedDateStr = selectedDate.toString()
         selected = true
 
-        fetchByDate()
+        fetchByDate(false)
 
     }
 
@@ -349,14 +359,13 @@ class ClientHomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchByDate() {
+    private fun fetchByDate(isFromDateFilter: Boolean) {
         if (selectedDateStr != null) {
             showProgress()
             val userId = UserRepository().userId
 
             val alarmsRef = FirebaseFirestore.getInstance().collection("alarms")
                 .whereEqualTo("userId", userId)
-                .whereEqualTo("date", selectedDateStr)
                 .whereEqualTo("cancelled", false)
 
             alarmsRef.get()
@@ -373,13 +382,28 @@ class ClientHomeActivity : AppCompatActivity() {
                         missedAlarmList.clear()
                         takenList.clear()
 
+                        val offset = TimeZone.getDefault().rawOffset
+                        val tz = DateTimeZone.forOffsetMillis(offset)
+                        val millis = DateTime.now(tz).millis
+
                         for (document in querySnapshot.documents) {
                             val alarm = document.toObject(Alarm::class.java)
                             alarm?.docId = document.id
 
-                            if (!alarm?.cancelled!! && !alarm.rang && alarm.date == selectedDateStr) {
-                                alarmList.add(alarm)
-                            } else if (alarm.missed) {
+                            val calendarNow: Calendar = Calendar.getInstance()
+                            calendarNow.timeInMillis = millis
+
+                            val calendarAlarm: Calendar = Calendar.getInstance()
+                            calendarAlarm.timeInMillis = alarm?.millis ?: 0
+
+                            if (!alarm?.rang!!) {
+                                /*if(isFromDateFilter && calendarNow.get(Calendar.DAY_OF_MONTH) <= calendarAlarm.get(Calendar.DAY_OF_MONTH))
+                                    continue*/
+
+                                if(alarm.date == selectedDateStr || alarm.repeatMode?.get(0) == 9)
+                                    alarmList.add(alarm)
+                            }
+                            else if (alarm.missed) {
                                 if (!alarm.cleaned) {
                                     missedAlarmList.add(alarm)
                                 }
@@ -456,6 +480,11 @@ class ClientHomeActivity : AppCompatActivity() {
                         hideAlarms()
                         hideMissedAlarms()
                         hideTakenAlarms()
+                    }
+
+                    if(isFromDateFilter){
+                        cl_missed_alarms.makeGone()
+                        clTakenAlarms.makeGone()
                     }
                 }
             }

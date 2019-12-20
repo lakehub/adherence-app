@@ -490,8 +490,9 @@ class AddChvReminderActivity : AppCompatActivity() {
                     toast.setGravity(Gravity.BOTTOM, 30, 30)
                     toast.duration = Toast.LENGTH_SHORT
                     toast.show()
-                } else {
-//                    showProgress()
+                }
+                else {
+                    // showProgress()
                     val id = ThreadLocalRandom.current().nextInt()
                     val db = FirebaseFirestore.getInstance()
                     val alarmsRef = db.collection("chv_reminders").document()

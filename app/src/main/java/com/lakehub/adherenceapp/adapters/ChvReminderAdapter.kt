@@ -74,6 +74,10 @@ class ChvReminderAdapter(val context: Context, private val alarms: ArrayList<Chv
             holder.timeTv.text = displayTime(alarm.dateTime)
         }
 
+        if(alarm.appointment){
+            holder.timeTv.text = displayDateTime(alarm.dateTime)
+        }
+
         if (holder.adapterPosition == 0) {
             holder.activeView.visibility = View.VISIBLE
         } else {

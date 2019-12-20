@@ -1,122 +1,127 @@
 <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="?selectableItemBackground">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
     <View
-            android:id="@+id/active_view"
-            android:layout_width="5dp"
-            android:layout_height="0dp"
-            android:background="@color/colorGreen"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"/>
+        android:id="@+id/active_view"
+        android:layout_width="5dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/colorGreen"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraint_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@+id/active_view"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="15dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
-            android:paddingEnd="20dp"
-            android:paddingStart="0dp"
-            app:layout_constraintBottom_toBottomOf="@+id/active_view"
-    >
+        android:id="@+id/constraint_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:paddingStart="0dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/active_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/active_view">
 
         <TextView
-                android:id="@+id/tv_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/circular_tv_bg"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:fontFamily="@font/product_sans_regular"
-                android:text="@string/two"
-                android:gravity="center"
-                android:textColor="@android:color/white"
-                android:visibility="visible"/>
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@+id/tv_count"
-                app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                    android:id="@+id/tv_dsc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:text="@string/hospital"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginStart="10dp"
-                    android:textColor="@android:color/white"
-            />
-
-            <TextView
-                    android:id="@+id/tv_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:text="@string/sample_time"
-                    app:layout_constraintStart_toStartOf="@+id/tv_dsc"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_dsc"
-                    android:textColor="@color/colorGrandis"
-                    app:layout_constraintBottom_toBottomOf="parent"
-            />
-
-            <TextView
-                    android:id="@+id/tvMode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:text="@string/once"
-                    app:layout_constraintStart_toEndOf="@+id/tv_time"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_dsc"
-                    android:textColor="@color/colorGrandis"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginStart="5dp"
-            />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <TextView
-            android:id="@+id/tv_client"
+            android:id="@+id/tv_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:text="@string/sample_name"
-            app:layout_constraintEnd_toStartOf="@+id/iv_menu"
-            app:layout_constraintTop_toTopOf="@+id/constraint_layout"
-            android:layout_marginStart="20dp"
-            android:textColor="@color/colorWhiteSemitransparent"
-            android:layout_marginEnd="5dp"
-            android:layout_marginTop="20dp"
-    />
+            android:background="@drawable/circular_tv_bg"
+            android:fontFamily="@font/product_sans_regular"
+            android:gravity="center"
+            android:text="@string/two"
+            android:textColor="@android:color/white"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/tv_count"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_dsc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@string/hospital"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:maxLines="1"
+                android:singleLine="true"/>
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sample_time"
+                android:textColor="@color/colorGrandis"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_dsc"
+                app:layout_constraintTop_toBottomOf="@+id/tv_dsc" />
+
+            <TextView
+                android:id="@+id/tvMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="@string/once"
+                android:textColor="@color/colorGrandis"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_time"
+                app:layout_constraintTop_toBottomOf="@+id/tv_dsc" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tv_client"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="5dp"
+        android:text="@string/sample_name"
+        android:textColor="@color/colorWhiteSemitransparent"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/iv_menu"
+        app:layout_constraintTop_toTopOf="@+id/constraint_layout"
+        app:layout_constraintEnd_toEndOf="@+id/constraint_layout"
+        app:layout_constrainedWidth="true"
+        android:maxLines="1"
+        android:singleLine="true"/>
+
     <ImageView
-            android:id="@+id/iv_menu"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/more_vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/constraint_layout"
-            android:tint="@android:color/white"
-            android:layout_marginTop="20dp"/>
+        android:id="@+id/iv_menu"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/more_vertical"
+        android:tint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/constraint_layout" />
 
     <View
-            android:id="@+id/divider"
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/colorTranslucent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorTranslucent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
