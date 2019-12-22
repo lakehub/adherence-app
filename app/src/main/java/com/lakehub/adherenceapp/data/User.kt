@@ -2,7 +2,7 @@ package com.lakehub.adherenceapp.data
 
 data class User (
     var chvUserId: String? = null,
-    var active: Boolean = false,
+    var active: Boolean = true,
     var image: String? = null,
     var location: String = "",
     var points: Int = 0,

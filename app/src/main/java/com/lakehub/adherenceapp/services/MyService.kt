@@ -20,7 +20,6 @@ import com.lakehub.adherenceapp.receivers.ChvReminderReceiver
 import com.lakehub.adherenceapp.receivers.ConfirmAttendPlaceReceiver
 import com.lakehub.adherenceapp.repositories.UserRepository
 import com.lakehub.adherenceapp.utils.MyNotificationManager
-import com.lakehub.adherenceapp.utils.USER_CHV
 import com.lakehub.adherenceapp.utils.displayTime
 import com.lakehub.adherenceapp.utils.toUtc
 import org.joda.time.DateTime
@@ -33,6 +32,10 @@ class MyService : JobIntentService() {
 
     override fun onHandleWork(@NonNull intent: Intent) {
         Log.d("TAG", "boot completed")
+        if(!UserRepository().isAuthenticated) {
+            return
+        }
+
         val offset = TimeZone.getDefault().rawOffset
         val tz = DateTimeZone.forOffsetMillis(offset)
         val now = DateTime.now(tz)

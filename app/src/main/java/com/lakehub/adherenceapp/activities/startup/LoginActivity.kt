@@ -15,7 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.tasks.TaskExecutors
 import com.google.android.material.textfield.TextInputEditText
@@ -53,8 +53,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var tvResend: TextView
     private var phoneNumber = ""
 
-    private var role: Role? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -80,7 +78,7 @@ class LoginActivity : AppCompatActivity() {
 
         hideProgress()
 
-        edit_text.addTextChangedListener {
+        edit_text.doAfterTextChanged {
             if (it.isNullOrBlank()) {
                 tv_btn_submit.setTextColor(
                     ContextCompat.getColor(applicationContext, R.color.colorBlack)
@@ -125,26 +123,15 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        editTextCode.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
+        editTextCode.doAfterTextChanged {
+            val text = it.toString().trim()
 
+            if (text.isBlank()) {
+                inputLayoutCode.error = getString(R.string.required)
+            } else {
+                inputLayoutCode.error = null
             }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                val text = p0.toString().trim()
-
-                if (text.isBlank()) {
-                    inputLayoutCode.error = getString(R.string.required)
-                } else {
-                    inputLayoutCode.error = null
-                }
-            }
-
-        })
+        }
 
         clBtnSubmit.setOnClickListener {
             inputLayoutCode.error = null
@@ -246,11 +233,15 @@ class LoginActivity : AppCompatActivity() {
 
                 val user = userRepository.getCurrentUser()
                 if(user == null) {
+                    alertDialog.dismiss()
                     FirebaseAuth.getInstance().signOut()
                     Log.e("TAG", "Current user was missing in database.")
                     showWarning(getString(R.string.invalid_phone_nr))
                     return@launch
                 }
+
+                //Mark user as active
+                userRepository.updateActiveState(true)
 
                 //Store user image locally if the user has an user image
                 user.image?.let { userRepository.storeUserImageLocally(this@LoginActivity) }

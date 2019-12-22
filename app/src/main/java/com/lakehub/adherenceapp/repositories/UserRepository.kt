@@ -66,6 +66,11 @@ class UserRepository {
         db.collection(USER_COLLECTION_REF).document(userId).update(data)
     }
 
+    fun updateActiveState(active: Boolean)  {
+        val data = mutableMapOf<String, Any>(User::active.name to active)
+        db.collection(USER_COLLECTION_REF).document(userId).update(data)
+    }
+
 
 
 }
